@@ -8,4 +8,4 @@ W.I.P. It's a mess, not a product. Just f***ing around with Vue and <canvas>. No
 
 No cycling, no smoking, no fishing, No dogs!
 
-![](https://media.giphy.com/media/U1Y2zn1vyzNGE/giphy.gif)
+<img src="https://media.giphy.com/media/U1Y2zn1vyzNGE/giphy.gif">
