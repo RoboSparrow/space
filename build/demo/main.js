@@ -251,8 +251,16 @@ var states = {
 var router = new VueRouter({
     mode: 'hash', //'history',
     routes: [{
+        path: '/',
+        component: Path
+    }, {
         path: '/Path',
         component: Path
+    },
+    // catch all redirect
+    {
+        path: '*',
+        redirect: '/'
     }]
 });
 

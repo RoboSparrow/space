@@ -1,21 +1,18 @@
 {
-  "name": "Vector",
+  "name": "Space",
   "version": "0.0.1",
-  "description": "vector",
+  "description": "W.I.P. It's a mess, not a product. Just f***ing around with Vue and <canvas>.",
+  "private": true,
   "scripts": {
     "dev": "watch 'npm run build' ./src",
     "devdemo": "watch 'rollup -c ./rollup.config-demo.js' ./src",
     "build": "rollup -c ./rollup.config-project.js && rollup -c ./rollup.config-demo.js",
     "test": "./node_modules/.bin/mocha --reporter spec tests"
   },
-  "repository": "",
+  "repository": "https://github.com/RoboSparrow/space",
   "keywords": [],
-  "author": "jboeselt",
-  "license": "MIT",
-  "files": [
-    "src",
-    "dist"
-  ],
+  "author": "jboeselt <sendstuff2bo@gmail.com>",
+  "license": "WTF",
   "dependencies": {
     "muicss": "^0.9.12",
     "vue": "^2.2.5",
