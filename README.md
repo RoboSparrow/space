@@ -6,6 +6,4 @@ W.I.P. It's a mess, not a product. Just f***ing around with Vue and <canvas>. No
 * [muicss](https://www.muicss.com/)
 * [rollup](https://rollupjs.org/)
 
-No cycling, no smoking, no fishing, No dogs!
-
-<img src="https://media.giphy.com/media/U1Y2zn1vyzNGE/giphy.gif">
+[No cycling, no smoking, no fishing, No dogs!](https://goo.gl/images/XOX5ye)
