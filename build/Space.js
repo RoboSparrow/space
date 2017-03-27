@@ -305,4 +305,4 @@ exports.Path = Path;
 exports.Polygon = Polygon$2;
 
 }((this.Space = this.Space || {})));
-//# sourceMappingURL=test.js.map
+//# sourceMappingURL=Space.js.map

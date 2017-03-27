@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "description": "vector",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "dev": "watch 'npm run build' ./src",
+    "devdemo": "watch 'rollup -c ./rollup.config-demo.js' ./src",
+    "build": "rollup -c ./rollup.config-project.js && rollup -c ./rollup.config-demo.js",
     "test": "./node_modules/.bin/mocha --reporter spec tests"
   },
   "repository": "",
@@ -15,7 +16,11 @@
     "src",
     "dist"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "muicss": "^0.9.12",
+    "vue": "^2.2.5",
+    "vue-router": "^2.3.0"
+  },
   "devDependencies": {
     "babel-eslint": "^7.2.1",
     "babel-plugin-external-helpers": "^6.22.0",
@@ -32,10 +37,9 @@
     "rollup": "^0.37.2",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-eslint": "^3.0.0",
-    "rollup-plugin-istanbul": "^1.1.0",
+    "rollup-plugin-scss": "^0.2.0",
     "rollup-plugin-vue": "^2.3.1",
     "rollup-watch": "^2.5.0",
-    "vue": "^2.2.5",
-    "vue-router": "^2.3.0"
+    "watch": "^1.0.2"
   }
 }

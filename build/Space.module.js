@@ -298,4 +298,4 @@ var Polygon$2 = Object.freeze({
 });
 
 export { Point, Path, Polygon$2 as Polygon };
-//# sourceMappingURL=test.module.js.map
+//# sourceMappingURL=Space.module.js.map

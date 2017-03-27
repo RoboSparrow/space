@@ -98,7 +98,7 @@ Matrix4x4.prototype.substract = function (m) {
     let i;
     let j;
     for (i = 0; i < 4; i++) {
-        for (j = 0; j < 4; j++) {
+        for (j = 0; j < 4; j++){
             this.m[i][j] -= m[i][j];
         }
     }

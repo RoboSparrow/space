@@ -1,37 +1,39 @@
 import babel from 'rollup-plugin-babel';
 import babelrc from 'babelrc-rollup';
 import eslint from 'rollup-plugin-eslint';
+import vue from 'rollup-plugin-vue';
+import scss from 'rollup-plugin-scss';
 
 const pkg = require('./package.json');
-const externals = Object.keys(pkg.dependencies);
+const externals = [/* add your deps */].concat(Object.keys(pkg.dependencies));
 
 const SRC = {
-    path: 'src/'
+    path: 'src/demo/'
 };
 
 const DEST = {
-    path: 'build/'
+    path: 'build/demo/'
 };
 
 export default {
 
-    entry: SRC.path + 'index.js',
+    entry: SRC.path + 'main.js',
 
     plugins: [
+        vue({
+            css: true //<head>
+            // css: DEST.path + 'components.css'
+        }),
+        scss(),
         eslint(),
-        babel(babelrc())
+        babel(babelrc()) //last!
     ],
     external: externals,
     targets: [
         {
-            dest: DEST.path + 'test.js',
+            dest: DEST.path + 'main.js',
             format: 'iife', //You must specify an output type - valid options are amd, cjs, es, iife, umd
             moduleName: 'Space',
-            sourceMap: true
-        },
-        {
-            dest: DEST.path + 'test.module.js',
-            format: 'es',
             sourceMap: true
         }
     ]
