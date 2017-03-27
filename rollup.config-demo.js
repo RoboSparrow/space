@@ -28,7 +28,14 @@ export default {
         eslint(),
         babel(babelrc()) //last!
     ],
+
     external: externals,
+
+    globals: {
+        Vue: 'vue',
+        VueRouter: 'vue-router'
+    },
+
     targets: [
         {
             dest: DEST.path + 'main.js',

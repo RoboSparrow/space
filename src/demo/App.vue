@@ -18,6 +18,7 @@
         <div id="content" class="mui-container-fluid">
             <div class="mui-row">
                 <div class="mui-col-sm-10 mui-col-sm-offset-1">
+                    <span>{{animation.count}}</span>
                     <router-view
                         class="view"
                         :states="states"
@@ -52,9 +53,5 @@ export default {
 
 </script>
 
-
 <style>
-    canvas {
-        border: 1px solid red;
-    }
 </style>
