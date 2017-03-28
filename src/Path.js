@@ -2,12 +2,12 @@
 import Point from './Point';
 
 /*
-    * @TODO:
-    * tranlate point
-    * scale
-    * rotate
-    * arc
-    */
+ * @TODO:
+ * tranlate point
+ * scale
+ * rotate
+ * arc
+ */
 const Path = function (x, y, z) {
     this.points = [];
     if (x !== undefined) {

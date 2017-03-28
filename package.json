@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "watch 'npm run build' ./src",
-    "devdemo": "node ./build",
+    "devdemo": "node ./build project demo",
     "build": "rollup -c ./rollup.config-project.js && rollup -c ./rollup.config-demo.js",
     "test": "./node_modules/.bin/mocha --reporter spec tests"
   },

@@ -1,8 +1,8 @@
-const babel  = require('rollup-plugin-babel');
-const babelrc  = require('babelrc-rollup').default;
-const eslint  = require('rollup-plugin-eslint');
-const vue  = require('rollup-plugin-vue');
-const scss  = require('rollup-plugin-scss');
+const babel = require('rollup-plugin-babel');
+const babelrc = require('babelrc-rollup').default;
+const eslint = require('rollup-plugin-eslint');
+const vue = require('rollup-plugin-vue');
+const scss = require('rollup-plugin-scss');
 
 const pkg = require('./package.json');
 const externals = [/* add your deps */].concat(Object.keys(pkg.dependencies));

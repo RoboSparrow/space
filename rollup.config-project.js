@@ -1,6 +1,6 @@
-import babel from 'rollup-plugin-babel';
-import babelrc from 'babelrc-rollup';
-import eslint from 'rollup-plugin-eslint';
+const babel = require('rollup-plugin-babel');
+const babelrc = require('babelrc-rollup').default;
+const eslint = require('rollup-plugin-eslint');
 
 const pkg = require('./package.json');
 const externals = Object.keys(pkg.dependencies);
@@ -13,7 +13,7 @@ const DEST = {
     path: 'build/'
 };
 
-export default {
+module.exports = {
 
     entry: SRC.path + 'Space.js',
 

@@ -120,8 +120,8 @@ var Utils = {
     * Using Math.round() will give you a non-uniform distribution!
     */
     bounds: function bounds(val, min, max) {
-        val = val < min ? min + 1 : val;
-        val = val > max ? max - 1 : val;
+        val = val < min ? min : val;
+        val = val > max ? max : val;
         return val;
     },
 

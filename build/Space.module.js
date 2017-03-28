@@ -132,12 +132,12 @@ Point.Spherical.prototype.lng = function () {
 
 //https://github.com/d3/d3-path/blob/master/src/path.js
 /*
-    * @TODO:
-    * tranlate point
-    * scale
-    * rotate
-    * arc
-    */
+ * @TODO:
+ * tranlate point
+ * scale
+ * rotate
+ * arc
+ */
 var Path = function Path(x, y, z) {
     this.points = [];
     if (x !== undefined) {
