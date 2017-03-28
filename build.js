@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint-disable import/no-extraneous-dependencies */
 const rollup = require('rollup');
 const chokidar = require('chokidar');
@@ -17,20 +19,28 @@ const globs = {
     demo: ['./src/demo/**/*.(vue|js)']
 };
 
-const task = function (config) {
+const task = function (name, config) {
     rollup.rollup({
         entry: config.entry,
         plugins: config.plugins,
         external: config.external,
         cache: cache
-    }).then((bundle) => {
+    })
+    .then((bundle) => {
+        console.log(`${colours.yellow} -${name}:${colours.clear} bundling..`);
+        const writers = [];
         config.targets.forEach((target) => {
-            bundle.write(target);
+            writers.push(bundle.write(target));
         });
+        return Promise.all(writers);
+    })
+    .then((results) => {
+        console.log(`${colours.yellow} -${name}:${colours.clear} ${colours.green}Bundling finished!${colours.clear}`);
     });
 };
 
 const watch = function (name, glob, config) {
+    const prefix = `${colours.yellow} -${name}:${colours.clear}`;
 
     const watcher = chokidar.watch(glob, {
         ignored: /[\/\\]\./, //eslint-disable-line no-useless-escape
@@ -40,16 +50,16 @@ const watch = function (name, glob, config) {
         console.log(`${colours.green}Watcher${colours.clear} ${name} (${glob.join(', ')}) ${colours.green} ready...${colours.clear}`);
     })
     .on('add', (path) => {
-        console.log(`${colours.yellow} --${name}:${colours.clear} File ${path} has been added`);
-        task(config);
+        console.log(`${prefix}${colours.clear} File ${path} has been added`);
+        task(name, config);
     })
     .on('change', (path) => {
-        console.log(`${colours.yellow} --${name}:${colours.clear} File ${path} has been changed`);
-        task(config);
+        console.log(`${prefix}${colours.clear} File ${path} has been changed`);
+        task(name, config);
     })
     .on('unlink', (path) => {
-        console.log(`${colours.yellow} --${name}:${colours.clear} File ${path} has been removed`);
-        task(config);
+        console.log(`${prefix}${colours.clear} File ${path} has been removed`);
+        task(name, config);
     })
     ;
 
