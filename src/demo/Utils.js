@@ -11,6 +11,16 @@ export default {
     * Returns a random integer between min (inclusive) and max (inclusive)
     * Using Math.round() will give you a non-uniform distribution!
     */
+    bounds: function (val, min, max) {
+        val = (val < min) ? min + 1 : val;
+        val = (val > max) ? max - 1 : val;
+        return val;
+    },
+
+    /**
+    * Returns a random integer between min (inclusive) and max (inclusive)
+    * Using Math.round() will give you a non-uniform distribution!
+    */
     randIntRange: function (base, range, bounce = []) {
         if (bounce.length) {
             if ((base + range[1]) > bounce[1]) {

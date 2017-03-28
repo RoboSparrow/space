@@ -1,8 +1,8 @@
-import babel from 'rollup-plugin-babel';
-import babelrc from 'babelrc-rollup';
-import eslint from 'rollup-plugin-eslint';
-import vue from 'rollup-plugin-vue';
-import scss from 'rollup-plugin-scss';
+const babel  = require('rollup-plugin-babel');
+const babelrc  = require('babelrc-rollup').default;
+const eslint  = require('rollup-plugin-eslint');
+const vue  = require('rollup-plugin-vue');
+const scss  = require('rollup-plugin-scss');
 
 const pkg = require('./package.json');
 const externals = [/* add your deps */].concat(Object.keys(pkg.dependencies));
@@ -15,7 +15,7 @@ const DEST = {
     path: 'build/demo/'
 };
 
-export default {
+module.exports = {
 
     entry: SRC.path + 'main.js',
 

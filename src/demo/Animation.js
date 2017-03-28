@@ -2,7 +2,15 @@ const Animation = function () {
     this.id = null;
     this.count = 0;
     this.running = false;
+    this.interval = -1;
+    this.last = new Date().getTime();
     this.callbacks = [];
+};
+
+// register callback
+Animation.prototype.fps = function (fps) {
+    this.interval = (fps < 0) ? -1 : 1000 / fps;
+    return this;
 };
 
 // register callback
@@ -30,10 +38,18 @@ Animation.prototype.play = function () {
         if (!this.running) {
             return;
         }
-        this.callbacks.forEach((fn) => {
-            this.count += 1;
-            fn();
-        });
+
+        const now = new Date().getTime();
+        const delta = now - this.last;
+
+        if (this.interval < 0 || delta > this.interval) {
+            this.last = now - (delta % this.interval);
+            this.callbacks.forEach((fn) => {
+                this.count += 1;
+                fn();
+            });
+        }
+
         this.id = window.requestAnimationFrame(callback);
     };
 

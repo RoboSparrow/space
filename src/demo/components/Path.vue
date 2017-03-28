@@ -1,10 +1,16 @@
 <template>
     <div>
-        <div class="pure-control-group">
-            <label for="name">Segment Range</label>
-            <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-            <span class="pure-form-message-inline">gre {{state}}</span>
-        </div>
+        <form class="mui-form">
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segments" min="1" max="500" step="10">
+                <label>Segments <small>({{ state.segments }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+            <pre>{{state}}</pre>
+        </form>
     </div>
 </template>
 
@@ -17,7 +23,7 @@ let prev;
 const state = {
     prev: null,
     segments: 100,
-    segmentsRange: 5
+    segmentsRange: 10
 };
 
 const compute = function(state, canvas) {
@@ -27,12 +33,17 @@ const compute = function(state, canvas) {
     const path = new Space.Path(state.prev.x, state.prev.y);
     const range = state.segmentsRange;
     let count = 0;
+    let rand;
     while(count < state.segments){
-        let x = Utils.randIntRange(path.last().x, [-range, range], [0, canvas.width]);
-        let y = Utils.randIntRange(path.last().y, [-range, range], [0, canvas.height]);
+        rand = Utils.randInt(-state.segmentsRange, state.segmentsRange);
+        let x = Utils.bounds(path.last().x + rand, 0, canvas.width);
+        rand = Utils.randInt(-state.segmentsRange, state.segmentsRange);
+        let y = Utils.bounds(path.last().y + rand, 0, canvas.height);
+        // console.log('here', x, y);
         path.add(x, y);
         count++;
     }
+
     return path;
 };
 
@@ -48,6 +59,7 @@ export default {
         this.canvas.clear();
 
         this.animation
+        // .fps(1)
         .only(() => {
             // compute path
             path = compute(this.state, this.canvas.canvas);
@@ -67,11 +79,11 @@ export default {
                 this.canvas.ctx.stroke();
             });
             this.canvas.ctx.closePath();
+
+            state.prev = path.last();
         })
         .play()
-        //.stop()
         ;
-        console.log(this.animation);
     },
     components: {
     },
