@@ -3,6 +3,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const rollup = require('rollup');
 const chokidar = require('chokidar');
+const fse = require('fs-extra');
 
 // https://coderwall.com/p/yphywg/printing-colorful-text-in-terminal-when-run-node-js-script
 const colours = {
@@ -14,9 +15,37 @@ const colours = {
 let cache;
 const opts = process.argv.slice(2);
 
-const globs = {
-    project: ['./src/*.js', '!./src/demo/*'],
-    demo: ['./src/demo/**/*.(vue|js)']
+const copy = function (src, dest) {
+    return new Promise((resolve, reject) => {
+        fse.copy(src, dest, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(dest.replace(/^.*[\\\/]/, ''));
+        });
+    });
+};
+
+const CONFIG = {
+    project: {
+        require: './rollup.config-project.js',
+        glob: ['./src/*.js', '!./src/demo/*'],
+        extraTasks: []
+    },
+    // make sure thewatched files exclude each other in every task
+    demo: {
+        require: './rollup.config-demo.js',
+        glob: ['./src/demo/**/*.(vue|js)'],
+        extraTasks: [
+            () => {
+                return copy('./node_modules/vue/dist/vue.min.js', './build/demo/vue.min.js');
+            },
+            () => {
+                return copy('./node_modules/vue-router/dist/vue-router.min.js', './build/demo/vue-router.min.js');
+            }
+        ]
+    }
 };
 
 const task = function (name, config) {
@@ -32,9 +61,12 @@ const task = function (name, config) {
         config.targets.forEach((target) => {
             writers.push(bundle.write(target));
         });
+        CONFIG[name].extraTasks.forEach((task) => {
+            writers.push(task());
+        });
         return Promise.all(writers);
     })
-    .then((results) => {
+    .then(() => {
         console.log(`${colours.yellow} -${name}:${colours.clear} ${colours.green}Bundling finished!${colours.clear}`);
     })
     .catch((error) => {
@@ -71,6 +103,6 @@ const watch = function (name, glob, config) {
 
 let config;
 opts.forEach((name) => {
-    config = require(`./rollup.config-${name}.js`); //eslint-disable-line global-require, import/no-dynamic-require
-    watch(name, globs[name], config);
+    config = require(CONFIG[name].require); //eslint-disable-line global-require, import/no-dynamic-require
+    watch(name, CONFIG[name].glob, config);
 });
