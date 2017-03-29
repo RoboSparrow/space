@@ -3727,6 +3727,15 @@ header {
   left: 0;
   z-index: 2; }
 
+header .app--sidebar-trigger {
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 2s ease-in-out;
+  transition: transform 2s ease-in-out; }
+
+header .app--sidebar-trigger:hover {
+  -webkit-transform: rotate(360deg);
+  transform: rotate(360deg); }
+
 #sidebar {
   position: fixed;
   top: 79px;

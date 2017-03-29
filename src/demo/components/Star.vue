@@ -6,8 +6,12 @@
                 <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
             </div>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.radiusRange" min="5" max="500">
-                <label>Radius Range <small>({{ state.radiusRange }})</small></label>
+                <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
+                <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
+                <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
             </div>
             <pre>{{state}}</pre>
         </form>
@@ -18,14 +22,16 @@
 import Utils from '../Utils';
 
 const Space = window.Space;
-
+// segments, outerRadius, innerRadius, center
 const state = {
     prev: {
         segments: 3,
-        radius: 50
+        outerRadius: 50,
+        innerRadius: 10
     },
     segmentsRange: 10,
-    radiusRange: 200,
+    outerRadiusRange: 200,
+    innerRadiusRange: 200,
     origin: null
 };
 
@@ -33,19 +39,22 @@ const compute = function(state, canvas) {
     if(!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
     }
-    let radius = Math.floor(Utils.randInt(5, state.radiusRange));
+    let outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
+    let innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
     let segments = Math.floor(Utils.randInt(3, state.segmentsRange));
     segments = Utils.bounds(segments, false, 25);
-    radius = Utils.bounds(radius, false, canvas.width/2);
+    outerRadius = Utils.bounds(outerRadius, false, canvas.width/2);
+    innerRadius = Utils.bounds(innerRadius, false, canvas.width/2);
 
     state.prev.segments = segments;
-    state.prev.radius = radius;
+    state.prev.outerRadius = outerRadius;
+    state.prev.innerRadius = innerRadius;
 
-    return new Space.Polygon(segments, radius, state.origin);
+    return new Space.Star(segments, outerRadius, innerRadius, state.origin);
 };
 
 export default {
-    name: 'Polygon',
+    name: 'Star',
     props: [
         'animation',
         'states',

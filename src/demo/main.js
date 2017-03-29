@@ -10,6 +10,8 @@ import Canvas2d from './Canvas2d';
 
 import Path from './components/Path.vue';
 import Polygon from './components/Polygon.vue';
+import Rectangle from './components/Rectangle.vue';
+import Star from './components/Star.vue';
 import App from './App.vue';
 
 const animation = new Animation();
@@ -40,6 +42,14 @@ const router = new VueRouter({
         {
             path: '/Polygon',
             component: Polygon
+        },
+        {
+            path: '/Rectangle',
+            component: Rectangle
+        },
+        {
+            path: '/Star',
+            component: Star
         },
         // catch all redirect
         {

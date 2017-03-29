@@ -337,6 +337,193 @@ var Polygon = { render: function render() {
     if (document) {
         var head = document.head || document.getElementsByTagName('head')[0],
             style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$2 = window.Space;
+
+var state$2 = {
+    prev: {
+        width: 25,
+        height: 50
+    },
+    widthRange: 500,
+    heightRange: 500,
+    origin: null
+};
+
+var compute$2 = function compute$2(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space$2.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+    var width = Math.floor(Utils.randInt(5, state.widthRange));
+    var height = Math.floor(Utils.randInt(3, state.heightRange));
+
+    state.prev.width = width;
+    state.prev.height = height;
+
+    return new Space$2.Rectangle(width, height, state.origin);
+};
+
+var Rectangle = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
+                    _vm.state.widthRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Width Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.widthRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.heightRange, expression: "state.heightRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.heightRange }, on: { "__r": function __r($event) {
+                    _vm.state.heightRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+    }, staticRenderFns: [],
+    name: 'Rectangle',
+    props: ['animation', 'states', 'canvas'],
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+        this.canvas.clear();
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            polygon = compute$2(_this.state, _this.canvas.canvas);
+
+            // draw
+            _this.canvas.clear();
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
+
+            polygon.path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+                _this.canvas.ctx.strokeStyle = _this.states.canvas.strokeStyle;
+                _this.canvas.ctx.lineWidth = _this.states.canvas.lineWidth;
+                _this.canvas.ctx.stroke();
+            });
+            _this.canvas.ctx.closePath();
+        }).play();
+    },
+
+    components: {},
+    data: function data() {
+        return {
+            state: state$2
+        };
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$3 = window.Space;
+// segments, outerRadius, innerRadius, center
+var state$3 = {
+    prev: {
+        segments: 3,
+        outerRadius: 50,
+        innerRadius: 10
+    },
+    segmentsRange: 10,
+    outerRadiusRange: 200,
+    innerRadiusRange: 200,
+    origin: null
+};
+
+var compute$3 = function compute$3(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space$3.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+    var outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
+    var innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
+    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
+    segments = Utils.bounds(segments, false, 25);
+    outerRadius = Utils.bounds(outerRadius, false, canvas.width / 2);
+    innerRadius = Utils.bounds(innerRadius, false, canvas.width / 2);
+
+    state.prev.segments = segments;
+    state.prev.outerRadius = outerRadius;
+    state.prev.innerRadius = innerRadius;
+
+    return new Space$3.Star(segments, outerRadius, innerRadius, state.origin);
+};
+
+var Star = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.outerRadiusRange, expression: "state.outerRadiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.outerRadiusRange }, on: { "__r": function __r($event) {
+                    _vm.state.outerRadiusRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Outer Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.outerRadiusRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.innerRadiusRange, expression: "state.innerRadiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.innerRadiusRange }, on: { "__r": function __r($event) {
+                    _vm.state.innerRadiusRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+    }, staticRenderFns: [],
+    name: 'Star',
+    props: ['animation', 'states', 'canvas'],
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+        this.canvas.clear();
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            polygon = compute$3(_this.state, _this.canvas.canvas);
+
+            // draw
+            _this.canvas.clear();
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
+
+            polygon.path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+                _this.canvas.ctx.strokeStyle = _this.states.canvas.strokeStyle;
+                _this.canvas.ctx.lineWidth = _this.states.canvas.lineWidth;
+                _this.canvas.ctx.stroke();
+            });
+            _this.canvas.ctx.closePath();
+        }).play();
+    },
+
+    components: {},
+    data: function data() {
+        return {
+            state: state$3
+        };
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
             css = " body{ background-color: black; } ";style.type = 'text/css';if (style.styleSheet) {
             style.styleSheet.cssText = css;
         } else {
@@ -346,7 +533,7 @@ var Polygon = { render: function render() {
 })();
 
 var App = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("Brand.io")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Path" } }, [_vm._v("Path")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Polygon" } }, [_vm._v("Polygon")])], 1), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "mui--pull-right", on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("SpaceLib Demo")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Path" } }, [_vm._v("Path")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Polygon" } }, [_vm._v("Polygon")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Rectangle" } }, [_vm._v("Rectangle")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Star" } }, [_vm._v("Star")])], 1), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right", on: { "click": function click($event) {
                     _vm.sidebar = !_vm.sidebar;
                 } } }, [_c('i', { staticClass: "material-icons mui--text-display1" }, [_vm._v("settings")])])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
@@ -356,9 +543,9 @@ var App = { render: function render() {
                     _vm.throttle($event.target.value);
                 } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "states": _vm.states, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
     }, staticRenderFns: [function () {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUI")])])]);
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUICSS")])])]);
     }, function () {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v("Brand.io")])]);
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v("Params")])]);
     }, function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('main', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-12 app--canvas" })])]);
     }],
@@ -422,6 +609,12 @@ var router = new VueRouter({
     }, {
         path: '/Polygon',
         component: Polygon
+    }, {
+        path: '/Rectangle',
+        component: Rectangle
+    }, {
+        path: '/Star',
+        component: Star
     },
     // catch all redirect
     {

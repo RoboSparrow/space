@@ -6,12 +6,14 @@
                     <table width="100%">
                         <tr class="mui--appbar-height">
                             <td>
-                                <span class="app--brand mui--text-title">Brand.io</span>
+                                <span class="app--brand mui--text-title">SpaceLib Demo</span>
                                 <router-link to="/Path" class="mui-btn mui-btn--raised">Path</router-link>
                                 <router-link to="/Polygon" class="mui-btn mui-btn--raised">Polygon</router-link>
+                                <router-link to="/Rectangle" class="mui-btn mui-btn--raised">Rectangle</router-link>
+                                <router-link to="/Star" class="mui-btn mui-btn--raised">Star</router-link>
                             </td>
                             <td class="mui--text-title">
-                                <a class="mui--pull-right" v-on:click="sidebar = !sidebar"><i class="material-icons mui--text-display1">settings</i></a>
+                                <a class="app--sidebar-trigger mui--pull-right" v-on:click="sidebar = !sidebar"><i class="material-icons mui--text-display1">settings</i></a>
                             </td>
                         </tr>
                     </table>
@@ -21,14 +23,14 @@
 
         <footer id="footer">
             <div class="app--footer-content mui-container-fluid mui--align-middle">
-                Made with <a href="https://vuejs.org/">Vue</a> & <a href="https://www.muicss.com">MUI</a>
+                Demo made with <a href="https://vuejs.org/">Vue</a> & <a href="https://www.muicss.com">MUICSS</a>
             </div>
         </footer>
 
         <aside id="sidebar" class="mui-panel" v-bind:class="{'visible': sidebar}">
 
             <div class="mui--appbar-line-height">
-                <span class="mui--text-title">Brand.io</span>
+                <span class="mui--text-title">Params</span>
             </div>
             <div class="mui-divider"></div>
 
