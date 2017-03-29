@@ -3788,6 +3788,9 @@ footer {
 footer, footer a {
   color: white; }
 
-a.mui-btn.router-link-active {
+.router-link-active {
   background-color: #2196F3;
   color: white; }
+
+.router-link-active:hover {
+  cursor: pointer; }

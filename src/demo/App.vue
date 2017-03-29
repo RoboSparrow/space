@@ -6,15 +6,22 @@
                     <table width="100%">
                         <tr class="mui--appbar-height">
                             <td>
-                                <span class="app--brand mui--text-title">SpaceLib Demo</span>
-                                <select v-on:change="goTo($event.target.value)">
-                                    <option
-                                        v-for="route in routes" 
-                                        v-if="route.name" 
-                                        v-bind:value="route.path">
-                                        {{$route.name === route.name ? '▸ ' : ''}}{{ route.name }}
-                                    </option>
-                                </select>
+                                <span class="app--brand">Space/{{$route.name}}</span>
+                                    <div class="mui-dropdown">
+                                    <button class="mui-btn mui-btn--primary mui-btn-small" data-mui-toggle="dropdown">
+                                        Browse
+                                        <span class="mui-caret"></span>
+                                    </button>
+                                    <ul class="mui-dropdown__menu">
+                                        <li
+                                            v-for="route in routes" 
+                                            v-if="route.name" 
+                                            v-bind:class="{'router-link-active': $route.name === route.name}" 
+                                        >
+                                         <a v-on:click="goTo(route.path)">{{ route.name }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                             <td class="mui--text-title">
                                 <a class="app--sidebar-trigger mui--pull-right" v-on:click="sidebar = !sidebar"><i class="material-icons mui--text-display1">settings</i></a>

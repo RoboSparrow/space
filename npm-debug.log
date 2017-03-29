@@ -1,33 +1,33 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'run', 'devdemo' ]
-2 info using npm@3.9.3
-3 info using node@v6.2.1
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'run', 'devdemo' ]
+2 info using npm@3.10.10
+3 info using node@v6.10.0
 4 verbose run-script [ 'predevdemo', 'devdemo', 'postdevdemo' ]
 5 info lifecycle Space@0.0.1~predevdemo: Space@0.0.1
 6 silly lifecycle Space@0.0.1~predevdemo: no script for predevdemo, continuing
 7 info lifecycle Space@0.0.1~devdemo: Space@0.0.1
 8 verbose lifecycle Space@0.0.1~devdemo: unsafe-perm in lifecycle true
-9 verbose lifecycle Space@0.0.1~devdemo: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/home/joerg/Workspace/space/node_modules/.bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/joerg/.rvm/bin:/home/joerg/.rvm/bin
-10 verbose lifecycle Space@0.0.1~devdemo: CWD: /home/joerg/Workspace/space
+9 verbose lifecycle Space@0.0.1~devdemo: PATH: /usr/lib/node_modules/npm/bin/node-gyp-bin:/home/chrx/Workspace/space/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+10 verbose lifecycle Space@0.0.1~devdemo: CWD: /home/chrx/Workspace/space
 11 silly lifecycle Space@0.0.1~devdemo: Args: [ '-c', 'node ./build project demo' ]
 12 silly lifecycle Space@0.0.1~devdemo: Returned: code: 1  signal: null
 13 info lifecycle Space@0.0.1~devdemo: Failed to exec devdemo script
 14 verbose stack Error: Space@0.0.1 devdemo: `node ./build project demo`
 14 verbose stack Exit status 1
-14 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:245:16)
+14 verbose stack     at EventEmitter.<anonymous> (/usr/lib/node_modules/npm/lib/utils/lifecycle.js:255:16)
 14 verbose stack     at emitTwo (events.js:106:13)
 14 verbose stack     at EventEmitter.emit (events.js:191:7)
-14 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+14 verbose stack     at ChildProcess.<anonymous> (/usr/lib/node_modules/npm/lib/utils/spawn.js:40:14)
 14 verbose stack     at emitTwo (events.js:106:13)
 14 verbose stack     at ChildProcess.emit (events.js:191:7)
-14 verbose stack     at maybeClose (internal/child_process.js:852:16)
-14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:215:5)
+14 verbose stack     at maybeClose (internal/child_process.js:877:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:226:5)
 15 verbose pkgid Space@0.0.1
-16 verbose cwd /home/joerg/Workspace/space
-17 error Linux 3.13.0-24-generic
-18 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "devdemo"
-19 error node v6.2.1
-20 error npm  v3.9.3
+16 verbose cwd /home/chrx/Workspace/space
+17 error Linux 4.8.17-galliumos
+18 error argv "/usr/bin/nodejs" "/usr/bin/npm" "run" "devdemo"
+19 error node v6.10.0
+20 error npm  v3.10.10
 21 error code ELIFECYCLE
 22 error Space@0.0.1 devdemo: `node ./build project demo`
 22 error Exit status 1

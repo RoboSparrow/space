@@ -144,7 +144,10 @@ footer, footer a{
 // misc
 ////
 
-a.mui-btn.router-link-active {
+.router-link-active {
     background-color: $mui-primary-color;
     color: white;
+}
+.router-link-active:hover{
+    cursor: pointer;
 }

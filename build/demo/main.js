@@ -533,20 +533,22 @@ var Star = { render: function render() {
 })();
 
 var App = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("SpaceLib Demo")]), _c('select', { on: { "change": function change($event) {
-                    _vm.goTo($event.target.value);
-                } } }, _vm._l(_vm.routes, function (route) {
-            return route.name ? _c('option', { domProps: { "value": route.path } }, [_vm._v(_vm._s(_vm.$route.name === route.name ? '▸ ' : '') + _vm._s(route.name))]) : _vm._e();
-        }))]), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right", on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand" }, [_vm._v("Space/" + _vm._s(_vm.$route.name))]), _c('div', { staticClass: "mui-dropdown" }, [_vm._m(0), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.routes, function (route) {
+            return route.name ? _c('li', { class: { 'router-link-active': _vm.$route.name === route.name } }, [_c('a', { on: { "click": function click($event) {
+                        _vm.goTo(route.path);
+                    } } }, [_vm._v(_vm._s(route.name))])]) : _vm._e();
+        }))])]), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right", on: { "click": function click($event) {
                     _vm.sidebar = !_vm.sidebar;
-                } } }, [_c('i', { staticClass: "material-icons mui--text-display1" }, [_vm._v("settings")])])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+                } } }, [_c('i', { staticClass: "material-icons mui--text-display1" }, [_vm._v("settings")])])])])])])])]), _vm._m(1), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(2), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
                 } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { attrs: { "type": "checkbox" }, on: { "click": function click($event) {
                     _vm.throttle(_vm.animation.interval < 0 ? 3 : -1);
                 } } }), _vm._v(" Throttle animation")])]), _vm.animation.interval > 1 ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
                     _vm.throttle($event.target.value);
-                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "states": _vm.states, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
+                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "states": _vm.states, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(3)]);
     }, staticRenderFns: [function () {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('button', { staticClass: "mui-btn mui-btn--primary mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v("Browse "), _c('span', { staticClass: "mui-caret" })]);
+    }, function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUICSS")])])]);
     }, function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v("Params")])]);
