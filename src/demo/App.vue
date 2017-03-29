@@ -7,10 +7,14 @@
                         <tr class="mui--appbar-height">
                             <td>
                                 <span class="app--brand mui--text-title">SpaceLib Demo</span>
-                                <router-link to="/Path" class="mui-btn mui-btn--raised">Path</router-link>
-                                <router-link to="/Polygon" class="mui-btn mui-btn--raised">Polygon</router-link>
-                                <router-link to="/Rectangle" class="mui-btn mui-btn--raised">Rectangle</router-link>
-                                <router-link to="/Star" class="mui-btn mui-btn--raised">Star</router-link>
+                                <select v-on:change="goTo($event.target.value)">
+                                    <option
+                                        v-for="route in routes" 
+                                        v-if="route.name" 
+                                        v-bind:value="route.path">
+                                        {{$route.name === route.name ? '▸ ' : ''}}{{ route.name }}
+                                    </option>
+                                </select>
                             </td>
                             <td class="mui--text-title">
                                 <a class="app--sidebar-trigger mui--pull-right" v-on:click="sidebar = !sidebar"><i class="material-icons mui--text-display1">settings</i></a>
@@ -73,11 +77,12 @@ import Path from './components/Path.vue';
 
 export default {
     name: 'app',
-    props: ['animation', 'states', 'canvas'],
+    props: ['animation', 'states', 'canvas', 'routes'],
     components: {
         Path
     },
     mounted() {
+        console.log('t',this.$route);
         this.$el.querySelector('.app--canvas').appendChild(this.canvas.canvas);
         this.canvas.canvas.width = document.body.clientWidth;
         this.canvas.canvas.height = document.body.clientHeight;
@@ -94,6 +99,10 @@ export default {
             if(!isNaN(value)){
                 this.animation.fps(value);
             }
+        },
+        goTo: function (path) {
+            console.log(path)
+            this.$router.push(path);
         }
     },
     data() {

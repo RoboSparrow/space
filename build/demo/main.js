@@ -533,7 +533,11 @@ var Star = { render: function render() {
 })();
 
 var App = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("SpaceLib Demo")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Path" } }, [_vm._v("Path")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Polygon" } }, [_vm._v("Polygon")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Rectangle" } }, [_vm._v("Rectangle")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Star" } }, [_vm._v("Star")])], 1), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right", on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("SpaceLib Demo")]), _c('select', { on: { "change": function change($event) {
+                    _vm.goTo($event.target.value);
+                } } }, _vm._l(_vm.routes, function (route) {
+            return route.name ? _c('option', { domProps: { "value": route.path } }, [_vm._v(_vm._s(_vm.$route.name === route.name ? '▸ ' : '') + _vm._s(route.name))]) : _vm._e();
+        }))]), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right", on: { "click": function click($event) {
                     _vm.sidebar = !_vm.sidebar;
                 } } }, [_c('i', { staticClass: "material-icons mui--text-display1" }, [_vm._v("settings")])])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
@@ -550,11 +554,12 @@ var App = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('main', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-12 app--canvas" })])]);
     }],
     name: 'app',
-    props: ['animation', 'states', 'canvas'],
+    props: ['animation', 'states', 'canvas', 'routes'],
     components: {
         Path: Path
     },
     mounted: function mounted() {
+        console.log('t', this.$route);
         this.$el.querySelector('.app--canvas').appendChild(this.canvas.canvas);
         this.canvas.canvas.width = document.body.clientWidth;
         this.canvas.canvas.height = document.body.clientHeight;
@@ -572,6 +577,10 @@ var App = { render: function render() {
             if (!isNaN(value)) {
                 this.animation.fps(value);
             }
+        },
+        goTo: function goTo(path) {
+            console.log(path);
+            this.$router.push(path);
         }
     },
     data: function data() {
@@ -597,30 +606,38 @@ var states = {
     }
 };
 
+var routes = [{
+    name: 'Home',
+    path: '/',
+    component: Path
+}, {
+    name: 'Path',
+    path: '/Path',
+    component: Path
+}, {
+    name: 'Polygon',
+    path: '/Polygon',
+    component: Polygon
+}, {
+    name: 'Rectangle',
+    path: '/Rectangle',
+    component: Rectangle
+}, {
+    name: 'Star',
+    path: '/Star',
+    component: Star
+},
+// catch all redirect
+{
+    name: '',
+    path: '*',
+    redirect: '/'
+}];
+
 // Create the router
 var router = new VueRouter({
     mode: 'hash', //'history',
-    routes: [{
-        path: '/',
-        component: Path
-    }, {
-        path: '/Path',
-        component: Path
-    }, {
-        path: '/Polygon',
-        component: Polygon
-    }, {
-        path: '/Rectangle',
-        component: Rectangle
-    }, {
-        path: '/Star',
-        component: Star
-    },
-    // catch all redirect
-    {
-        path: '*',
-        redirect: '/'
-    }]
+    routes: routes
 });
 
 // 4. Create and mount root instance.
@@ -630,13 +647,14 @@ new Vue({
     data: {
         animation: animation,
         states: states,
-        canvas: canvas
+        canvas: canvas,
+        routes: routes
     },
     components: {
         App: App
     },
     //render: h => h(App)
-    template: '<App :states="states" :animation="animation" :canvas="canvas" />'
+    template: '<App :states="states" :animation="animation" :canvas="canvas" :routes="routes"/>'
 }).$mount('#app');
 
 }(Vue,VueRouter));
