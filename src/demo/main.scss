@@ -1,4 +1,7 @@
+////
 // muicss
+////
+
 @import "../../node_modules/muicss/lib/sass/mui-colors";
 
 $mui-appbar-bg-color: rgba(255, 255, 255, .35);
@@ -10,13 +13,9 @@ $app-footer-height: 30px;
 
 @import "../../node_modules/muicss/lib/sass/mui";
 
-header a{
-    color: $mui-appbar-font-color;
-}
-
-/**
- * Body CSS
- */
+////
+// global
+////
 
 html,
 body {
@@ -32,9 +31,9 @@ buttons {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/**
- * Layout CSS
- */
+////
+// header
+////
 
 header {
     position: fixed;
@@ -43,7 +42,6 @@ header {
     left: 0;
     z-index: 2;
 }
-
 
 header .app--sidebar-trigger{
     cursor: pointer;
@@ -55,6 +53,18 @@ header .app--sidebar-trigger:hover{
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
 }
+
+header .app--brand{
+    margin-right: 1em;
+}
+
+header a{
+    color: $mui-appbar-font-color;
+}
+
+////
+// sidebar
+////
 
 #sidebar{
     position: fixed;
@@ -86,17 +96,6 @@ header .app--sidebar-trigger:hover{
     background-color: $app-sidebar-color;
 }
 
-#content {
-    min-height: 100%;
-    overflow-x: hidden;
-    box-sizing: border-box;
-}
-
-.app--footer-content{
-    padding-top: .5em;
-    padding-bottom: .5em;
-}
-
 @media (min-width: 768px) {
     #sidebar{
         width: $app-sidebar-width;
@@ -107,8 +106,23 @@ header .app--sidebar-trigger:hover{
     }
 }
 
-.app--brand{
-    margin-right: 1em;
+////
+// main
+////
+
+#content {
+    min-height: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+////
+// footer
+////
+
+.app--footer-content{
+    padding-top: .5em;
+    padding-bottom: .5em;
 }
 
 footer {
@@ -124,4 +138,13 @@ footer {
 
 footer, footer a{
     color: $app-sidebar-color;
+}
+
+////
+// misc
+////
+
+a.mui-btn.router-link-active {
+    background-color: $mui-primary-color;
+    color: white;
 }
