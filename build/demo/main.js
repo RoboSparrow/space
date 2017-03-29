@@ -337,7 +337,7 @@ var Polygon = { render: function render() {
     if (document) {
         var head = document.head || document.getElementsByTagName('head')[0],
             style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            css = " body{ background-color: black; } ";style.type = 'text/css';if (style.styleSheet) {
             style.styleSheet.cssText = css;
         } else {
             style.appendChild(document.createTextNode(css));
@@ -346,14 +346,22 @@ var Polygon = { render: function render() {
 })();
 
 var App = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { staticClass: "mui-appbar mui--z1" }, [_c('div', { staticClass: "mui-container" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', { staticClass: "mui--text-title" }, [_vm._v("Brand.io")]), _c('td', { attrs: { "align": "right" } }, [_c('ul', { staticClass: "mui-list--inline mui--text-body2" }, [_c('li', [_c('router-link', { attrs: { "to": "/Path" } }, [_vm._v("Path")])], 1), _c('li', [_c('router-link', { attrs: { "to": "/Polygon" } }, [_vm._v("Polygon")])], 1)])])])])])]), _c('div', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-8 app--canvas" }), _c('div', { staticClass: "mui-col-md-4" }, [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("Brand.io")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Path" } }, [_vm._v("Path")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Polygon" } }, [_vm._v("Polygon")])], 1), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "mui--pull-right", on: { "click": function click($event) {
+                    _vm.sidebar = !_vm.sidebar;
+                } } }, [_c('i', { staticClass: "material-icons mui--text-display1" }, [_vm._v("settings")])])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
                 } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { attrs: { "type": "checkbox" }, on: { "click": function click($event) {
                     _vm.throttle(_vm.animation.interval < 0 ? 3 : -1);
                 } } }), _vm._v(" Throttle animation")])]), _vm.animation.interval > 1 ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
                     _vm.throttle($event.target.value);
-                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "states": _vm.states, "animation": _vm.animation, "canvas": _vm.canvas } }), _c('div')], 1)])])]);
-    }, staticRenderFns: [],
+                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "states": _vm.states, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
+    }, staticRenderFns: [function () {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUI")])])]);
+    }, function () {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v("Brand.io")])]);
+    }, function () {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('main', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-12 app--canvas" })])]);
+    }],
     name: 'app',
     props: ['animation', 'states', 'canvas'],
     components: {
@@ -361,8 +369,8 @@ var App = { render: function render() {
     },
     mounted: function mounted() {
         this.$el.querySelector('.app--canvas').appendChild(this.canvas.canvas);
-        this.canvas.canvas.width = this.states.canvas.width;
-        this.canvas.canvas.height = this.states.canvas.height;
+        this.canvas.canvas.width = document.body.clientWidth;
+        this.canvas.canvas.height = document.body.clientHeight;
         this.canvas.ctx.fillStyle = this.states.canvas.fillStyle;
         this.canvas.ctx.lineWidth = this.states.canvas.lineWidth;
     },
@@ -378,6 +386,11 @@ var App = { render: function render() {
                 this.animation.fps(value);
             }
         }
+    },
+    data: function data() {
+        return {
+            sidebar: true
+        };
     }
 };
 

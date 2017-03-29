@@ -1,11 +1,115 @@
 // muicss
 @import "../../node_modules/muicss/lib/sass/mui-colors";
-// define colors here
+
+$mui-appbar-bg-color: rgba(255, 255, 255, .35);
+
+$app-sidebar-color: rgba(255, 255, 255, 1);
+$app-sidebar-bg-color: rgba($app-sidebar-color, .1);
+$app-sidebar-width: 300px;
+$app-footer-height: 30px;
+
 @import "../../node_modules/muicss/lib/sass/mui";
 
 header a{
-    color: white;
+    color: $mui-appbar-font-color;
 }
-header ul.mui-list--inline {
-  margin-bottom: 0;
+
+/**
+ * Body CSS
+ */
+
+html,
+body {
+  height: 100%;
+}
+
+html,
+body,
+input,
+textarea,
+buttons {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/**
+ * Layout CSS
+ */
+
+header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 2;
+}
+
+#sidebar{
+    position: fixed;
+    top: $mui-appbar-height + 15;
+    right: (-$app-sidebar-width/2 - 50);
+    bottom: 0;
+    width: $app-sidebar-width/2;
+    right: 0;
+    overflow: auto;
+    transition: right 0.2s;
+    background-color: $app-sidebar-bg-color;
+}
+
+#sidebar.visible{
+    position: fixed;
+    top: $mui-appbar-height + 15;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    transition: transform 0.2s;
+    background-color: $app-sidebar-bg-color;
+}
+
+#sidebar, #sidebar a, #sidebar label{
+    color: $app-sidebar-color;
+}
+
+#sidebar .mui-divider{
+    background-color: $app-sidebar-color;
+}
+
+#content {
+    min-height: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.app--footer-content{
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+@media (min-width: 768px) {
+    #sidebar{
+        width: $app-sidebar-width;
+        right: (-$app-sidebar-width - 50);
+    }
+    #sidebar.visible{
+        right: 0;
+    }
+}
+
+.app--brand{
+    margin-right: 1em;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 2;
+    height: $app-footer-height;
+    background-color: rgba($app-sidebar-color, .5);
+    box-sizing: border-box;
+}
+
+footer, footer a{
+    color: $app-sidebar-color;
 }

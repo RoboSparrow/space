@@ -2191,7 +2191,7 @@ h4, h5, h6 {
     top: 64px; } }
 
 .mui-appbar {
-  background-color: #2196F3;
+  background-color: rgba(255, 255, 255, 0.35);
   color: #FFF; }
 
 /**
@@ -3700,7 +3700,87 @@ h4, h5, h6 {
   text-transform: uppercase; }
 
 header a {
+  color: #FFF; }
+
+/**
+ * Body CSS
+ */
+html,
+body {
+  height: 100%; }
+
+html,
+body,
+input,
+textarea,
+buttons {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+/**
+ * Layout CSS
+ */
+header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2; }
+
+#sidebar {
+  position: fixed;
+  top: 79px;
+  right: -200px;
+  bottom: 0;
+  width: 150px;
+  right: 0;
+  overflow: auto;
+  transition: right 0.2s;
+  background-color: rgba(255, 255, 255, 0.1); }
+
+#sidebar.visible {
+  position: fixed;
+  top: 79px;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  transition: transform 0.2s;
+  background-color: rgba(255, 255, 255, 0.1); }
+
+#sidebar, #sidebar a, #sidebar label {
   color: white; }
 
-header ul.mui-list--inline {
-  margin-bottom: 0; }
+#sidebar .mui-divider {
+  background-color: white; }
+
+#content {
+  min-height: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box; }
+
+.app--footer-content {
+  padding-top: .5em;
+  padding-bottom: .5em; }
+
+@media (min-width: 768px) {
+  #sidebar {
+    width: 300px;
+    right: -350px; }
+  #sidebar.visible {
+    right: 0; } }
+
+.app--brand {
+  margin-right: 1em; }
+
+footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-sizing: border-box; }
+
+footer, footer a {
+  color: white; }

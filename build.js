@@ -36,6 +36,9 @@ const task = function (name, config) {
     })
     .then((results) => {
         console.log(`${colours.yellow} -${name}:${colours.clear} ${colours.green}Bundling finished!${colours.clear}`);
+    })
+    .catch((error) => {
+        console.log(`${colours.red} Error: ${error} ${colours.clear}`);
     });
 };
 
