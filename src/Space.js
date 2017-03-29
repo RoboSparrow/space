@@ -1,9 +1,15 @@
 import Point from './Point';
 import Path from './Path';
-import * as Polygon from './Polygon';
+import * as Polygons from './Polygon';
 
-export {
+const Module = {
     Point,
-    Path,
-    Polygon
+    Path
 };
+
+// hm...
+Object.keys(Polygons).forEach((key) => {
+    Module[key] = Polygons[key];
+});
+
+export default Module;

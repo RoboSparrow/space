@@ -8,6 +8,7 @@
                         <td align="right">
                             <ul class="mui-list--inline mui--text-body2">
                                 <li><router-link to="/Path">Path</router-link></li>
+                                <li><router-link to="/Polygon">Polygon</router-link></li>
                             </ul>
                         </td>
                     </tr>
@@ -17,33 +18,38 @@
 
         <div id="content" class="mui-container-fluid">
             <div class="mui-row">
-            
+
                 <div class="mui-col-md-8 app--canvas">
                 </div>
 
                 <div class="mui-col-md-4">
-                
+
                      <form class="mui-form">
                         <div class="mui-textfield">
-                            <span>count {{animation.count}}</span>
+                            <pre>count {{animation.count}}</pre>
                         </div>
                         <div class="mui-textfield">
                             <button v-on:click="animation.toggle()" class="mui-btn mui-btn--small mui-btn--primary">{{ (animation.running) ? 'Pause' : 'Run' }}</button>
                         </div>
-                        <div class="mui-textfield">
-                            <input type="range" v-on:change="setFps" min="0" max="500">
-                            <label>fps <small>({{ 1000 / animation.interval }})</small></label>
+                        <div class="mui-checkbox">
+                            <label><input type="checkbox" v-on:click="throttle(animation.interval < 0 ? 3 : -1)"> Throttle animation</label>
+                        </div>
+                        <div class="mui-panel" v-if="animation.interval > 1">
+                            <div class="mui-textfield" style="">
+                                <input type="range" v-on:change="throttle($event.target.value)" min="0" max="100">
+                                <label>fps <small>({{ 1000 / animation.interval }})</small></label>
+                            </div>
                         </div>
                     </form>
-                        
+
                     <router-view class="view"
                         :states="states"
                         :animation="animation"
                         :canvas="canvas"
                     ></router-view>
-                    
+
                 <div>
-                
+
             </div>
         </div>
     </div>
@@ -66,20 +72,15 @@ export default {
         this.canvas.ctx.lineWidth = this.states.canvas.lineWidth;
     },
     methods: {
-        setFps: function (e) {
-            // @TODO: improve this crap algo
-            let fps = parseInt(e.target.value, 10);
-            if (isNaN(fps)) {
-                e.target.classList.add('error');
+        throttle: function (value) {
+            if(value === null){
                 return;
             }
-            
-            e.target.classList.remove('error');
-            if(fps >= 100){
-                fps = -1;
+            value = parseInt(value, 10);
+            console.log(value);
+            if(!isNaN(value)){
+                this.animation.fps(value);
             }
-     
-            this.animation.fps(fps);
         }
     }
 };

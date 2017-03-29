@@ -1,4 +1,4 @@
-(function (exports) {
+var Space = (function () {
 'use strict';
 
 var Point = {};
@@ -290,19 +290,25 @@ var Star = function Star(segments, outerRadius, innerRadius, center) {
     this.path = path;
 };
 
-var Polygon$1 = {
-    Polygon: Polygon,
-    Rectangle: Rectangle,
-    Star: Star
-};
 
-var Polygon$2 = Object.freeze({
-	default: Polygon$1
+
+var Polygons = Object.freeze({
+	Polygon: Polygon,
+	Rectangle: Rectangle,
+	Star: Star
 });
 
-exports.Point = Point;
-exports.Path = Path;
-exports.Polygon = Polygon$2;
+var Module = {
+    Point: Point,
+    Path: Path
+};
 
-}((this.Space = this.Space || {})));
+// hm...
+Object.keys(Polygons).forEach(function (key) {
+    Module[key] = Polygons[key];
+});
+
+return Module;
+
+}());
 //# sourceMappingURL=Space.js.map

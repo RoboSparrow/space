@@ -2,12 +2,12 @@
     <div>
         <form class="mui-form">
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.segments" min="10" max="800" step="10">
-                <label>Segments <small>({{ state.segments }})</small></label>
-            </div>
-            <div class="mui-textfield">
                 <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
                 <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.radiusRange" min="5" max="500">
+                <label>Radius Range <small>({{ state.radiusRange }})</small></label>
             </div>
             <pre>{{state}}</pre>
         </form>
@@ -20,58 +20,53 @@ import Utils from '../Utils';
 const Space = window.Space;
 
 const state = {
-    prev: null,
-    segments: 100,
-    segmentsRange: 10
+    prev: {
+        segments: 3,
+        radius: 50
+    },
+    segmentsRange: 10,
+    radiusRange: 200,
+    origin: null
 };
 
 const compute = function(state, canvas) {
-    if (!state.prev) {
-        state.prev = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
+    if(!state.origin) {
+        state.origin = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
     }
-    const path = new Space.Path(state.prev.x, state.prev.y);
-    const range = state.segmentsRange;
-    let count = 0;
-    let rand;
+    let radius = Math.floor(Utils.randInt(5, state.radiusRange));
+    let segments = Math.floor(Utils.randInt(3, state.segmentsRange));
+    segments = Utils.bounds(segments, false, 25);
+    radius = Utils.bounds(radius, false, canvas.width/2);
 
-    while(count < state.segments){
-        const segX = Utils.randInt(-range, range) * Utils.randInt();
-        const segY = Utils.randInt(-range, range) * Utils.randInt();
-        let x = path.last().x + segX;
-        let y = path.last().y + segY;
-        x = Utils.bounds(x, 0, canvas.width);
-        y = Utils.bounds(y, 0, canvas.height);
-        path.add(x, y);
-        count++;
-    }
+    state.prev.segments = segments;
+    state.prev.radius = radius;
 
-    state.prev = path.last();
-    return path;
+    return new Space.Polygon(segments, radius, state.origin);
 };
 
 export default {
-    name: 'Path',
+    name: 'Polygon',
     props: [
         'animation',
         'states',
         'canvas'
     ],
     mounted() {
-        let path;
+        let polygon;
         this.canvas.clear();
 
         this.animation
         // .fps(1)
         .only(() => {
             // compute path
-            path = compute(this.state, this.canvas.canvas);
+            polygon = compute(this.state, this.canvas.canvas);
 
             // draw
             this.canvas.clear();
             this.canvas.ctx.beginPath();
-            this.canvas.ctx.moveTo(path.first().x, path.first().y);
+            this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
 
-            path.points.forEach((point, index)=> {
+            polygon.path.points.forEach((point, index)=> {
                 if(index === 0){
                     return;
                 }

@@ -287,15 +287,23 @@ var Star = function Star(segments, outerRadius, innerRadius, center) {
     this.path = path;
 };
 
-var Polygon$1 = {
-    Polygon: Polygon,
-    Rectangle: Rectangle,
-    Star: Star
-};
 
-var Polygon$2 = Object.freeze({
-	default: Polygon$1
+
+var Polygons = Object.freeze({
+	Polygon: Polygon,
+	Rectangle: Rectangle,
+	Star: Star
 });
 
-export { Point, Path, Polygon$2 as Polygon };
+var Module = {
+    Point: Point,
+    Path: Path
+};
+
+// hm...
+Object.keys(Polygons).forEach(function (key) {
+    Module[key] = Polygons[key];
+});
+
+export default Module;
 //# sourceMappingURL=Space.module.js.map

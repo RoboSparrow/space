@@ -101,7 +101,7 @@ const Star = function (segments, outerRadius, innerRadius, center) {
     this.path = path;
 };
 
-export default {
+export {
     Polygon,
     Rectangle,
     Star

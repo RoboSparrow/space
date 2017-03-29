@@ -4,7 +4,10 @@ export default {
     * Using Math.round() will give you a non-uniform distribution!
     */
     randInt: function (min, max) {
-        return Math.floor(Math.random() * (max - (min + 1))) + min;
+        min = min || -1;
+        max = max || 1;
+        // eslint-disable-next-line no-mixed-operators
+        return Math.random() * (max - min) + min;
     },
 
     /**
@@ -12,8 +15,8 @@ export default {
     * Using Math.round() will give you a non-uniform distribution!
     */
     bounds: function (val, min, max) {
-        val = (val < min) ? min : val;
-        val = (val > max) ? max : val;
+        val = (min !== false && val < min) ? min : val;
+        val = (max !== false && val > max) ? max : val;
         return val;
     },
 
