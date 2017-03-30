@@ -95,6 +95,10 @@ export default {
             }
         };
     },
+    created() {
+        //temp redirect
+        this.$router.push('/Path');
+    },
     mounted() {
         let polygon;
         this.canvas.clear();
