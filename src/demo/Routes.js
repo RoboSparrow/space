@@ -6,7 +6,7 @@ import Star from './components/Star.vue';
 
 const Routes = [
     {
-        name: 'Path',
+        name: 'Home',
         path: '/',
         component: Path
     },

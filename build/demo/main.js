@@ -182,111 +182,6 @@ var Utils = {
 
 var Space = window.Space;
 
-var compute = function compute(state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-
-    var i = void 0;
-    var figures = {};
-
-    // Path
-    var path = new Space.Path(canvas.width / 2, canvas.height / 2);
-    var segments = Utils.randInt(10, 100);
-    for (i = 1; i < segments; i++) {
-        var prev = path.points[i - 1];
-        path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
-    }
-
-    figures.Path = {
-        path: path,
-        opacity: 0.25
-    };
-
-    // star (segments, outerRadius, innerRadius, center)
-    var star = new Space.Star(Utils.randInt(3, 50), Utils.randInt(200, 500), Utils.randInt(10, 200), new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2));
-
-    figures.star = {
-        path: star.path,
-        opacity: .6
-    };
-
-    state.prev.figures = figures;
-    return figures;
-};
-
-var randRgba = function randRgba(opacity) {
-    opacity = opacity || Utils.randInt(0, 1);
-    return 'rgba(' + Math.floor(Utils.randInt(0, 255)) + ', ' + Math.floor(Utils.randInt(0, 255)) + ', ' + Math.floor(Utils.randInt(0, 255)) + ', ' + opacity + ')';
-};
-
-var draw = function draw(path, ctx, opacity) {
-    //init
-    ctx.save();
-
-    // styles
-    ctx.fillStyle = randRgba(opacity);
-    ctx.strokeStyle = randRgba(opacity);
-    ctx.lineWidth = 1;
-
-    // path
-    ctx.beginPath();
-    ctx.moveTo(path.first().x, path.first().y);
-    path.points.forEach(function (point, index) {
-        if (index === 0) {
-            return;
-        }
-        ctx.lineTo(point.x, point.y);
-    });
-
-    // draw
-    if (ctx.fillStyle) {
-        ctx.fill();
-    }
-    ctx.stroke();
-
-    // finish
-    ctx.closePath();
-    ctx.restore();
-};
-
-var Home = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm._v("nothing")]);
-    }, staticRenderFns: [],
-    name: 'Home',
-    props: ['animation', 'appState', 'canvas'],
-    data: function data() {
-        return {
-            state: {
-                prev: {
-                    figures: {}
-                },
-                origin: null,
-                canvas: this.appState.factor('canvas')
-            }
-        };
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        var polygon = void 0;
-        this.canvas.clear();
-
-        this.animation.fps(32).only(function () {
-            // compute path
-            var figures = compute(_this.state, _this.canvas.canvas);
-            var tasks = Object.keys(figures);
-            // init
-            _this.canvas.clear();
-
-            // draw
-            tasks.forEach(function (id) {
-                draw(figures[id].path, _this.canvas.ctx, figures[id].opacity);
-            });
-        }).play();
-    }
-};
-
 (function () {
     if (document) {
         var head = document.head || document.getElementsByTagName('head')[0],
@@ -699,7 +594,7 @@ var Star = { render: function render() {
 var Routes = [{
     name: 'Home',
     path: '/',
-    component: Home
+    component: Path
 }, {
     name: 'Path',
     path: '/Path',
