@@ -6,25 +6,25 @@
                     <table width="100%">
                         <tr class="mui--appbar-height">
                             <td>
-                                <span class="app--brand">Space/{{$route.name}}</span>
+                                <span class="app--brand"></span>
                                     <div class="mui-dropdown">
-                                    <button class="mui-btn mui-btn--primary mui-btn-small" data-mui-toggle="dropdown">
-                                        Browse
-                                        <span class="mui-caret"></span>
+                                    <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                                        Space <span class="mui--text-accent">/</span> {{ $route.name }}
+                                        <span class="mui-caret mui--text-accent"></span>
                                     </button>
                                     <ul class="mui-dropdown__menu">
                                         <li
-                                            v-for="route in routes" 
-                                            v-if="route.name" 
-                                            v-bind:class="{'router-link-active': $route.name === route.name}" 
+                                            v-for="route in routes"
+                                            v-if="route.name"
+                                            v-bind:class="{'router-link-active': $route.name === route.name}"
                                         >
                                          <a v-on:click="goTo(route.path)">{{ route.name }}</a>
                                         </li>
                                     </ul>
                                 </div>
                             </td>
-                            <td class="mui--text-title">
-                                <a class="app--sidebar-trigger mui--pull-right" v-on:click="sidebar = !sidebar"><i class="material-icons mui--text-display1">settings</i></a>
+                            <td>
+                                <a class="app--sidebar-trigger mui--pull-right mui--text-display1" v-on:click="toggle()"><i class="zmdi zmdi-settings"></i></a>
                             </td>
                         </tr>
                     </table>
@@ -89,7 +89,8 @@ export default {
         Path
     },
     mounted() {
-        console.log('t',this.$route);
+        this.sidebar = document.getElementById('sidebar');
+
         this.$el.querySelector('.app--canvas').appendChild(this.canvas.canvas);
         this.canvas.canvas.width = document.body.clientWidth;
         this.canvas.canvas.height = document.body.clientHeight;
@@ -110,11 +111,19 @@ export default {
         goTo: function (path) {
             console.log(path)
             this.$router.push(path);
+        },
+        toggle: function() {
+            if(!this.sidebar) {
+                return;
+            }
+            let right = (this.sidebar.style.right) ? this.sidebar.style.right : window.getComputedStyle(this.sidebar).getPropertyValue('right');
+            right = parseInt(right, 10);
+            this.sidebar.style.right = ((right < 0) ? 0 : -this.sidebar.clientWidth) + 'px';
         }
     },
     data() {
         return {
-            sidebar: true
+            sidebar: null
         }
     }
 };

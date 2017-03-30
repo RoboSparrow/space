@@ -45,14 +45,17 @@ header {
 
 header .app--sidebar-trigger{
     cursor: pointer;
-    -webkit-transition: -webkit-transform 2s ease-in-out;
-    transition: transform 2s ease-in-out;
+    -webkit-animation: spin-slow 4s linear infinite;
+    animation: spin-slow 4s linear infinite;
+    animation-play-state: paused;
 }
 
 header .app--sidebar-trigger:hover{
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+    animation-play-state: running;
 }
+
+@-webkit-keyframes spin-slow { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin-slow { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
 header .app--brand{
     margin-right: 1em;
@@ -72,19 +75,8 @@ header a{
     right: (-$app-sidebar-width/2 - 50);
     bottom: 0;
     width: $app-sidebar-width/2;
-    right: 0;
     overflow: auto;
     transition: right 0.2s;
-    background-color: $app-sidebar-bg-color;
-}
-
-#sidebar.visible{
-    position: fixed;
-    top: $mui-appbar-height + 15;
-    bottom: 0;
-    right: 0;
-    overflow: auto;
-    transition: transform 0.2s;
     background-color: $app-sidebar-bg-color;
 }
 
@@ -100,9 +92,6 @@ header a{
     #sidebar{
         width: $app-sidebar-width;
         right: (-$app-sidebar-width - 50);
-    }
-    #sidebar.visible{
-        right: 0;
     }
 }
 
