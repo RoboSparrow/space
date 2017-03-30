@@ -88,6 +88,10 @@ header a{
     background-color: $app-sidebar-color;
 }
 
+#sidebar .mui-panel{
+    background-color: rgba($app-sidebar-color, 0.15);
+}
+
 @media (min-width: 768px) {
     #sidebar{
         width: $app-sidebar-width;

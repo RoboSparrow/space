@@ -15,6 +15,8 @@ const compute = function(state, canvas) {
     }
 
     let i;
+    let origin;
+    let dim;
     const figures  = {};
 
     // Path
@@ -27,36 +29,52 @@ const compute = function(state, canvas) {
 
     figures.Path = {
         path: path,
-        opacity: 0.25
+        fillStyle: [255, 255, 255, 0.05]
     };
 
-    // star (segments, outerRadius, innerRadius, center)
-    const star = new Space.Star(Utils.randInt(3, 50), Utils.randInt(200, 500), Utils.randInt(10, 200), new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2));
+    //
+    // origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    origin = new Space.Point.Cartesian(Utils.randInt(canvas.width / 2, canvas.width), Utils.randInt(canvas.height / 2, canvas.height));
+    const star = new Space.Star(Utils.randInt(3, 15), Utils.randInt(100, 300), Utils.randInt(10, 100), origin);
 
     figures.star = {
         path: star.path,
-        opacity: .6
+        fillStyle: [-1, -1, -1, .25]
     };
 
+    // Square
+    origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
+    dim = Utils.randInt(50, 75);
+    const square = new Space.Rectangle(dim, dim, origin);
+    
+    figures.Square = {
+        path: square.path,
+        fillStyle: [-1, -1, -1, .25]
+    };
+    
     state.prev.figures = figures;
     return figures;
 };
 
-const randRgba = function (opacity) {
-    opacity = opacity || Utils.randInt(0, 1);
-    return 'rgba(' + Math.floor(Utils.randInt(0, 255)) +  ', ' + Math.floor(Utils.randInt(0, 255)) + ', ' + Math.floor(Utils.randInt(0, 255)) + ', ' + opacity + ')';
+const randRgba = function (rgba) {
+    const r = (rgba[0] > 0) ? rgba[0] : Math.round(Utils.randInt(0, 255));
+    const g = (rgba[1] > 0) ? rgba[1] : Math.round(Utils.randInt(0, 255));
+    const b = (rgba[2] > 0) ? rgba[2] : Math.round(Utils.randInt(0, 255));
+    const a = (rgba[3] > 0) ? rgba[3] : Math.round(Utils.randInt(0, 1));
+    return 'rgba(' + r +  ', ' + g + ', ' + b + ', ' + a + ')';
 };
 
-const draw = function(path, ctx, opacity) {
+const draw = function(figure, ctx) {
     //init
     ctx.save();
 
     // styles
-    ctx.fillStyle = randRgba(opacity);
-    ctx.strokeStyle = randRgba(opacity);
+    ctx.fillStyle = randRgba(figure.fillStyle);
+    ctx.strokeStyle = randRgba(figure.fillStyle);
     ctx.lineWidth = 1;
 
     // path
+    const path = figure.path;
     ctx.beginPath();
     ctx.moveTo(path.first().x, path.first().y);
     path.points.forEach((point, index) => {
@@ -96,8 +114,8 @@ export default {
         };
     },
     created() {
-        //temp redirect
-        this.$router.push('/Path');
+        // temp redirect
+        // this.$router.push('/Path');
     },
     mounted() {
         let polygon;
@@ -114,7 +132,7 @@ export default {
 
             // draw
             tasks.forEach((id) => {
-                draw(figures[id].path, this.canvas.ctx, figures[id].opacity);
+                draw(figures[id], this.canvas.ctx);
             });
         })
         .play()

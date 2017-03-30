@@ -3758,6 +3758,9 @@ header a {
 #sidebar .mui-divider {
   background-color: white; }
 
+#sidebar .mui-panel {
+  background-color: rgba(255, 255, 255, 0.15); }
+
 @media (min-width: 768px) {
   #sidebar {
     width: 300px;
