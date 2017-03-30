@@ -64,7 +64,7 @@
            </form>
 
            <router-view class="view"
-               :states="states"
+               :app-state="appState"
                :animation="animation"
                :canvas="canvas"
            ></router-view>
@@ -84,7 +84,7 @@ import Path from './components/Path.vue';
 
 export default {
     name: 'app',
-    props: ['animation', 'states', 'canvas', 'routes'],
+    props: ['animation', 'appState', 'canvas', 'routes'],
     components: {
         Path
     },
@@ -94,8 +94,8 @@ export default {
         this.$el.querySelector('.app--canvas').appendChild(this.canvas.canvas);
         this.canvas.canvas.width = document.body.clientWidth;
         this.canvas.canvas.height = document.body.clientHeight;
-        this.canvas.ctx.fillStyle = this.states.canvas.fillStyle;
-        this.canvas.ctx.lineWidth = this.states.canvas.lineWidth;
+        this.canvas.ctx.fillStyle = this.appState.canvas.fillStyle;
+        this.canvas.ctx.lineWidth = this.appState.canvas.lineWidth;
     },
     methods: {
         throttle: function (value) {

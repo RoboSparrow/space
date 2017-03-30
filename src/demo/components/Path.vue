@@ -53,9 +53,14 @@ export default {
     name: 'Path',
     props: [
         'animation',
-        'states',
+        'appState',
         'canvas'
     ],
+    data: function () {
+        return {
+            state
+        };
+    },
     mounted() {
         let path;
         this.canvas.clear();
@@ -76,21 +81,14 @@ export default {
                     return;
                 }
                 this.canvas.ctx.lineTo(point.x, point.y);
-                this.canvas.ctx.strokeStyle = this.states.canvas.strokeStyle;
-                this.canvas.ctx.lineWidth = this.states.canvas.lineWidth;
+                this.canvas.ctx.strokeStyle = this.appState.strokeStyle;
+                this.canvas.ctx.lineWidth = this.appState.lineWidth;
                 this.canvas.ctx.stroke();
             });
             this.canvas.ctx.closePath();
         })
         .play()
         ;
-    },
-    components: {
-    },
-    data() {
-        return {
-            state
-        };
     }
 };
 
