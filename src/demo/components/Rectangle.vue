@@ -19,16 +19,6 @@ import Utils from '../Utils';
 
 const Space = window.Space;
 
-const state = {
-    prev: {
-        width: 25,
-        height: 50
-    },
-    widthRange: 500,
-    heightRange: 500,
-    origin: null
-};
-
 const compute = function(state, canvas) {
     if(!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
@@ -51,7 +41,19 @@ export default {
     ],
     data: function () {
         return {
-            state
+            state: {
+                prev: {
+                    width: 25,
+                    height: 50
+                },
+                widthRange: 500,
+                heightRange: 500,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(255, 255, 255, .2)'
+                })
+            }
         };
     },
     mounted() {
@@ -64,21 +66,34 @@ export default {
             // compute path
             polygon = compute(this.state, this.canvas.canvas);
 
-            // draw
+            // init
             this.canvas.clear();
+            this.canvas.ctx.save();
+
+            // styles
+            this.canvas.ctx.fillStyle = this.state.canvas.fillStyle;
+            this.canvas.ctx.strokeStyle = this.state.canvas.strokeStyle;
+            this.canvas.ctx.lineWidth = this.state.canvas.lineWidth;
+
+            // path
             this.canvas.ctx.beginPath();
             this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-
-            polygon.path.points.forEach((point, index)=> {
+            polygon.path.points.forEach((point, index) => {
                 if(index === 0){
                     return;
                 }
                 this.canvas.ctx.lineTo(point.x, point.y);
-                this.canvas.ctx.strokeStyle = this.appState.canvas.strokeStyle;
-                this.canvas.ctx.lineWidth = this.appState.canvas.lineWidth;
-                this.canvas.ctx.stroke();
             });
+
+            // draw
+            if(this.state.canvas.fillStyle){
+                this.canvas.ctx.fill();
+            }
+            this.canvas.ctx.stroke();
+
+            // finish
             this.canvas.ctx.closePath();
+            this.canvas.ctx.restore();
         })
         .play()
         ;

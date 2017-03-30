@@ -3761,7 +3761,7 @@ header a {
 @media (min-width: 768px) {
   #sidebar {
     width: 300px;
-    right: -350px; } }
+    right: 0; } }
 
 #content {
   min-height: 100%;

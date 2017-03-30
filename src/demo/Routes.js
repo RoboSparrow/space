@@ -1,3 +1,4 @@
+import Home from './components/Home.vue';
 import Path from './components/Path.vue';
 import Polygon from './components/Polygon.vue';
 import Rectangle from './components/Rectangle.vue';
@@ -7,7 +8,7 @@ const Routes = [
     {
         name: 'Home',
         path: '/',
-        component: Path
+        component: Home
     },
     {
         name: 'Path',
