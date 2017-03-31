@@ -106,6 +106,26 @@ Canvas2d.prototype.clear = function () {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
+var State = {
+    canvas: {
+        width: 500,
+        height: 500,
+        strokeStyle: 'hsla(300, 100%, 75%, 1)',
+        fillStyle: 'rgba(0, 0, 0, .08)',
+        lineWidth: 0.1
+    },
+    // shallow(!) clone and merge in submitted properties
+    factor: function factor(property, merge) {
+        var _this = this;
+
+        merge = merge || {};
+        Object.keys(this[property]).forEach(function (key) {
+            merge[key] = typeof merge[key] !== 'undefined' ? merge[key] : _this[property][key];
+        });
+        return merge;
+    }
+};
+
 var Utils = {
     /**
     * Returns a random integer between min (inclusive) and max (inclusive)
@@ -162,17 +182,152 @@ var Utils = {
 
 var Space = window.Space;
 
-var state = {
-    prev: null,
-    segments: 100,
-    segmentsRange: 10
+var compute = function compute(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+
+    var i = void 0;
+    var origin = void 0;
+    var dim = void 0;
+    var figures = {};
+
+    // Path
+    var path = new Space.Path(canvas.width / 2, canvas.height / 2);
+    var segments = Utils.randInt(10, 100);
+    for (i = 1; i < segments; i++) {
+        var prev = path.points[i - 1];
+        path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
+    }
+
+    figures.Path = {
+        path: path,
+        fillStyle: [255, 255, 255, 0.05]
+    };
+
+    //
+    // origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    origin = new Space.Point.Cartesian(Utils.randInt(canvas.width / 2, canvas.width), Utils.randInt(canvas.height / 2, canvas.height));
+    var star = new Space.Star(Utils.randInt(3, 15), Utils.randInt(100, 300), Utils.randInt(10, 100), origin);
+
+    figures.star = {
+        path: star.path,
+        fillStyle: [-1, -1, -1, .25]
+    };
+
+    // Square
+    origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
+    dim = Utils.randInt(50, 75);
+    var square = new Space.Rectangle(dim, dim, origin);
+
+    figures.Square = {
+        path: square.path,
+        fillStyle: [-1, -1, -1, .25]
+    };
+
+    state.prev.figures = figures;
+    return figures;
 };
 
-var compute = function compute(state, canvas) {
-    if (!state.prev) {
-        state.prev = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+var randRgba = function randRgba(rgba) {
+    var r = rgba[0] > 0 ? rgba[0] : Math.round(Utils.randInt(0, 255));
+    var g = rgba[1] > 0 ? rgba[1] : Math.round(Utils.randInt(0, 255));
+    var b = rgba[2] > 0 ? rgba[2] : Math.round(Utils.randInt(0, 255));
+    var a = rgba[3] > 0 ? rgba[3] : Math.round(Utils.randInt(0, 1));
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+};
+
+var draw = function draw(figure, ctx) {
+    //init
+    ctx.save();
+
+    // styles
+    ctx.fillStyle = randRgba(figure.fillStyle);
+    ctx.strokeStyle = randRgba(figure.fillStyle);
+    ctx.lineWidth = 1;
+
+    // path
+    var path = figure.path;
+    ctx.beginPath();
+    ctx.moveTo(path.first().x, path.first().y);
+    path.points.forEach(function (point, index) {
+        if (index === 0) {
+            return;
+        }
+        ctx.lineTo(point.x, point.y);
+    });
+
+    // draw
+    if (ctx.fillStyle) {
+        ctx.fill();
     }
-    var path = new Space.Path(state.prev.x, state.prev.y);
+    ctx.stroke();
+
+    // finish
+    ctx.closePath();
+    ctx.restore();
+};
+
+var Home = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm._v("nothing")]);
+    }, staticRenderFns: [],
+    name: 'Home',
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    figures: {}
+                },
+                origin: null,
+                canvas: this.appState.factor('canvas')
+            }
+        };
+    },
+    created: function created() {
+        // temp redirect
+        // this.$router.push('/Path');
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+        this.canvas.clear();
+
+        this.animation.fps(32).only(function () {
+            // compute path
+            var figures = compute(_this.state, _this.canvas.canvas);
+            var tasks = Object.keys(figures);
+            // init
+            _this.canvas.clear();
+
+            // draw
+            tasks.forEach(function (id) {
+                draw(figures[id], _this.canvas.ctx);
+            });
+        }).play();
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$1 = window.Space;
+
+var compute$1 = function compute$1(state, canvas) {
+    if (!state.prev) {
+        state.prev = new Space$1.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+    var path = new Space$1.Path(state.prev.x, state.prev.y);
     var range = state.segmentsRange;
     var count = 0;
     var rand = void 0;
@@ -204,7 +359,17 @@ var Path = { render: function render() {
                 } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
     name: 'Path',
-    props: ['animation', 'states', 'canvas'],
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: null,
+                segments: 100,
+                segmentsRange: 10,
+                canvas: this.appState.factor('canvas')
+            }
+        };
+    },
     mounted: function mounted() {
         var _this = this;
 
@@ -215,7 +380,7 @@ var Path = { render: function render() {
         // .fps(1)
         .only(function () {
             // compute path
-            path = compute(_this.state, _this.canvas.canvas);
+            path = compute$1(_this.state, _this.canvas.canvas);
 
             // draw
             _this.canvas.clear();
@@ -227,109 +392,12 @@ var Path = { render: function render() {
                     return;
                 }
                 _this.canvas.ctx.lineTo(point.x, point.y);
-                _this.canvas.ctx.strokeStyle = _this.states.canvas.strokeStyle;
-                _this.canvas.ctx.lineWidth = _this.states.canvas.lineWidth;
+                _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+                _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
                 _this.canvas.ctx.stroke();
             });
             _this.canvas.ctx.closePath();
         }).play();
-    },
-
-    components: {},
-    data: function data() {
-        return {
-            state: state
-        };
-    }
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space$1 = window.Space;
-
-var state$1 = {
-    prev: {
-        segments: 3,
-        radius: 50
-    },
-    segmentsRange: 10,
-    radiusRange: 200,
-    origin: null
-};
-
-var compute$1 = function compute$1(state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space$1.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-    var radius = Math.floor(Utils.randInt(5, state.radiusRange));
-    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
-    segments = Utils.bounds(segments, false, 25);
-    radius = Utils.bounds(radius, false, canvas.width / 2);
-
-    state.prev.segments = segments;
-    state.prev.radius = radius;
-
-    return new Space$1.Polygon(segments, radius, state.origin);
-};
-
-var Polygon = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.radiusRange, expression: "state.radiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.radiusRange }, on: { "__r": function __r($event) {
-                    _vm.state.radiusRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
-    }, staticRenderFns: [],
-    name: 'Polygon',
-    props: ['animation', 'states', 'canvas'],
-    mounted: function mounted() {
-        var _this = this;
-
-        var polygon = void 0;
-        this.canvas.clear();
-
-        this.animation
-        // .fps(1)
-        .only(function () {
-            // compute path
-            polygon = compute$1(_this.state, _this.canvas.canvas);
-
-            // draw
-            _this.canvas.clear();
-            _this.canvas.ctx.beginPath();
-            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-
-            polygon.path.points.forEach(function (point, index) {
-                if (index === 0) {
-                    return;
-                }
-                _this.canvas.ctx.lineTo(point.x, point.y);
-                _this.canvas.ctx.strokeStyle = _this.states.canvas.strokeStyle;
-                _this.canvas.ctx.lineWidth = _this.states.canvas.lineWidth;
-                _this.canvas.ctx.stroke();
-            });
-            _this.canvas.ctx.closePath();
-        }).play();
-    },
-
-    components: {},
-    data: function data() {
-        return {
-            state: state$1
-        };
     }
 };
 
@@ -347,42 +415,51 @@ var Polygon = { render: function render() {
 
 var Space$2 = window.Space;
 
-var state$2 = {
-    prev: {
-        width: 25,
-        height: 50
-    },
-    widthRange: 500,
-    heightRange: 500,
-    origin: null
-};
-
 var compute$2 = function compute$2(state, canvas) {
     if (!state.origin) {
         state.origin = new Space$2.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-    var width = Math.floor(Utils.randInt(5, state.widthRange));
-    var height = Math.floor(Utils.randInt(3, state.heightRange));
+    var radius = Math.floor(Utils.randInt(5, state.radiusRange));
+    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
+    segments = Utils.bounds(segments, false, 25);
+    radius = Utils.bounds(radius, false, canvas.width / 2);
 
-    state.prev.width = width;
-    state.prev.height = height;
+    state.prev.segments = segments;
+    state.prev.radius = radius;
 
-    return new Space$2.Rectangle(width, height, state.origin);
+    return new Space$2.Polygon(segments, radius, state.origin);
 };
 
-var Rectangle = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
-                    _vm.state.widthRange = _vm._n($event.target.value);
+var Polygon = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Width Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.widthRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.heightRange, expression: "state.heightRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.heightRange }, on: { "__r": function __r($event) {
-                    _vm.state.heightRange = _vm._n($event.target.value);
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.radiusRange, expression: "state.radiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.radiusRange }, on: { "__r": function __r($event) {
+                    _vm.state.radiusRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
-    name: 'Rectangle',
-    props: ['animation', 'states', 'canvas'],
+    name: 'Polygon',
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    segments: 3,
+                    radius: 50
+                },
+                segmentsRange: 10,
+                radiusRange: 200,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(99, 9, 9, .8)'
+                })
+            }
+        };
+    },
     mounted: function mounted() {
         var _this = this;
 
@@ -395,29 +472,35 @@ var Rectangle = { render: function render() {
             // compute path
             polygon = compute$2(_this.state, _this.canvas.canvas);
 
-            // draw
+            // init
             _this.canvas.clear();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
             _this.canvas.ctx.beginPath();
             _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-
             polygon.path.points.forEach(function (point, index) {
                 if (index === 0) {
                     return;
                 }
                 _this.canvas.ctx.lineTo(point.x, point.y);
-                _this.canvas.ctx.strokeStyle = _this.states.canvas.strokeStyle;
-                _this.canvas.ctx.lineWidth = _this.states.canvas.lineWidth;
-                _this.canvas.ctx.stroke();
             });
-            _this.canvas.ctx.closePath();
-        }).play();
-    },
 
-    components: {},
-    data: function data() {
-        return {
-            state: state$2
-        };
+            // draw
+            if (_this.state.canvas.fillStyle) {
+                _this.canvas.ctx.fill();
+            }
+            _this.canvas.ctx.stroke();
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
     }
 };
 
@@ -434,23 +517,113 @@ var Rectangle = { render: function render() {
 })();
 
 var Space$3 = window.Space;
-// segments, outerRadius, innerRadius, center
-var state$3 = {
-    prev: {
-        segments: 3,
-        outerRadius: 50,
-        innerRadius: 10
-    },
-    segmentsRange: 10,
-    outerRadiusRange: 200,
-    innerRadiusRange: 200,
-    origin: null
-};
 
 var compute$3 = function compute$3(state, canvas) {
     if (!state.origin) {
         state.origin = new Space$3.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
+    var width = Math.floor(Utils.randInt(5, state.widthRange));
+    var height = Math.floor(Utils.randInt(3, state.heightRange));
+
+    state.prev.width = width;
+    state.prev.height = height;
+
+    return new Space$3.Rectangle(width, height, state.origin);
+};
+
+var Rectangle = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
+                    _vm.state.widthRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Width Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.widthRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.heightRange, expression: "state.heightRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.heightRange }, on: { "__r": function __r($event) {
+                    _vm.state.heightRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+    }, staticRenderFns: [],
+    name: 'Rectangle',
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    width: 25,
+                    height: 50
+                },
+                widthRange: 500,
+                heightRange: 500,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(255, 255, 255, .2)'
+                })
+            }
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+        this.canvas.clear();
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            polygon = compute$3(_this.state, _this.canvas.canvas);
+
+            // init
+            _this.canvas.clear();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
+            polygon.path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+            });
+
+            // draw
+            if (_this.state.canvas.fillStyle) {
+                _this.canvas.ctx.fill();
+            }
+            _this.canvas.ctx.stroke();
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$4 = window.Space;
+
+var compute$4 = function compute$4(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space$4.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+
     var outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
     var innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
     var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
@@ -462,7 +635,7 @@ var compute$3 = function compute$3(state, canvas) {
     state.prev.outerRadius = outerRadius;
     state.prev.innerRadius = innerRadius;
 
-    return new Space$3.Star(segments, outerRadius, innerRadius, state.origin);
+    return new Space$4.Star(segments, outerRadius, innerRadius, state.origin);
 };
 
 var Star = { render: function render() {
@@ -481,7 +654,26 @@ var Star = { render: function render() {
                 } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
     name: 'Star',
-    props: ['animation', 'states', 'canvas'],
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    segments: 3,
+                    outerRadius: 50,
+                    innerRadius: 10
+                },
+                segmentsRange: 10,
+                outerRadiusRange: 200,
+                innerRadiusRange: 200,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(0, 99, 0, .6)'
+                })
+            }
+        };
+    },
     mounted: function mounted() {
         var _this = this;
 
@@ -492,33 +684,67 @@ var Star = { render: function render() {
         // .fps(1)
         .only(function () {
             // compute path
-            polygon = compute$3(_this.state, _this.canvas.canvas);
+            polygon = compute$4(_this.state, _this.canvas.canvas);
 
-            // draw
+            // init
             _this.canvas.clear();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
             _this.canvas.ctx.beginPath();
             _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-
             polygon.path.points.forEach(function (point, index) {
                 if (index === 0) {
                     return;
                 }
                 _this.canvas.ctx.lineTo(point.x, point.y);
-                _this.canvas.ctx.strokeStyle = _this.states.canvas.strokeStyle;
-                _this.canvas.ctx.lineWidth = _this.states.canvas.lineWidth;
-                _this.canvas.ctx.stroke();
             });
-            _this.canvas.ctx.closePath();
-        }).play();
-    },
 
-    components: {},
-    data: function data() {
-        return {
-            state: state$3
-        };
+            // draw
+            if (_this.state.canvas.fillStyle) {
+                _this.canvas.ctx.fill();
+            }
+            _this.canvas.ctx.stroke();
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
     }
 };
+
+var Routes = [{
+    name: 'Home',
+    path: '/',
+    component: Home
+}, {
+    name: 'Path',
+    path: '/Path',
+    component: Path
+}, {
+    name: 'Polygon',
+    path: '/Polygon',
+    component: Polygon
+}, {
+    name: 'Rectangle',
+    path: '/Rectangle',
+    component: Rectangle
+}, {
+    name: 'Star',
+    path: '/Star',
+    component: Star
+},
+// catch all redirect
+{
+    name: '',
+    path: '*',
+    redirect: '/'
+}];
 
 (function () {
     if (document) {
@@ -533,15 +759,19 @@ var Star = { render: function render() {
 })();
 
 var App = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand mui--text-title" }, [_vm._v("SpaceLib Demo")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Path" } }, [_vm._v("Path")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Polygon" } }, [_vm._v("Polygon")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Rectangle" } }, [_vm._v("Rectangle")]), _c('router-link', { staticClass: "mui-btn mui-btn--raised", attrs: { "to": "/Star" } }, [_vm._v("Star")])], 1), _c('td', { staticClass: "mui--text-title" }, [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right", on: { "click": function click($event) {
-                    _vm.sidebar = !_vm.sidebar;
-                } } }, [_c('i', { staticClass: "material-icons mui--text-display1" }, [_vm._v("settings")])])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand" }), _c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v("Space "), _c('span', { staticClass: "mui--text-accent" }, [_vm._v("/")]), _vm._v(" " + _vm._s(_vm.$route.name) + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.routes, function (route) {
+            return route.name ? _c('li', { class: { 'router-link-active': _vm.$route.name === route.name } }, [_c('a', { on: { "click": function click($event) {
+                        _vm.goTo(route.path);
+                    } } }, [_vm._v(_vm._s(route.name))])]) : _vm._e();
+        }))])]), _c('td', [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right mui--text-display1", on: { "click": function click($event) {
+                    _vm.toggle();
+                } } }, [_c('i', { staticClass: "zmdi zmdi-settings" })])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
                 } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { attrs: { "type": "checkbox" }, on: { "click": function click($event) {
                     _vm.throttle(_vm.animation.interval < 0 ? 3 : -1);
                 } } }), _vm._v(" Throttle animation")])]), _vm.animation.interval > 1 ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
                     _vm.throttle($event.target.value);
-                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "states": _vm.states, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
+                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
     }, staticRenderFns: [function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUICSS")])])]);
     }, function () {
@@ -550,16 +780,18 @@ var App = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('main', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-12 app--canvas" })])]);
     }],
     name: 'app',
-    props: ['animation', 'states', 'canvas'],
+    props: ['animation', 'appState', 'canvas', 'routes'],
     components: {
         Path: Path
     },
     mounted: function mounted() {
+        this.sidebar = document.getElementById('sidebar');
+
         this.$el.querySelector('.app--canvas').appendChild(this.canvas.canvas);
         this.canvas.canvas.width = document.body.clientWidth;
         this.canvas.canvas.height = document.body.clientHeight;
-        this.canvas.ctx.fillStyle = this.states.canvas.fillStyle;
-        this.canvas.ctx.lineWidth = this.states.canvas.lineWidth;
+        this.canvas.ctx.fillStyle = this.appState.canvas.fillStyle;
+        this.canvas.ctx.lineWidth = this.appState.canvas.lineWidth;
     },
 
     methods: {
@@ -572,11 +804,23 @@ var App = { render: function render() {
             if (!isNaN(value)) {
                 this.animation.fps(value);
             }
+        },
+        goTo: function goTo(path) {
+            console.log(path);
+            this.$router.push(path);
+        },
+        toggle: function toggle() {
+            if (!this.sidebar) {
+                return;
+            }
+            var right = this.sidebar.style.right ? this.sidebar.style.right : window.getComputedStyle(this.sidebar).getPropertyValue('right');
+            right = parseInt(right, 10);
+            this.sidebar.style.right = (right < 0 ? 0 : -this.sidebar.clientWidth) + 'px';
         }
     },
     data: function data() {
         return {
-            sidebar: true
+            sidebar: null
         };
     }
 };
@@ -587,40 +831,10 @@ var App = { render: function render() {
 var animation = new Animation();
 var canvas = new Canvas2d();
 
-var states = {
-    canvas: {
-        width: 500,
-        height: 500,
-        strokeStyle: 'hsla(300, 100%, 75%, 1)',
-        fillStyle: 'rgba(0, 0, 0, .08)',
-        lineWidth: 0.1
-    }
-};
-
 // Create the router
 var router = new VueRouter({
     mode: 'hash', //'history',
-    routes: [{
-        path: '/',
-        component: Path
-    }, {
-        path: '/Path',
-        component: Path
-    }, {
-        path: '/Polygon',
-        component: Polygon
-    }, {
-        path: '/Rectangle',
-        component: Rectangle
-    }, {
-        path: '/Star',
-        component: Star
-    },
-    // catch all redirect
-    {
-        path: '*',
-        redirect: '/'
-    }]
+    routes: Routes
 });
 
 // 4. Create and mount root instance.
@@ -629,14 +843,20 @@ new Vue({
     router: router,
     data: {
         animation: animation,
-        states: states,
-        canvas: canvas
+        appState: State,
+        canvas: canvas,
+        routes: Routes.map(function (item) {
+            return {
+                name: item.name,
+                path: item.path
+            };
+        })
     },
     components: {
         App: App
     },
     //render: h => h(App)
-    template: '<App :states="states" :animation="animation" :canvas="canvas" />'
+    template: '<App :app-state="appState" :animation="animation" :canvas="canvas" :routes="routes"/>'
 }).$mount('#app');
 
 }(Vue,VueRouter));

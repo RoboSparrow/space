@@ -3720,12 +3720,21 @@ header {
 
 header .app--sidebar-trigger {
   cursor: pointer;
-  -webkit-transition: -webkit-transform 2s ease-in-out;
-  transition: transform 2s ease-in-out; }
+  -webkit-animation: spin-slow 4s linear infinite;
+  animation: spin-slow 4s linear infinite;
+  animation-play-state: paused; }
 
 header .app--sidebar-trigger:hover {
-  -webkit-transform: rotate(360deg);
-  transform: rotate(360deg); }
+  animation-play-state: running; }
+
+@-webkit-keyframes spin-slow {
+  100% {
+    -webkit-transform: rotate(360deg); } }
+
+@keyframes spin-slow {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
 
 header .app--brand {
   margin-right: 1em; }
@@ -3739,18 +3748,8 @@ header a {
   right: -200px;
   bottom: 0;
   width: 150px;
-  right: 0;
   overflow: auto;
   transition: right 0.2s;
-  background-color: rgba(255, 255, 255, 0.1); }
-
-#sidebar.visible {
-  position: fixed;
-  top: 79px;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
-  transition: transform 0.2s;
   background-color: rgba(255, 255, 255, 0.1); }
 
 #sidebar, #sidebar a, #sidebar label {
@@ -3759,11 +3758,12 @@ header a {
 #sidebar .mui-divider {
   background-color: white; }
 
+#sidebar .mui-panel {
+  background-color: rgba(255, 255, 255, 0.15); }
+
 @media (min-width: 768px) {
   #sidebar {
     width: 300px;
-    right: -350px; }
-  #sidebar.visible {
     right: 0; } }
 
 #content {
@@ -3788,6 +3788,9 @@ footer {
 footer, footer a {
   color: white; }
 
-a.mui-btn.router-link-active {
+.router-link-active {
   background-color: #2196F3;
   color: white; }
+
+.router-link-active:hover {
+  cursor: pointer; }

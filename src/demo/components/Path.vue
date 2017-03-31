@@ -19,12 +19,6 @@ import Utils from '../Utils';
 
 const Space = window.Space;
 
-const state = {
-    prev: null,
-    segments: 100,
-    segmentsRange: 10
-};
-
 const compute = function(state, canvas) {
     if (!state.prev) {
         state.prev = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
@@ -53,9 +47,19 @@ export default {
     name: 'Path',
     props: [
         'animation',
-        'states',
+        'appState',
         'canvas'
     ],
+    data: function () {
+        return {
+            state: {
+                prev: null,
+                segments: 100,
+                segmentsRange: 10,
+                canvas: this.appState.factor('canvas')
+            }
+        };
+    },
     mounted() {
         let path;
         this.canvas.clear();
@@ -71,26 +75,19 @@ export default {
             this.canvas.ctx.beginPath();
             this.canvas.ctx.moveTo(path.first().x, path.first().y);
 
-            path.points.forEach((point, index)=> {
+            path.points.forEach((point, index) => {
                 if(index === 0){
                     return;
                 }
                 this.canvas.ctx.lineTo(point.x, point.y);
-                this.canvas.ctx.strokeStyle = this.states.canvas.strokeStyle;
-                this.canvas.ctx.lineWidth = this.states.canvas.lineWidth;
+                this.canvas.ctx.strokeStyle = this.state.canvas.strokeStyle;
+                this.canvas.ctx.lineWidth = this.state.canvas.lineWidth;
                 this.canvas.ctx.stroke();
             });
             this.canvas.ctx.closePath();
         })
         .play()
         ;
-    },
-    components: {
-    },
-    data() {
-        return {
-            state
-        };
     }
 };
 

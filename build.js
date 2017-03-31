@@ -43,6 +43,9 @@ const CONFIG = {
             },
             () => {
                 return copy('./node_modules/vue-router/dist/vue-router.min.js', './build/demo/vue-router.min.js');
+            },
+            () => {
+                return copy('./node_modules/muicss/dist/js/mui.min.js', './build/demo/mui.min.js');
             }
         ]
     }
