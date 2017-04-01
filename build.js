@@ -1,6 +1,9 @@
+/* eslint-env node */
+/* eslint-disable import/no-extraneous-dependencies, no-console */
+//eslint 'strict' warning can't be disabled inline, wait for https://github.com/eslint/eslint/issues/4936
+
 'use strict';
 
-/* eslint-disable import/no-extraneous-dependencies */
 const rollup = require('rollup');
 const chokidar = require('chokidar');
 const fse = require('fs-extra');
@@ -17,31 +20,54 @@ const colours = {
 };
 
 // handle options
-let argv = process.argv.slice(2);
+const argv = process.argv.slice(2);
 const opts = argv.filter((opt) => {
     return opt.indexOf('-w') === -1 && opt.indexOf('--watch') === -1;
 });
-let mode = (argv.length > opts.length) ? 'watch' : 'build';
+const mode = (argv.length > opts.length) ? 'watch' : 'build';
 
-console.log(opts);
 if (opts.length < 1) {
     console.log(`${colours.red}Abort!${colours.clear} No task for ${colours.yellow}${mode}${colours.clear} found.`);
     console.log(`${colours.yellow}Command: ${colours.clear} ./node build --<option> <task>`);
     process.exit();
 }
 
+////
+// utils
+////
+
+const copy = function (src, dest) {
+    return new Promise((resolve, reject) => {
+        fse.copy(src, dest, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            // eslint-disable-next-line no-useless-escape
+            resolve(dest.replace(/^.*[\\\/]/, ''));
+        });
+    });
+};
+
+
+////
+// Mode Config
+////
+
 let cache;
 
+// make sure the watched files exclude each other in every task
+    
 const CONFIG = {
     project: {
         rollup: ConfigProject,
         glob: ['./src/*.js', '!./src/demo/*'],
         extraTasks: []
     },
-    // make sure the watched files exclude each other in every task
+
     demo: {
         rollup: ConfigDemo,
-        glob: ['./src/demo/**/*.(vue|js)'],
+        glob: ['./src/demo/**/*.(vue|js)', './src/demo/*.scss'],
         extraTasks: [
             () => {
                 return copy('./node_modules/vue/dist/vue.min.js', './build/demo/vue.min.js');
@@ -57,22 +83,6 @@ const CONFIG = {
 };
 
 ////
-// utils
-////
-
-const copy = function (src, dest) {
-    return new Promise((resolve, reject) => {
-        fse.copy(src, dest, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(dest.replace(/^.*[\\\/]/, ''));
-        });
-    });
-};
-
-////
 // tasks
 ////
 
@@ -80,7 +90,7 @@ const task = function (name, config) {
     return rollup.rollup({
         entry: config.rollup.entry,
         plugins: config.rollup.plugins,
-        external:  config.rollup.external,
+        external: config.rollup.external,
         cache: cache
     })
     .then((bundle) => {
@@ -89,8 +99,8 @@ const task = function (name, config) {
         config.rollup.targets.forEach((target) => {
             writers.push(bundle.write(target));
         });
-        config.extraTasks.forEach((task) => {
-            writers.push(task());
+        config.extraTasks.forEach((taskFn) => {
+            writers.push(taskFn());
         });
         return Promise.all(writers);
     })
@@ -137,7 +147,6 @@ const watch = function (name, config) {
 // build
 ////
 
-let config;
 opts.forEach((name) => {
     if (mode === 'watch') {
         watch(name, CONFIG[name]);

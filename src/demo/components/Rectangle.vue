@@ -39,7 +39,7 @@ export default {
         'appState',
         'canvas'
     ],
-    data: function() {
+    data: function () {
         return {
             state: {
                 prev: {
