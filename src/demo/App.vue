@@ -18,7 +18,7 @@
                                             v-if="route.name"
                                             v-bind:class="{'router-link-active': $route.name === route.name}"
                                         >
-                                         <a v-on:click="goTo(route.path)">{{ route.name }}</a>
+                                         <a v-on:click="goTo(route)">{{ route.name }}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -80,14 +80,9 @@
 </template>
 
 <script>
-import Path from './components/Path.vue';
-
 export default {
     name: 'app',
     props: ['animation', 'appState', 'canvas', 'routes'],
-    components: {
-        Path
-    },
     mounted() {
         this.sidebar = document.getElementById('sidebar');
 
@@ -107,8 +102,9 @@ export default {
                 this.animation.fps(value);
             }
         },
-        goTo: function (path) {
-            this.$router.push(path);
+        goTo: function (route) {
+            const to = (route.path.indexOf('/:') > -1) ? { name: route.name, params: {} } : route.path;
+            this.$router.push(to);
         },
         toggle: function () {
             if (!this.sidebar) {

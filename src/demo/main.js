@@ -18,7 +18,7 @@ const canvas = new Canvas2d();
 // Create the router
 const router = new VueRouter({
     mode: 'hash', //'history',
-    routes: Routes
+    routes: Routes.routes
 });
 
 // 4. Create and mount root instance.
@@ -29,12 +29,7 @@ new Vue({
         animation,
         appState: State,
         canvas,
-        routes: Routes.map((item) => {
-            return {
-                name: item.name,
-                path: item.path
-            };
-        })
+        routes: Routes.menu()
     },
     components: {
         App

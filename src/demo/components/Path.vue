@@ -61,7 +61,6 @@ export default {
     },
     mounted() {
         let path;
-        this.canvas.clear();
 
         this.animation
         // .fps(1)

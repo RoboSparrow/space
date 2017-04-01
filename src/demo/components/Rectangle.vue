@@ -58,7 +58,6 @@ export default {
     },
     mounted() {
         let polygon;
-        this.canvas.clear();
 
         this.animation
         // .fps(1)

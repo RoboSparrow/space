@@ -3,39 +3,113 @@ import Path from './components/Path.vue';
 import Polygon from './components/Polygon.vue';
 import Rectangle from './components/Rectangle.vue';
 import Star from './components/Star.vue';
+import Figures from './components/Figures.vue';
 
-const Routes = [
+const routes = [
     {
         name: 'Home',
         path: '/',
-        component: Home
+        component: Home,
+        meta: {
+            menu: true,
+            figure: false
+        }
     },
     {
         name: 'Path',
         path: '/Path',
-        component: Path
+        component: Path,
+        meta: {
+            menu: true,
+            figure: true
+        }
     },
     {
         name: 'Polygon',
         path: '/Polygon',
-        component: Polygon
+        component: Polygon,
+        meta: {
+            menu: true,
+            figure: true
+        }
     },
     {
         name: 'Rectangle',
         path: '/Rectangle',
-        component: Rectangle
+        component: Rectangle,
+        meta: {
+            menu: true,
+            figure: true
+        }
     },
     {
         name: 'Star',
         path: '/Star',
-        component: Star
+        component: Star,
+        meta: {
+            menu: true,
+            figure: true
+        }
+    },
+    {
+        name: 'Figures',
+        path: '/Figures',
+        component: Figures,
+        meta: {
+            menu: true,
+            figure: false
+        }
+    },
+    {
+        name: 'Figure',
+        path: '/Figures/:name',
+        component: Figures,
+        meta: {
+            menu: false,
+            figure: false
+        }
     },
     // catch all redirect
     {
         name: '',
         path: '*',
-        redirect: '/'
+        redirect: '/',
+        meta: {
+            menu: false,
+            figure: false
+        }
     }
 ];
 
-export default Routes;
+const figures = function () {
+    return routes.filter((item) => {
+        return item.meta.figure;
+    });
+};
+
+const menu = function () {
+    return routes.map((item) => {
+        return {
+            name: item.name,
+            path: item.path,
+            meta: item.meta || {}
+        };
+    });
+};
+
+const byName = function (name) {
+    let i;
+    for (i = 1; i < routes.length; i += 1) {
+        if (routes[i].name === name) {
+            return routes[i];
+        }
+    }
+    return null;
+};
+
+export default {
+    routes: routes,
+    figures: figures,
+    menu: menu,
+    byName: byName
+};

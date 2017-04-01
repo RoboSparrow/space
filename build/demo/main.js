@@ -371,7 +371,6 @@ var Path = { render: function render() {
         var _this = this;
 
         var path = void 0;
-        this.canvas.clear();
 
         this.animation
         // .fps(1)
@@ -461,7 +460,6 @@ var Polygon = { render: function render() {
         var _this = this;
 
         var polygon = void 0;
-        this.canvas.clear();
 
         this.animation
         // .fps(1)
@@ -562,7 +560,6 @@ var Rectangle = { render: function render() {
         var _this = this;
 
         var polygon = void 0;
-        this.canvas.clear();
 
         this.animation
         // .fps(1)
@@ -675,7 +672,6 @@ var Star = { render: function render() {
         var _this = this;
 
         var polygon = void 0;
-        this.canvas.clear();
 
         this.animation
         // .fps(1)
@@ -715,33 +711,222 @@ var Star = { render: function render() {
     }
 };
 
-var Routes = [{
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$5 = window.Space;
+
+var compute$5 = function compute$5(figure, state, canvas) {
+
+    if (!state.origin) {
+        state.origin = new Space$5.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+
+    var fig = void 0;
+    var width = void 0;
+    var segments = void 0;
+
+    switch (figure) {
+
+        case 'Path':
+            {
+                var margin = 50;
+                width = canvas.width - 2 * margin;
+                segments = 5;
+                var delta = width / segments;
+                fig = new Space$5.Path(margin, margin);
+                while (segments > 0) {
+                    margin = -margin;
+                    fig.progress(delta, margin > 0 ? margin : canvas.height - margin);
+                    segments -= 1;
+                }
+                break;
+            }
+
+        default:
+            {
+                fig = null;
+            }
+
+    }
+
+    return typeof fig.path !== 'undefined' ? fig.path : fig;
+};
+
+var draw$1 = function draw$1(path, state, canvas) {
+    console.log(path, state, canvas);
+    canvas.ctx.save();
+
+    // styles
+    canvas.ctx.fillStyle = state.canvas.fillStyle;
+    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
+    canvas.ctx.lineWidth = state.canvas.lineWidth;
+
+    // path
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(path.first().x, path.first().y);
+    path.points.forEach(function (point, index) {
+        if (index === 0) {
+            return;
+        }
+        canvas.ctx.lineTo(point.x, point.y);
+    });
+
+    // draw
+    if (state.canvas.fillStyle) {
+        canvas.ctx.fill();
+    }
+    canvas.ctx.stroke();
+
+    // finish
+    canvas.ctx.closePath();
+    canvas.ctx.restore();
+};
+
+var Figures = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('h2', [_vm._v(_vm._s(_vm.$route.name))]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+    }, staticRenderFns: [],
+    name: 'Figures',
+    props: ['animation', 'appState', 'canvas'],
+    watch: {
+        '$route': function $route(to, from) {
+            console.log(this.$route);
+            this.title = this.$route;
+        }
+    },
+    data: function data() {
+        return {
+            state: {
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(255, 255, 255, 1)',
+                    lineWidth: 2
+                })
+            },
+            routes: Routes.figures(),
+            title: this.$route
+        };
+    },
+    mounted: function mounted() {
+        this.animation.stop(); // !!!
+        this.canvas.clear();
+
+        var figure = typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'Path';
+        var path = compute$5(figure, this.state, this.canvas.canvas);
+        draw$1(path, this.state, this.canvas);
+    }
+};
+
+var routes = [{
     name: 'Home',
     path: '/',
-    component: Home
+    component: Home,
+    meta: {
+        menu: true,
+        figure: false
+    }
 }, {
     name: 'Path',
     path: '/Path',
-    component: Path
+    component: Path,
+    meta: {
+        menu: true,
+        figure: true
+    }
 }, {
     name: 'Polygon',
     path: '/Polygon',
-    component: Polygon
+    component: Polygon,
+    meta: {
+        menu: true,
+        figure: true
+    }
 }, {
     name: 'Rectangle',
     path: '/Rectangle',
-    component: Rectangle
+    component: Rectangle,
+    meta: {
+        menu: true,
+        figure: true
+    }
 }, {
     name: 'Star',
     path: '/Star',
-    component: Star
+    component: Star,
+    meta: {
+        menu: true,
+        figure: true
+    }
+}, {
+    name: 'Figures',
+    path: '/Figures',
+    component: Figures,
+    meta: {
+        menu: true,
+        figure: false
+    }
+}, {
+    name: 'Figure',
+    path: '/Figures/:name',
+    component: Figures,
+    meta: {
+        menu: false,
+        figure: false
+    }
 },
 // catch all redirect
 {
     name: '',
     path: '*',
-    redirect: '/'
+    redirect: '/',
+    meta: {
+        menu: false,
+        figure: false
+    }
 }];
+
+var figures = function figures() {
+    return routes.filter(function (item) {
+        return item.meta.figure;
+    });
+};
+
+var menu = function menu() {
+    return routes.map(function (item) {
+        return {
+            name: item.name,
+            path: item.path,
+            meta: item.meta || {}
+        };
+    });
+};
+
+var byName = function byName(name) {
+    var i = void 0;
+    for (i = 1; i < routes.length; i += 1) {
+        if (routes[i].name === name) {
+            return routes[i];
+        }
+    }
+    return null;
+};
+
+var Routes = {
+    routes: routes,
+    figures: figures,
+    menu: menu,
+    byName: byName
+};
 
 (function () {
     if (document) {
@@ -758,7 +943,7 @@ var Routes = [{
 var App = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand" }), _c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v("Space "), _c('span', { staticClass: "mui--text-accent" }, [_vm._v("/")]), _vm._v(" " + _vm._s(_vm.$route.name) + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.routes, function (route) {
             return route.name ? _c('li', { class: { 'router-link-active': _vm.$route.name === route.name } }, [_c('a', { on: { "click": function click($event) {
-                        _vm.goTo(route.path);
+                        _vm.goTo(route);
                     } } }, [_vm._v(_vm._s(route.name))])]) : _vm._e();
         }))])]), _c('td', [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right mui--text-display1", on: { "click": function click($event) {
                     _vm.toggle();
@@ -791,9 +976,6 @@ var App = { render: function render() {
     }],
     name: 'app',
     props: ['animation', 'appState', 'canvas', 'routes'],
-    components: {
-        Path: Path
-    },
     mounted: function mounted() {
         this.sidebar = document.getElementById('sidebar');
 
@@ -814,8 +996,9 @@ var App = { render: function render() {
                 this.animation.fps(value);
             }
         },
-        goTo: function goTo(path) {
-            this.$router.push(path);
+        goTo: function goTo(route) {
+            var to = route.path.indexOf('/:') > -1 ? { name: route.name, params: {} } : route.path;
+            this.$router.push(to);
         },
         toggle: function toggle() {
             if (!this.sidebar) {
@@ -843,7 +1026,7 @@ var canvas = new Canvas2d();
 // Create the router
 var router = new VueRouter({
     mode: 'hash', //'history',
-    routes: Routes
+    routes: Routes.routes
 });
 
 // 4. Create and mount root instance.
@@ -854,12 +1037,7 @@ new Vue({
         animation: animation,
         appState: State,
         canvas: canvas,
-        routes: Routes.map(function (item) {
-            return {
-                name: item.name,
-                path: item.path
-            };
-        })
+        routes: Routes.menu()
     },
     components: {
         App: App
