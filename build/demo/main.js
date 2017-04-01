@@ -764,9 +764,22 @@ var App = { render: function render() {
                     _vm.toggle();
                 } } }, [_c('i', { staticClass: "zmdi zmdi-settings" })])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
-                } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { attrs: { "type": "checkbox" }, on: { "click": function click($event) {
+                } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.throttlePanel, expression: "throttlePanel" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.throttlePanel) ? _vm._i(_vm.throttlePanel, null) > -1 : _vm.throttlePanel }, on: { "click": function click($event) {
                     _vm.throttle(_vm.animation.interval < 0 ? 3 : -1);
-                } } }), _vm._v(" Throttle animation")])]), _vm.animation.interval > 1 ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
+                }, "__c": function __c($event) {
+                    var $$a = _vm.throttlePanel,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.throttlePanel = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.throttlePanel = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.throttlePanel = $$c;
+                    }
+                } } }), _vm._v(" Throttle animation")])]), _vm.throttlePanel ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
                     _vm.throttle($event.target.value);
                 } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
     }, staticRenderFns: [function () {
@@ -815,7 +828,8 @@ var App = { render: function render() {
     },
     data: function data() {
         return {
-            sidebar: null
+            sidebar: null,
+            throttlePanel: 0
         };
     }
 };

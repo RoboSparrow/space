@@ -23,6 +23,13 @@ const opts = argv.filter((opt) => {
 });
 let mode = (argv.length > opts.length) ? 'watch' : 'build';
 
+console.log(opts);
+if (opts.length < 1) {
+    console.log(`${colours.red}Abort!${colours.clear} No task for ${colours.yellow}${mode}${colours.clear} found.`);
+    console.log(`${colours.yellow}Command: ${colours.clear} ./node build --<option> <task>`);
+    process.exit();
+}
+
 let cache;
 
 const CONFIG = {
@@ -70,7 +77,7 @@ const copy = function (src, dest) {
 ////
 
 const task = function (name, config) {
-    rollup.rollup({
+    return rollup.rollup({
         entry: config.rollup.entry,
         plugins: config.rollup.plugins,
         external:  config.rollup.external,

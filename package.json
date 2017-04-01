@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node ./build --watch project demo",
     "build": "node ./build project demo",
-    "test": "./node_modules/.bin/mocha --reporter spec tests"
+    "test": "./node_modules/.bin/mocha --reporter spec tests",
+    "lint": "./node_modules/.bin/eslint ./"
   },
   "repository": "https://github.com/RoboSparrow/space",
   "keywords": [],
