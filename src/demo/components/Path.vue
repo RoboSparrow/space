@@ -19,16 +19,15 @@ import Utils from '../Utils';
 
 const Space = window.Space;
 
-const compute = function(state, canvas) {
+const compute = function (state, canvas) {
     if (!state.prev) {
-        state.prev = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
+        state.prev = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
     const path = new Space.Path(state.prev.x, state.prev.y);
     const range = state.segmentsRange;
     let count = 0;
-    let rand;
 
-    while(count < state.segments){
+    while (count < state.segments) {
         const segX = Utils.randInt(-range, range) * Utils.randInt();
         const segY = Utils.randInt(-range, range) * Utils.randInt();
         let x = path.last().x + segX;
@@ -36,7 +35,7 @@ const compute = function(state, canvas) {
         x = Utils.bounds(x, 0, canvas.width);
         y = Utils.bounds(y, 0, canvas.height);
         path.add(x, y);
-        count++;
+        count += 1;
     }
 
     state.prev = path.last();
@@ -76,7 +75,7 @@ export default {
             this.canvas.ctx.moveTo(path.first().x, path.first().y);
 
             path.points.forEach((point, index) => {
-                if(index === 0){
+                if (index === 0) {
                     return;
                 }
                 this.canvas.ctx.lineTo(point.x, point.y);

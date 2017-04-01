@@ -9,20 +9,19 @@ import Utils from '../Utils';
 
 const Space = window.Space;
 
-const compute = function(state, canvas) {
-    if(!state.origin) {
-        state.origin = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
+const compute = function (state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
 
     let i;
     let origin;
-    let dim;
-    const figures  = {};
+    const figures = {};
 
     // Path
     const path = new Space.Path(canvas.width / 2, canvas.height / 2);
     const segments = Utils.randInt(10, 100);
-    for(i = 1; i < segments; i++) {
+    for (i = 1; i < segments; i += 1) {
         const prev = path.points[i - 1];
         path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
     }
@@ -39,19 +38,19 @@ const compute = function(state, canvas) {
 
     figures.star = {
         path: star.path,
-        fillStyle: [-1, -1, -1, .25]
+        fillStyle: [-1, -1, -1, 0.25]
     };
 
     // Square
     origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
-    dim = Utils.randInt(50, 75);
+    const dim = Utils.randInt(50, 75);
     const square = new Space.Rectangle(dim, dim, origin);
-    
+
     figures.Square = {
         path: square.path,
-        fillStyle: [-1, -1, -1, .25]
+        fillStyle: [-1, -1, -1, 0.25]
     };
-    
+
     state.prev.figures = figures;
     return figures;
 };
@@ -61,10 +60,10 @@ const randRgba = function (rgba) {
     const g = (rgba[1] > 0) ? rgba[1] : Math.round(Utils.randInt(0, 255));
     const b = (rgba[2] > 0) ? rgba[2] : Math.round(Utils.randInt(0, 255));
     const a = (rgba[3] > 0) ? rgba[3] : Math.round(Utils.randInt(0, 1));
-    return 'rgba(' + r +  ', ' + g + ', ' + b + ', ' + a + ')';
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
 };
 
-const draw = function(figure, ctx) {
+const draw = function (figure, ctx) {
     //init
     ctx.save();
 
@@ -78,14 +77,14 @@ const draw = function(figure, ctx) {
     ctx.beginPath();
     ctx.moveTo(path.first().x, path.first().y);
     path.points.forEach((point, index) => {
-        if(index === 0){
+        if (index === 0) {
             return;
         }
         ctx.lineTo(point.x, point.y);
     });
 
     // draw
-    if(ctx.fillStyle){
+    if (ctx.fillStyle) {
         ctx.fill();
     }
     ctx.stroke();
@@ -104,7 +103,7 @@ export default {
     ],
     data: function () {
         return {
-            state:  {
+            state: {
                 prev: {
                     figures: {}
                 },
@@ -118,7 +117,6 @@ export default {
         // this.$router.push('/Path');
     },
     mounted() {
-        let polygon;
         this.canvas.clear();
 
         this.animation

@@ -99,21 +99,19 @@ export default {
     },
     methods: {
         throttle: function (value) {
-            if(value === null){
+            if (value === null) {
                 return;
             }
             value = parseInt(value, 10);
-            console.log(value);
-            if(!isNaN(value)){
+            if (!isNaN(value)) {
                 this.animation.fps(value);
             }
         },
         goTo: function (path) {
-            console.log(path)
             this.$router.push(path);
         },
-        toggle: function() {
-            if(!this.sidebar) {
+        toggle: function () {
+            if (!this.sidebar) {
                 return;
             }
             let right = (this.sidebar.style.right) ? this.sidebar.style.right : window.getComputedStyle(this.sidebar).getPropertyValue('right');
@@ -124,7 +122,7 @@ export default {
     data() {
         return {
             sidebar: null
-        }
+        };
     }
 };
 </script>

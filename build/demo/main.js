@@ -189,13 +189,12 @@ var compute = function compute(state, canvas) {
 
     var i = void 0;
     var origin = void 0;
-    var dim = void 0;
     var figures = {};
 
     // Path
     var path = new Space.Path(canvas.width / 2, canvas.height / 2);
     var segments = Utils.randInt(10, 100);
-    for (i = 1; i < segments; i++) {
+    for (i = 1; i < segments; i += 1) {
         var prev = path.points[i - 1];
         path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
     }
@@ -212,17 +211,17 @@ var compute = function compute(state, canvas) {
 
     figures.star = {
         path: star.path,
-        fillStyle: [-1, -1, -1, .25]
+        fillStyle: [-1, -1, -1, 0.25]
     };
 
     // Square
     origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
-    dim = Utils.randInt(50, 75);
+    var dim = Utils.randInt(50, 75);
     var square = new Space.Rectangle(dim, dim, origin);
 
     figures.Square = {
         path: square.path,
-        fillStyle: [-1, -1, -1, .25]
+        fillStyle: [-1, -1, -1, 0.25]
     };
 
     state.prev.figures = figures;
@@ -291,7 +290,6 @@ var Home = { render: function render() {
     mounted: function mounted() {
         var _this = this;
 
-        var polygon = void 0;
         this.canvas.clear();
 
         this.animation.fps(32).only(function () {
@@ -330,7 +328,6 @@ var compute$1 = function compute$1(state, canvas) {
     var path = new Space$1.Path(state.prev.x, state.prev.y);
     var range = state.segmentsRange;
     var count = 0;
-    var rand = void 0;
 
     while (count < state.segments) {
         var segX = Utils.randInt(-range, range) * Utils.randInt();
@@ -340,7 +337,7 @@ var compute$1 = function compute$1(state, canvas) {
         x = Utils.bounds(x, 0, canvas.width);
         y = Utils.bounds(y, 0, canvas.height);
         path.add(x, y);
-        count++;
+        count += 1;
     }
 
     state.prev = path.last();
@@ -800,13 +797,11 @@ var App = { render: function render() {
                 return;
             }
             value = parseInt(value, 10);
-            console.log(value);
             if (!isNaN(value)) {
                 this.animation.fps(value);
             }
         },
         goTo: function goTo(path) {
-            console.log(path);
             this.$router.push(path);
         },
         toggle: function toggle() {

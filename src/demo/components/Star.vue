@@ -23,17 +23,17 @@ import Utils from '../Utils';
 
 const Space = window.Space;
 
-const compute = function(state, canvas) {
-    if(!state.origin) {
-        state.origin = new Space.Point.Cartesian(canvas.width/2, canvas.height/2);
+const compute = function (state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
 
     let outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
     let innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
     let segments = Math.floor(Utils.randInt(3, state.segmentsRange));
     segments = Utils.bounds(segments, false, 25);
-    outerRadius = Utils.bounds(outerRadius, false, canvas.width/2);
-    innerRadius = Utils.bounds(innerRadius, false, canvas.width/2);
+    outerRadius = Utils.bounds(outerRadius, false, canvas.width / 2);
+    innerRadius = Utils.bounds(innerRadius, false, canvas.width / 2);
 
     state.prev.segments = segments;
     state.prev.outerRadius = outerRadius;
@@ -51,7 +51,7 @@ export default {
     ],
     data: function () {
         return {
-            state:  {
+            state: {
                 prev: {
                     segments: 3,
                     outerRadius: 50,
@@ -91,14 +91,14 @@ export default {
             this.canvas.ctx.beginPath();
             this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
             polygon.path.points.forEach((point, index) => {
-                if(index === 0){
+                if (index === 0) {
                     return;
                 }
                 this.canvas.ctx.lineTo(point.x, point.y);
             });
 
             // draw
-            if(this.state.canvas.fillStyle){
+            if (this.state.canvas.fillStyle) {
                 this.canvas.ctx.fill();
             }
             this.canvas.ctx.stroke();

@@ -30,7 +30,7 @@ module.exports = {
         indent: ['error', 4, { 'SwitchCase': 1 }],
         'func-names': 'off',
         'no-underscore-dangle': 'off',
-        'no-console': 'off',
+        'no-console': 'error', //'off',
         'comma-dangle': ['error', 'only-multiline'],
         'no-restricted-syntax': [
             'error',
