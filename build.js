@@ -5,37 +5,35 @@ const rollup = require('rollup');
 const chokidar = require('chokidar');
 const fse = require('fs-extra');
 
+const ConfigProject = require('./rollup.config-project');
+const ConfigDemo = require('./rollup.config-demo');
+
 // https://coderwall.com/p/yphywg/printing-colorful-text-in-terminal-when-run-node-js-script
 const colours = {
+    red: '\x1b[31m',
     green: '\x1b[32m',
     yellow: '\x1b[33m',
     clear: '\x1b[0m'
 };
 
-let cache;
-const opts = process.argv.slice(2);
+// handle options
+let argv = process.argv.slice(2);
+const opts = argv.filter((opt) => {
+    return opt.indexOf('-w') === -1 && opt.indexOf('--watch') === -1;
+});
+let mode = (argv.length > opts.length) ? 'watch' : 'build';
 
-const copy = function (src, dest) {
-    return new Promise((resolve, reject) => {
-        fse.copy(src, dest, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(dest.replace(/^.*[\\\/]/, ''));
-        });
-    });
-};
+let cache;
 
 const CONFIG = {
     project: {
-        require: './rollup.config-project.js',
+        rollup: ConfigProject,
         glob: ['./src/*.js', '!./src/demo/*'],
         extraTasks: []
     },
-    // make sure thewatched files exclude each other in every task
+    // make sure the watched files exclude each other in every task
     demo: {
-        require: './rollup.config-demo.js',
+        rollup: ConfigDemo,
         glob: ['./src/demo/**/*.(vue|js)'],
         extraTasks: [
             () => {
@@ -51,20 +49,40 @@ const CONFIG = {
     }
 };
 
+////
+// utils
+////
+
+const copy = function (src, dest) {
+    return new Promise((resolve, reject) => {
+        fse.copy(src, dest, (err) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(dest.replace(/^.*[\\\/]/, ''));
+        });
+    });
+};
+
+////
+// tasks
+////
+
 const task = function (name, config) {
     rollup.rollup({
-        entry: config.entry,
-        plugins: config.plugins,
-        external: config.external,
+        entry: config.rollup.entry,
+        plugins: config.rollup.plugins,
+        external:  config.rollup.external,
         cache: cache
     })
     .then((bundle) => {
         console.log(`${colours.yellow} -${name}:${colours.clear} bundling..`);
         const writers = [];
-        config.targets.forEach((target) => {
+        config.rollup.targets.forEach((target) => {
             writers.push(bundle.write(target));
         });
-        CONFIG[name].extraTasks.forEach((task) => {
+        config.extraTasks.forEach((task) => {
             writers.push(task());
         });
         return Promise.all(writers);
@@ -77,15 +95,19 @@ const task = function (name, config) {
     });
 };
 
-const watch = function (name, glob, config) {
+////
+// watch
+////
+
+const watch = function (name, config) {
     const prefix = `${colours.yellow} -${name}:${colours.clear}`;
 
-    const watcher = chokidar.watch(glob, {
+    const watcher = chokidar.watch(config.glob, {
         ignored: /[\/\\]\./, //eslint-disable-line no-useless-escape
         ignoreInitial: true // first add events on bootup watcher
     })
     .on('ready', () => {
-        console.log(`${colours.green}Watcher${colours.clear} ${name} (${glob.join(', ')}) ${colours.green} ready...${colours.clear}`);
+        console.log(`${colours.green}Watcher${colours.clear} ${name} (${config.glob.join(', ')}) ${colours.green} ready...${colours.clear}`);
     })
     .on('add', (path) => {
         console.log(`${prefix}${colours.clear} File ${path} has been added`);
@@ -104,8 +126,20 @@ const watch = function (name, glob, config) {
     return watcher;
 };
 
+////
+// build
+////
+
 let config;
 opts.forEach((name) => {
-    config = require(CONFIG[name].require); //eslint-disable-line global-require, import/no-dynamic-require
-    watch(name, CONFIG[name].glob, config);
+    if (mode === 'watch') {
+        watch(name, CONFIG[name]);
+        return;
+    }
+    if (mode === 'build') {
+        task(name, CONFIG[name]);
+        return;
+    }
+    console.log(`${colours.red}Abort!${colours.clear} No task for mode ${colours.yellow}${mode}${colours.clear} found.`);
+    process.exit();
 });

@@ -20,7 +20,7 @@ module.exports = {
     entry: SRC.path + 'main.js',
 
     plugins: [
-        // workaround for not including  .vue files (march 2017)
+        //-- workaround for not including  .vue files (march 2017)
         // note: this needs to be invoked before vue plugin!
         eslint({
             include: 'src/demo/**/*.vue'
@@ -30,7 +30,7 @@ module.exports = {
             // css: DEST.path + 'components.css'
         }),
         scss(),
-        // eslint(), // does not work with .vue files (march 2017)
+        //-- eslint(), // does not work with .vue files (march 2017)
         babel(babelrc()) //last!
     ],
 

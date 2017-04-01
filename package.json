@@ -4,9 +4,8 @@
   "description": "W.I.P. It's a mess, not a product. Just f***ing around with Vue and <canvas>.",
   "private": true,
   "scripts": {
-    "dev": "watch 'npm run build' ./src",
-    "devdemo": "node ./build project demo",
-    "build": "rollup -c ./rollup.config-project.js && rollup -c ./rollup.config-demo.js",
+    "dev": "node ./build --watch project demo",
+    "build": "node ./build project demo",
     "test": "./node_modules/.bin/mocha --reporter spec tests"
   },
   "repository": "https://github.com/RoboSparrow/space",
