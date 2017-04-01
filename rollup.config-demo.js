@@ -23,7 +23,7 @@ module.exports = {
         //-- workaround for not including  .vue files (march 2017)
         // note: this needs to be invoked before vue plugin!
         eslint({
-            include: 'src/demo/**/*.vue'
+            include: ['src/demo/**/*.js', 'src/demo/**/*.vue']
         }),
         vue({
             css: true //<head>
