@@ -15,13 +15,51 @@
                 </li>
             </ul>
         </div>
-        <form class="mui-form">
+        <p></p>
+        <form class="mui-form--inline">
             
             <section v-if="figure === 'Path'">
                 <div class="mui-textfield">
                     <input type="range" v-model.number="state.Path.segments" v-on:change="init()" min="1" max="100">
                     <label>Segments <small>({{ state.Path.segments }})</small></label>
                 </div>  
+            </section>
+            
+            <section v-if="figure === 'Polygon'">
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Polygon.segments" v-on:change="init()" >
+                    <label>Segments</label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Polygon.radius" v-on:change="init()" >
+                    <label>Radius</label>
+                </div>
+            </section>
+            
+            <section v-if="figure === 'Star'">
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Star.segments" v-on:change="init()" >
+                    <label>Segments</label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Star.outerRadius" v-on:change="init()" >
+                    <label>outer Radius</label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Star.innerRadius" v-on:change="init()" >
+                    <label>inner Radius</label>
+                </div>
+            </section>
+            
+            <section v-if="figure === 'Rectangle'">
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Rectangle.width" v-on:change="init()" >
+                    <label>Width</label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.Rectangle.height" v-on:change="init()" >
+                    <label>Height</label>
+                </div>
             </section>
             
             <pre>{{state}}</pre>
@@ -60,17 +98,17 @@ const compute = function (figure, state, canvas) {
         }
 
         case 'Polygon': {
-            fig = new Space.Polygon(6, 200, state.origin);
+            fig = new Space.Polygon(state.Polygon.segments, state.Polygon.radius, state.origin);
             break;
         }
 
         case 'Rectangle': {
-            fig = new Space.Rectangle(400, 100, state.origin);
+            fig = new Space.Rectangle(state.Rectangle.width, state.Rectangle.height, state.origin);
             break;
         }
 
         case 'Star': {
-            fig = new Space.Star(5, 200, 78, state.origin);
+            fig = new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
             break;
         }
 
@@ -136,6 +174,19 @@ export default {
                 }),
                 Path: {
                     segments: 25
+                },
+                Polygon: {
+                    segments: 6,
+                    radius: 200
+                },
+                Star: {
+                    segments: 5,
+                    outerRadius: 200,
+                    innerRadius: 70
+                },
+                Rectangle: {
+                    width: 300,
+                    height: 200
                 }
             },
             figures: Routes.figures(),

@@ -118,6 +118,19 @@ header a {
     color: rgba($app-bg-color, 1);
 }
 
+#sidebar .mui-textfield > input {
+    background-color: rgba($app-sidebar-fg-color, .3);
+    color: rgba($app-fg-color, 1);
+    border-bottom-color: rgba($app-fg-color, .5);
+    padding-left:  5px;
+    padding-right: 5px;
+}
+
+#sidebar .mui-form--inline .mui-textfield{
+    padding-right: 5px;
+    max-width: 75px;
+}
+
 @media (min-width: 768px) {
     #sidebar {
         width: $app-sidebar-width;

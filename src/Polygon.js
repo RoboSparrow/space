@@ -75,6 +75,14 @@ const Star = function (segments, outerRadius, innerRadius, center) {
         center = new Point.Cartesian(0, 0, 0);
     }
 
+    // @TODO
+    //const add = function(radius, delta, center){
+    //    const point = new Point.Polar(radius, delta);
+    //    point = outer.toCartesian();
+    //    point.add(center);
+    //    path.add(point.x, point.y);
+    //};
+
     //@see http://stackoverflow.com/a/7198179
     const delta = (Math.PI * 2) / segments;
     let _delta;

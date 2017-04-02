@@ -3776,6 +3776,17 @@ header a {
 #sidebar .mui-dropdown__menu a {
   color: black; }
 
+#sidebar .mui-textfield > input {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+  padding-left: 5px;
+  padding-right: 5px; }
+
+#sidebar .mui-form--inline .mui-textfield {
+  padding-right: 5px;
+  max-width: 75px; }
+
 @media (min-width: 768px) {
   #sidebar {
     width: 300px;

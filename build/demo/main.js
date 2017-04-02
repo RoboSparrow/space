@@ -777,19 +777,19 @@ var compute$5 = function compute$5(figure, state, canvas) {
 
         case 'Polygon':
             {
-                fig = new Space$5.Polygon(6, 200, state.origin);
+                fig = new Space$5.Polygon(state.Polygon.segments, state.Polygon.radius, state.origin);
                 break;
             }
 
         case 'Rectangle':
             {
-                fig = new Space$5.Rectangle(400, 100, state.origin);
+                fig = new Space$5.Rectangle(state.Rectangle.width, state.Rectangle.height, state.origin);
                 break;
             }
 
         case 'Star':
             {
-                fig = new Space$5.Star(5, 200, 78, state.origin);
+                fig = new Space$5.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
                 break;
             }
 
@@ -836,13 +836,69 @@ var Figures = { render: function render() {
             return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
                         _vm.goTo(fig);
                     } } }, [_vm._v(_vm._s(fig.name))])]) : _vm._e();
-        }))]), _c('form', { staticClass: "mui-form" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "100" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
+        }))]), _c('p'), _c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "100" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__r": function __r($event) {
                     _vm.state.Path.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _vm.figure === 'Polygon' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Polygon.segments, expression: "state.Polygon.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Polygon.segments }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Polygon.segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Polygon.radius, expression: "state.Polygon.radius", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Polygon.radius }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Polygon.radius = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Radius")])])]) : _vm._e(), _vm.figure === 'Star' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Star.segments, expression: "state.Star.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Star.segments }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Star.segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Star.outerRadius, expression: "state.Star.outerRadius", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Star.outerRadius }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Star.outerRadius = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("outer Radius")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Star.innerRadius, expression: "state.Star.innerRadius", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Star.innerRadius }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Star.innerRadius = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("inner Radius")])])]) : _vm._e(), _vm.figure === 'Rectangle' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Rectangle.width, expression: "state.Rectangle.width", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Rectangle.width }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Rectangle.width = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Width")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Rectangle.height, expression: "state.Rectangle.height", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Rectangle.height }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Rectangle.height = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
     name: 'Figures',
     props: ['animation', 'appState', 'canvas'],
@@ -863,6 +919,19 @@ var Figures = { render: function render() {
                 }),
                 Path: {
                     segments: 25
+                },
+                Polygon: {
+                    segments: 6,
+                    radius: 200
+                },
+                Star: {
+                    segments: 5,
+                    outerRadius: 200,
+                    innerRadius: 70
+                },
+                Rectangle: {
+                    width: 300,
+                    height: 200
                 }
             },
             figures: Routes.figures(),
