@@ -7,7 +7,7 @@
                         <tr class="mui--appbar-height">
                             <td>
                                 <span class="app--brand"></span>
-                                    <div class="mui-dropdown">
+                                <div class="mui-dropdown">
                                     <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
                                         Space <span class="mui--text-accent">/</span> {{ $route.name }}
                                         <span class="mui-caret mui--text-accent"></span>
@@ -18,7 +18,7 @@
                                             v-if="route.name"
                                             v-bind:class="{'router-link-active': $route.name === route.name}"
                                         >
-                                         <a v-on:click="goTo(route)">{{ route.name }}</a>
+                                            <a v-on:click="goTo(route)">{{ route.name }}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -40,12 +40,12 @@
 
         <aside id="sidebar" class="mui-panel" v-bind:class="{'visible': sidebar}">
 
-            <div class="mui--appbar-line-height">
-                <span class="mui--text-title">Params</span>
+            <div v-if="$route.name" class="mui--appbar-line-height">
+                <span class="mui--text-title">{{ $route.name }}</span>
             </div>
             <div class="mui-divider"></div>
 
-            <form class="mui-form">
+            <form v-if="animation.id" class="mui-form">
                <div class="mui-textfield">
                    <pre>count {{animation.count}}</pre>
                </div>
@@ -125,7 +125,4 @@ export default {
 </script>
 
 <style>
-body{
-    background-color: black;
-}
 </style>

@@ -13,7 +13,7 @@ var Animation = function Animation() {
     this.callbacks = [];
 };
 
-// register callback
+// throttle - set frames per second
 Animation.prototype.fps = function (fps) {
     this.interval = fps < 0 ? -1 : 1000 / fps;
     return this;
@@ -31,7 +31,7 @@ Animation.prototype.clear = function () {
     return this;
 };
 
-// clear all callbacks
+// clear existing callbacks and set one
 Animation.prototype.only = function (callback) {
     this.clear().add(callback);
     return this;
@@ -76,8 +76,10 @@ Animation.prototype.pause = function () {
     return this;
 };
 
-Animation.prototype.reset = function () {
-    this.running = false;
+Animation.prototype.cancel = function () {
+    this.stop();
+    window.cancelAnimationFrame(this.id);
+    this.id = null;
     return this;
 };
 
@@ -102,7 +104,21 @@ var Canvas2d = function Canvas2d() {
     this.ctx = ctx;
 };
 
+Canvas2d.prototype.styles = function (styles) {
+    var _this = this;
+
+    Object.keys(styles).forEach(function (key) {
+        if (key in _this.ctx) {
+            _this.ctx[key] = styles[key];
+        }
+    });
+};
+
 Canvas2d.prototype.clear = function () {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
+Canvas2d.prototype.fill = function () {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
@@ -290,14 +306,14 @@ var Home = { render: function render() {
     mounted: function mounted() {
         var _this = this;
 
-        this.canvas.clear();
+        this.canvas.fill();
 
         this.animation.fps(32).only(function () {
             // compute path
             var figures = compute(_this.state, _this.canvas.canvas);
             var tasks = Object.keys(figures);
             // init
-            _this.canvas.clear();
+            _this.canvas.fill();
 
             // draw
             tasks.forEach(function (id) {
@@ -361,7 +377,7 @@ var Path = { render: function render() {
         return {
             state: {
                 prev: null,
-                segments: 100,
+                segments: 200,
                 segmentsRange: 10,
                 canvas: this.appState.factor('canvas')
             }
@@ -378,21 +394,29 @@ var Path = { render: function render() {
             // compute path
             path = compute$1(_this.state, _this.canvas.canvas);
 
-            // draw
-            _this.canvas.clear();
+            // init
+            _this.canvas.fill();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
             _this.canvas.ctx.beginPath();
             _this.canvas.ctx.moveTo(path.first().x, path.first().y);
-
             path.points.forEach(function (point, index) {
                 if (index === 0) {
                     return;
                 }
                 _this.canvas.ctx.lineTo(point.x, point.y);
-                _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
-                _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+                // draw
                 _this.canvas.ctx.stroke();
             });
+
+            // finish
             _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
         }).play();
     }
 };
@@ -468,7 +492,7 @@ var Polygon = { render: function render() {
             polygon = compute$2(_this.state, _this.canvas.canvas);
 
             // init
-            _this.canvas.clear();
+            _this.canvas.fill();
             _this.canvas.ctx.save();
 
             // styles
@@ -568,7 +592,7 @@ var Rectangle = { render: function render() {
             polygon = compute$3(_this.state, _this.canvas.canvas);
 
             // init
-            _this.canvas.clear();
+            _this.canvas.fill();
             _this.canvas.ctx.save();
 
             // styles
@@ -680,7 +704,7 @@ var Star = { render: function render() {
             polygon = compute$4(_this.state, _this.canvas.canvas);
 
             // init
-            _this.canvas.clear();
+            _this.canvas.fill();
             _this.canvas.ctx.save();
 
             // styles
@@ -732,23 +756,40 @@ var compute$5 = function compute$5(figure, state, canvas) {
     }
 
     var fig = void 0;
-    var width = void 0;
     var segments = void 0;
 
     switch (figure) {
 
         case 'Path':
             {
-                var margin = 50;
-                width = canvas.width - 2 * margin;
-                segments = 5;
-                var delta = width / segments;
+                var margin = 100;
+                segments = state.Path.segments;
+                var x = (canvas.width - 2 * margin) / segments;
+                var y = canvas.height - 2 * margin;
                 fig = new Space$5.Path(margin, margin);
                 while (segments > 0) {
-                    margin = -margin;
-                    fig.progress(delta, margin > 0 ? margin : canvas.height - margin);
+                    fig.progress(x, y);
+                    y = -y;
                     segments -= 1;
                 }
+                break;
+            }
+
+        case 'Polygon':
+            {
+                fig = new Space$5.Polygon(6, 200, state.origin);
+                break;
+            }
+
+        case 'Rectangle':
+            {
+                fig = new Space$5.Rectangle(400, 100, state.origin);
+                break;
+            }
+
+        case 'Star':
+            {
+                fig = new Space$5.Star(5, 200, 78, state.origin);
                 break;
             }
 
@@ -762,12 +803,10 @@ var compute$5 = function compute$5(figure, state, canvas) {
     return typeof fig.path !== 'undefined' ? fig.path : fig;
 };
 
-var draw$1 = function draw$1(path, state, canvas) {
-    console.log(path, state, canvas);
+var draw$1 = function draw$1(figure, path, state, canvas) {
     canvas.ctx.save();
-
     // styles
-    canvas.ctx.fillStyle = state.canvas.fillStyle;
+    canvas.ctx.fillStyle = figure !== 'Path' ? state.canvas.fillStyle : null;
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
@@ -793,14 +832,24 @@ var draw$1 = function draw$1(path, state, canvas) {
 };
 
 var Figures = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('h2', [_vm._v(_vm._s(_vm.$route.name))]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figure ? _vm.figure : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures, function (fig) {
+            return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
+                        _vm.goTo(fig);
+                    } } }, [_vm._v(_vm._s(fig.name))])]) : _vm._e();
+        }))]), _c('form', { staticClass: "mui-form" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "100" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__r": function __r($event) {
+                    _vm.state.Path.segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
     name: 'Figures',
     props: ['animation', 'appState', 'canvas'],
     watch: {
-        '$route': function $route(to, from) {
-            console.log(this.$route);
-            this.title = this.$route;
+        '$route': function $route(to) {
+            this.figure = to.params.figure;
+            this.init();
         }
     },
     data: function data() {
@@ -811,19 +860,36 @@ var Figures = { render: function render() {
                     strokeStyle: 'rgba(255, 255, 255, 1)',
                     fillStyle: 'rgba(255, 255, 255, 1)',
                     lineWidth: 2
-                })
+                }),
+                Path: {
+                    segments: 25
+                }
             },
-            routes: Routes.figures(),
-            title: this.$route
+            figures: Routes.figures(),
+            figure: typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'Path'
         };
     },
     mounted: function mounted() {
-        this.animation.stop(); // !!!
-        this.canvas.clear();
+        //@TODO cancel animation
+        this.animation.only(function () {}).cancel(); // !!!!!
+        this.init();
+    },
 
-        var figure = typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'Path';
-        var path = compute$5(figure, this.state, this.canvas.canvas);
-        draw$1(path, this.state, this.canvas);
+    methods: {
+        init: function init() {
+            var _this = this;
+
+            var timeout = null;
+            this.canvas.clear();
+            timeout = window.setTimeout(function () {
+                var path = compute$5(_this.figure, _this.state, _this.canvas.canvas);
+                draw$1(_this.figure, path, _this.state, _this.canvas);
+                window.clearTimeout(timeout);
+            }, 100);
+        },
+        goTo: function goTo(figure) {
+            this.$router.push({ name: 'Figure', params: { figure: figure.name } });
+        }
     }
 };
 
@@ -877,7 +943,7 @@ var routes = [{
     }
 }, {
     name: 'Figure',
-    path: '/Figures/:name',
+    path: '/Figures/:figure',
     component: Figures,
     meta: {
         menu: false,
@@ -902,7 +968,9 @@ var figures = function figures() {
 };
 
 var menu = function menu() {
-    return routes.map(function (item) {
+    return routes.filter(function (item) {
+        return item.meta.menu;
+    }).map(function (item) {
         return {
             name: item.name,
             path: item.path,
@@ -932,7 +1000,7 @@ var Routes = {
     if (document) {
         var head = document.head || document.getElementsByTagName('head')[0],
             style = document.createElement('style'),
-            css = " body{ background-color: black; } ";style.type = 'text/css';if (style.styleSheet) {
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
             style.styleSheet.cssText = css;
         } else {
             style.appendChild(document.createTextNode(css));
@@ -947,7 +1015,7 @@ var App = { render: function render() {
                     } } }, [_vm._v(_vm._s(route.name))])]) : _vm._e();
         }))])]), _c('td', [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right mui--text-display1", on: { "click": function click($event) {
                     _vm.toggle();
-                } } }, [_c('i', { staticClass: "zmdi zmdi-settings" })])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm._m(1), _c('div', { staticClass: "mui-divider" }), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+                } } }, [_c('i', { staticClass: "zmdi zmdi-settings" })])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm.$route.name ? _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v(_vm._s(_vm.$route.name))])]) : _vm._e(), _c('div', { staticClass: "mui-divider" }), _vm.animation.id ? _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
                 } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.throttlePanel, expression: "throttlePanel" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.throttlePanel) ? _vm._i(_vm.throttlePanel, null) > -1 : _vm.throttlePanel }, on: { "click": function click($event) {
                     _vm.throttle(_vm.animation.interval < 0 ? 3 : -1);
@@ -966,11 +1034,9 @@ var App = { render: function render() {
                     }
                 } } }), _vm._v(" Throttle animation")])]), _vm.throttlePanel ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
                     _vm.throttle($event.target.value);
-                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(2)]);
+                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]) : _vm._e(), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(1)]);
     }, staticRenderFns: [function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUICSS")])])]);
-    }, function () {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v("Params")])]);
     }, function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('main', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-12 app--canvas" })])]);
     }],

@@ -68,7 +68,7 @@ export default {
             polygon = compute(this.state, this.canvas.canvas);
 
             // init
-            this.canvas.clear();
+            this.canvas.fill();
             this.canvas.ctx.save();
 
             // styles

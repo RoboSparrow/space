@@ -1,7 +1,29 @@
 <template>
     <div>
+        <div class="mui-dropdown">
+            <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                {{ (figure) ? figure : 'Choose' }}
+                <span class="mui-caret mui--text-accent"></span>
+            </button>
+            <ul class="mui-dropdown__menu">
+                <li
+                    v-for="fig in figures"
+                    v-if="fig.name !== figure"
+                    v-bind:class="{'router-link-active': fig.name === figure}"
+                >
+                    <a v-on:click="goTo(fig)">{{ fig.name }}</a>
+                </li>
+            </ul>
+        </div>
         <form class="mui-form">
-            <h2>{{$route.name}}</h2>
+            
+            <section v-if="figure === 'Path'">
+                <div class="mui-textfield">
+                    <input type="range" v-model.number="state.Path.segments" v-on:change="init()" min="1" max="100">
+                    <label>Segments <small>({{ state.Path.segments }})</small></label>
+                </div>  
+            </section>
+            
             <pre>{{state}}</pre>
         </form>
     </div>
@@ -19,22 +41,36 @@ const compute = function (figure, state, canvas) {
     }
 
     let fig;
-    let width;
     let segments;
 
     switch (figure) {
 
         case 'Path': {
-            let margin = 50;
-            width = canvas.width - (2 * margin);
-            segments = 5;
-            const delta = width / segments;
+            const margin = 100;
+            segments = state.Path.segments;
+            const x = (canvas.width - (2 * margin)) / segments;
+            let y = canvas.height - (2 * margin);
             fig = new Space.Path(margin, margin);
             while (segments > 0) {
-                margin = -margin;
-                fig.progress(delta, (margin > 0) ? margin : canvas.height - margin);
+                fig.progress(x, y);
+                y = -y;
                 segments -= 1;
             }
+            break;
+        }
+
+        case 'Polygon': {
+            fig = new Space.Polygon(6, 200, state.origin);
+            break;
+        }
+
+        case 'Rectangle': {
+            fig = new Space.Rectangle(400, 100, state.origin);
+            break;
+        }
+
+        case 'Star': {
+            fig = new Space.Star(5, 200, 78, state.origin);
             break;
         }
 
@@ -48,12 +84,10 @@ const compute = function (figure, state, canvas) {
 
 };
 
-const draw = function (path, state, canvas) {
-    console.log(path, state, canvas);
+const draw = function (figure, path, state, canvas) {
     canvas.ctx.save();
-
     // styles
-    canvas.ctx.fillStyle = state.canvas.fillStyle;
+    canvas.ctx.fillStyle = (figure !== 'Path') ? state.canvas.fillStyle : null;
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
@@ -86,9 +120,9 @@ export default {
         'canvas'
     ],
     watch: {
-        '$route'(to, from) {
-            console.log(this.$route);
-            this.title = this.$route;
+        '$route'(to) {
+            this.figure = to.params.figure;
+            this.init();
         }
     },
     data: function () {
@@ -99,19 +133,33 @@ export default {
                     strokeStyle: 'rgba(255, 255, 255, 1)',
                     fillStyle: 'rgba(255, 255, 255, 1)',
                     lineWidth: 2
-                })
+                }),
+                Path: {
+                    segments: 25
+                }
             },
-            routes: Routes.figures(),
-            title: this.$route
+            figures: Routes.figures(),
+            figure: (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'Path'
         };
     },
     mounted() {
-        this.animation.stop(); // !!!
-        this.canvas.clear();
-
-        const figure = (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'Path';
-        const path = compute(figure, this.state, this.canvas.canvas);
-        draw(path, this.state, this.canvas);
+        //@TODO cancel animation
+        this.animation.only(() => {}).cancel(); // !!!!!
+        this.init();
+    },
+    methods: {
+        init: function () {
+            let timeout = null;
+            this.canvas.clear();
+            timeout = window.setTimeout(() => {
+                const path = compute(this.figure, this.state, this.canvas.canvas);
+                draw(this.figure, path, this.state, this.canvas);
+                window.clearTimeout(timeout);
+            }, 100);
+        },
+        goTo(figure) {
+            this.$router.push({ name: 'Figure', params: { figure: figure.name } });
+        }
     }
 };
 </script>

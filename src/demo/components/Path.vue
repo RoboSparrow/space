@@ -53,7 +53,7 @@ export default {
         return {
             state: {
                 prev: null,
-                segments: 100,
+                segments: 200,
                 segmentsRange: 10,
                 canvas: this.appState.factor('canvas')
             }
@@ -68,21 +68,29 @@ export default {
             // compute path
             path = compute(this.state, this.canvas.canvas);
 
-            // draw
-            this.canvas.clear();
+            // init
+            this.canvas.fill();
+            this.canvas.ctx.save();
+
+            // styles
+            this.canvas.ctx.strokeStyle = this.state.canvas.strokeStyle;
+            this.canvas.ctx.lineWidth = this.state.canvas.lineWidth;
+
+            // path
             this.canvas.ctx.beginPath();
             this.canvas.ctx.moveTo(path.first().x, path.first().y);
-
             path.points.forEach((point, index) => {
                 if (index === 0) {
                     return;
                 }
                 this.canvas.ctx.lineTo(point.x, point.y);
-                this.canvas.ctx.strokeStyle = this.state.canvas.strokeStyle;
-                this.canvas.ctx.lineWidth = this.state.canvas.lineWidth;
+                // draw
                 this.canvas.ctx.stroke();
             });
+
+            // finish
             this.canvas.ctx.closePath();
+            this.canvas.ctx.restore();
         })
         .play()
         ;

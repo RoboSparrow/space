@@ -3711,6 +3711,14 @@ buttons {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
+body {
+  background-color: rgba(0, 0, 0, 0.87);
+  color: white; }
+
+a {
+  color: white;
+  cursor: pointer; }
+
 header {
   position: fixed;
   top: 0;
@@ -3760,6 +3768,13 @@ header a {
 
 #sidebar .mui-panel {
   background-color: rgba(255, 255, 255, 0.15); }
+
+#sidebar .mui-dropdown__menu {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: white; }
+
+#sidebar .mui-dropdown__menu a {
+  color: black; }
 
 @media (min-width: 768px) {
   #sidebar {

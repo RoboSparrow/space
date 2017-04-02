@@ -62,7 +62,7 @@ const routes = [
     },
     {
         name: 'Figure',
-        path: '/Figures/:name',
+        path: '/Figures/:figure',
         component: Figures,
         meta: {
             menu: false,
@@ -88,7 +88,11 @@ const figures = function () {
 };
 
 const menu = function () {
-    return routes.map((item) => {
+    return routes
+    .filter((item) => {
+        return item.meta.menu;
+    })
+    .map((item) => {
         return {
             name: item.name,
             path: item.path,

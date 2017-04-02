@@ -7,7 +7,7 @@ const Animation = function () {
     this.callbacks = [];
 };
 
-// register callback
+// throttle - set frames per second
 Animation.prototype.fps = function (fps) {
     this.interval = (fps < 0) ? -1 : 1000 / fps;
     return this;
@@ -25,7 +25,7 @@ Animation.prototype.clear = function () {
     return this;
 };
 
-// clear all callbacks
+// clear existing callbacks and set one
 Animation.prototype.only = function (callback) {
     this.clear().add(callback);
     return this;
@@ -68,8 +68,10 @@ Animation.prototype.pause = function () {
     return this;
 };
 
-Animation.prototype.reset = function () {
-    this.running = false;
+Animation.prototype.cancel = function () {
+    this.stop();
+    window.cancelAnimationFrame(this.id);
+    this.id = null;
     return this;
 };
 

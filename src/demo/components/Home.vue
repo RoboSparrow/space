@@ -117,7 +117,7 @@ export default {
         // this.$router.push('/Path');
     },
     mounted() {
-        this.canvas.clear();
+        this.canvas.fill();
 
         this.animation
         .fps(32)
@@ -126,7 +126,7 @@ export default {
             const figures = compute(this.state, this.canvas.canvas);
             const tasks = Object.keys(figures);
             // init
-            this.canvas.clear();
+            this.canvas.fill();
 
             // draw
             tasks.forEach((id) => {

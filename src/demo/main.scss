@@ -4,10 +4,12 @@
 
 @import "../../node_modules/muicss/lib/sass/mui-colors";
 
-$mui-appbar-bg-color: rgba(255, 255, 255, .35);
+$app-bg-color: mui-color('black-alpha-87');
+$app-fg-color: rgba(255, 255, 255, 1);
+$mui-appbar-bg-color: rgba($app-fg-color, .35);
 
-$app-sidebar-color: rgba(255, 255, 255, 1);
-$app-sidebar-bg-color: rgba($app-sidebar-color, .1);
+$app-sidebar-fg-color: $app-fg-color;
+$app-sidebar-bg-color: rgba($app-sidebar-fg-color, .1);
 $app-sidebar-width: 300px;
 $app-footer-height: 30px;
 
@@ -31,6 +33,16 @@ buttons {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+    background-color: $app-bg-color;
+    color: $app-fg-color;
+}
+
+a {
+    color: $app-fg-color;
+    cursor: pointer;
+}
+
 ////
 // header
 ////
@@ -43,7 +55,7 @@ header {
     z-index: 2;
 }
 
-header .app--sidebar-trigger{
+header .app--sidebar-trigger {
     cursor: pointer;
     -webkit-animation: spin-slow 4s linear infinite;
     animation: spin-slow 4s linear infinite;
@@ -57,11 +69,11 @@ header .app--sidebar-trigger:hover{
 @-webkit-keyframes spin-slow { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin-slow { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
-header .app--brand{
+header .app--brand {
     margin-right: 1em;
 }
 
-header a{
+header a {
     color: $mui-appbar-font-color;
 }
 
@@ -69,7 +81,7 @@ header a{
 // sidebar
 ////
 
-#sidebar{
+#sidebar {
     position: fixed;
     top: $mui-appbar-height + 15;
     right: (-$app-sidebar-width/2 - 50);
@@ -80,20 +92,34 @@ header a{
     background-color: $app-sidebar-bg-color;
 }
 
-#sidebar, #sidebar a, #sidebar label{
-    color: $app-sidebar-color;
+#sidebar, #sidebar a, #sidebar label {
+    color: $app-sidebar-fg-color;
 }
 
-#sidebar .mui-divider{
-    background-color: $app-sidebar-color;
+#sidebar .mui-divider {
+    background-color: $app-sidebar-fg-color;
 }
 
-#sidebar .mui-panel{
-    background-color: rgba($app-sidebar-color, 0.15);
+#sidebar .mui-panel {
+    background-color: rgba($app-sidebar-fg-color, 0.15);
+}
+
+#sidebar .mui-dropdown {
+    // background-color: rgba($app-sidebar-fg-color, 0.8);
+    // color: rgba($app-fg-color, 1);
+}
+
+#sidebar .mui-dropdown__menu {
+    background-color: rgba($app-sidebar-fg-color, .7);
+    color: rgba($app-fg-color, 1);
+}
+
+#sidebar .mui-dropdown__menu a {
+    color: rgba($app-bg-color, 1);
 }
 
 @media (min-width: 768px) {
-    #sidebar{
+    #sidebar {
         width: $app-sidebar-width;
         right: 0;
     }
@@ -113,7 +139,7 @@ header a{
 // footer
 ////
 
-.app--footer-content{
+.app--footer-content {
     padding-top: .5em;
     padding-bottom: .5em;
 }
@@ -125,12 +151,12 @@ footer {
     left: 0;
     z-index: 2;
     height: $app-footer-height;
-    background-color: rgba($app-sidebar-color, .5);
+    background-color: rgba($app-sidebar-fg-color, .5);
     box-sizing: border-box;
 }
 
-footer, footer a{
-    color: $app-sidebar-color;
+footer, footer a {
+    color: $app-sidebar-fg-color;
 }
 
 ////
@@ -141,6 +167,6 @@ footer, footer a{
     background-color: $mui-primary-color;
     color: white;
 }
-.router-link-active:hover{
+.router-link-active:hover {
     cursor: pointer;
 }

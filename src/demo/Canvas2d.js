@@ -10,7 +10,19 @@ const Canvas2d = function () {
     this.ctx = ctx;
 };
 
+Canvas2d.prototype.styles = function (styles) {
+    Object.keys(styles).forEach((key) => {
+        if (key in this.ctx) {
+            this.ctx[key] = styles[key];
+        }
+    });
+};
+
 Canvas2d.prototype.clear = function () {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
+Canvas2d.prototype.fill = function () {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
