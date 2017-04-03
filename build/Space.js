@@ -67,6 +67,10 @@ Point.Cartesian.prototype.substract = function (p) {
     this.z -= p.z;
 };
 
+Point.Cartesian.prototype.equals = function (p) {
+    return this.x === p.x && this.y === p.y && this.z === p.z;
+};
+
 ////
 // Point.Polar
 ////
@@ -164,6 +168,15 @@ Path.prototype.progress = function (x, y, z) {
     // return this?
 };
 
+Path.prototype.translate = function (x, y, z) {
+    var i = void 0;
+    var v = new Point.Cartesian(x, y, z);
+    var length = this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].add(v);
+    }
+};
+
 Path.prototype.last = function () {
     return this.points[this.points.length - 1];
 };
@@ -181,13 +194,13 @@ Path.prototype.open = function () {
 
 Path.prototype.close = function () {
     if (!this.isClosed()) {
-        this.points.push(this.first());
+        this.points.push(this.first().clone());
     }
     return this.last();
 };
 
 Path.prototype.isClosed = function () {
-    return this.last() === this.first();
+    return this.last().equals(this.first());
 };
 
 ////
@@ -255,7 +268,6 @@ var Rectangle = function Rectangle(width, height, center) {
 ////
 
 var Star = function Star(segments, outerRadius, innerRadius, center) {
-    center = center || null; // node v8: no default params
 
     var _point = function _point(radius, delta, center) {
         var point = new Point.Polar(radius, delta);
@@ -264,6 +276,7 @@ var Star = function Star(segments, outerRadius, innerRadius, center) {
         return point;
     };
 
+    center = center || null; // node v8: no default params
     var path = new Path();
     var i = 0;
 

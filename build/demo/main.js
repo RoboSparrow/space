@@ -799,6 +799,14 @@ var compute$5 = function compute$5(figure, state, canvas) {
             }
 
     }
+    // translate
+    var hasTranslate = state.tanslate.reduce(function (a, b) {
+        return a + b;
+    });
+    console.log(fig.path);
+    if (hasTranslate) {
+        fig.path.translate(state.tanslate[0], state.tanslate[1]);
+    }
 
     return typeof fig.path !== 'undefined' ? fig.path : fig;
 };
@@ -930,7 +938,33 @@ var Figures = { render: function render() {
                     } else {
                         _vm.state.stroke = $$c;
                     }
-                } } }), _vm._v(" Stroke")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _vm._v(" Stroke")])])]), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }var $$exp = _vm.state.tanslate,
+                        $$idx = 0;if (!Array.isArray($$exp)) {
+                        _vm.state.tanslate[0] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("X")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[1], expression: "state.tanslate[1]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[1] }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }var $$exp = _vm.state.tanslate,
+                        $$idx = 1;if (!Array.isArray($$exp)) {
+                        _vm.state.tanslate[1] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Y")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
     name: 'Figures',
     props: ['animation', 'appState', 'canvas'],
@@ -951,6 +985,7 @@ var Figures = { render: function render() {
                 }),
                 fill: true,
                 stroke: true,
+                tanslate: [0, 0],
                 Path: {
                     segments: 25
                 },
