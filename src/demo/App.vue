@@ -50,7 +50,7 @@
                    <pre>count {{animation.count}}</pre>
                </div>
                <div class="mui-textfield">
-                   <button v-on:click="animation.toggle()" class="mui-btn mui-btn--small mui-btn--primary">{{ (animation.running) ? 'Pause' : 'Run' }}</button>
+                   <button v-on:click="animation.toggle()" class="mui-btn mui-btn--small mui-btn--primary">{{(animation.running) ? 'Pause' : 'Run'}}</button>
                </div>
                <div class="mui-checkbox">
                    <label><input type="checkbox" v-model="throttlePanel" v-on:click="throttle(animation.interval < 0 ? 3 : -1)"> Throttle animation</label>
@@ -58,7 +58,7 @@
                <div class="mui-panel" v-if="throttlePanel">
                    <div class="mui-textfield" style="">
                        <input type="range" v-on:change="throttle($event.target.value)" min="0" max="100">
-                       <label>fps <small>({{ 1000 / animation.interval }})</small></label>
+                       <label>fps <small>({{1000 / animation.interval}})</small></label>
                    </div>
                </div>
            </form>

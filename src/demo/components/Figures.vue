@@ -63,7 +63,7 @@
             </section>
 
             <section>
-                <div class="mui--text-title">Background</div>
+                <legend class="mui--text-subhead">Background</legend>
                 <div class="mui-checkbox">
                     <label>
                         <input type="checkbox" v-model="state.fill.show" v-on:change="init()"> Show
@@ -81,7 +81,7 @@
             </div>
 
             <section>
-                <legend class="mui--text-subhead mui--bg-primary">Stroke</legend>
+                <legend class="mui--text-subhead">Stroke</legend>
                 <div class="mui-checkbox">
                     <label>
                         <input type="checkbox" v-model="state.stroke.show" v-on:change="init()"> Show
@@ -99,6 +99,7 @@
             </div>
 
             <section>
+                <legend class="mui--text-subhead">Translate</legend>
                 <div class="mui-textfield">
                     <input type="text" v-model.number="state.tanslate[0]" v-on:change="init()" >
                     <label>X</label>
@@ -108,15 +109,15 @@
                     <label>Y</label>
                 </div>
             </section>
-
-            <pre>{{state}}</pre>
         </form>
+        <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
 
 <script>
 import Routes from '../Routes';
 import ColorPicker from './form/ColorPicker.vue';
+import Dev from './form/Dev.vue';
 
 const Space = window.Space;
 
@@ -273,7 +274,8 @@ export default {
         };
     },
     components: {
-        ColorPicker
+        ColorPicker,
+        Dev
     },
     mounted() {
         //@TODO cancel animation
