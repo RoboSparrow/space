@@ -1,19 +1,14 @@
-/* global SPACE */
+/* global Space */
 
 'use strict';
 
-// !commonJS
-var vm = require('vm');
-var fs = require('fs');
-var script = fs.readFileSync('./src/Point.js');
-vm.runInThisContext(script);
+import Space from '../src/Space';
+import assert from 'assert';
 
-var assert = require('assert');
-
-describe('new SPACE.Point.Cartesian conversions', function() {
+describe('new Space.Point.Cartesian conversions', function() {
 
   it('should convert between cartesian and spherical (maintain: 1)', function() {
-    var cP = new SPACE.Point.Cartesian(1, 1, 1);
+    var cP = new Space.Point.Cartesian(1, 1, 1);
     var sP = cP.toSpherical();
     var cP1 = sP.toCartesian();
 
@@ -23,7 +18,7 @@ describe('new SPACE.Point.Cartesian conversions', function() {
   });
 
   it('should convert between cartesian and spherical (maintain: 0)', function() {
-    var cP = new SPACE.Point.Cartesian(0, 0, 0);
+    var cP = new Space.Point.Cartesian(0, 0, 0);
     var sP = cP.toSpherical();
     var cP1 = sP.toCartesian();
 
@@ -33,7 +28,7 @@ describe('new SPACE.Point.Cartesian conversions', function() {
   });
 
   it('should convert between cartesian and spherical (maintain: float)', function() {
-    var cP = new SPACE.Point.Cartesian(22.22, 33.33, 44.44);
+    var cP = new Space.Point.Cartesian(22.22, 33.33, 44.44);
     var sP = cP.toSpherical();
     var cP1 = sP.toCartesian();
 
@@ -43,7 +38,7 @@ describe('new SPACE.Point.Cartesian conversions', function() {
   });
 
   it('should convert between cartesian and spherical (maintain: negative)', function() {
-    var cP = new SPACE.Point.Cartesian(-22.22, -33.33, -44.44);
+    var cP = new Space.Point.Cartesian(-22.22, -33.33, -44.44);
     var sP = cP.toSpherical();
     var cP1 = sP.toCartesian();
 
@@ -54,10 +49,10 @@ describe('new SPACE.Point.Cartesian conversions', function() {
 
 });
 
-describe('new SPACE.Point.Cartesian operations', function() {
+describe('new Space.Point.Cartesian operations', function() {
 
-  it('should create an independent clone', function() {
-    var p = new SPACE.Point.Cartesian(5, 5, 5);
+  it('clone() creates new instance', function() {
+    var p = new Space.Point.Cartesian(5, 5, 5);
     var clone = p.clone();
 
     assert.strictEqual(p.x, clone.x);
@@ -68,9 +63,9 @@ describe('new SPACE.Point.Cartesian operations', function() {
     assert.notStrictEqual(p.y, clone.y);
   });
 
-  it('should add points without mutationg the second point', function() {
-    var p1 = new SPACE.Point.Cartesian(5, 5, 5);
-    var p2 = new SPACE.Point.Cartesian(5, 10, 20);
+  it('add() without mutating the reference point', function() {
+    var p1 = new Space.Point.Cartesian(5, 5, 5);
+    var p2 = new Space.Point.Cartesian(5, 10, 20);
     p1.add(p2);
 
     assert.strictEqual(p1.x, 10);
@@ -82,9 +77,9 @@ describe('new SPACE.Point.Cartesian operations', function() {
     assert.strictEqual(p2.z, 20);
   });
 
-  it('should substract without mutationg the second point', function() {
-    var p1 = new SPACE.Point.Cartesian(5, 5, 5);
-    var p2 = new SPACE.Point.Cartesian(5, 10, 20);
+  it('substract() without mutating the reference point', function() {
+    var p1 = new Space.Point.Cartesian(5, 5, 5);
+    var p2 = new Space.Point.Cartesian(5, 10, 20);
     p1.substract(p2);
 
     assert.strictEqual(p1.x, 0);
@@ -96,12 +91,28 @@ describe('new SPACE.Point.Cartesian operations', function() {
     assert.strictEqual(p2.z, 20);
   });
 
+  it('equals(): true', function() {
+    var p1 = new Space.Point.Cartesian(5, 5, 5);
+    var p2 = new Space.Point.Cartesian(5, 5, 5);
+
+    assert.strictEqual(p1.equals(p2), true);
+    assert.strictEqual(p2.equals(p1), true);
+  });
+
+  it('equals(): false', function() {
+    var p1 = new Space.Point.Cartesian(5, 5, 5);
+    var p2 = new Space.Point.Cartesian(5, 10, 20);
+
+    assert.strictEqual(p1.equals(p2), false);
+    assert.strictEqual(p2.equals(p1), false);
+  });
+
 });
 
-describe('new SPACE.Point.Spherical conversions', function() {
+describe('new Space.Point.Spherical conversions', function() {
 
   it('should convert between spherical and cartesian (maintain: 1)', function() {
-    var sP = new SPACE.Point.Spherical(1, 1, 1);
+    var sP = new Space.Point.Spherical(1, 1, 1);
     var cP = sP.toCartesian();
     var sP1 = cP.toSpherical();
 
@@ -111,7 +122,7 @@ describe('new SPACE.Point.Spherical conversions', function() {
   });
 
   it('should convert between spherical and cartesian (maintain: 0)', function() {
-    var sP = new SPACE.Point.Spherical(0, 0, 0);
+    var sP = new Space.Point.Spherical(0, 0, 0);
     var cP = sP.toCartesian();
     var sP1 = cP.toSpherical();
 
@@ -121,7 +132,7 @@ describe('new SPACE.Point.Spherical conversions', function() {
   });
 
   it('should convert between spherical and cartesian (maintain: float)', function() {
-    var sP = new SPACE.Point.Spherical(22.22, Math.Pi/2,  Math.Pi/2);
+    var sP = new Space.Point.Spherical(22.22, Math.Pi/2,  Math.Pi/2);
     var cP = sP.toCartesian();
     var sP1 = cP.toSpherical();
 
@@ -131,7 +142,7 @@ describe('new SPACE.Point.Spherical conversions', function() {
   });
 
   it('should convert between spherical and cartesian (maintain: negative)', function() {
-    var sP = new SPACE.Point.Spherical(-22.22, -Math.Pi/2, -Math.Pi/2);
+    var sP = new Space.Point.Spherical(-22.22, -Math.Pi/2, -Math.Pi/2);
     var cP = sP.toCartesian();
     var sP1 = cP.toSpherical();
 

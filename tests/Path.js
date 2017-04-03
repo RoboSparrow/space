@@ -1,18 +1,13 @@
-/* globals SPACE */
+/* globals Space */
 
 'use strict';
 
-let vm = require('vm');
-let fs = require('fs');
-let script = fs.readFileSync('./src/Point.js');
-script += fs.readFileSync('./src/Path.js');
-vm.runInThisContext(script);
-
-var assert = require('assert');
+import Space from '../src/Space';
+import assert from 'assert';
 
 describe('Path 2D', function() {
     it('progress', function() {
-        let path = new SPACE.Path(50, 50);
+        let path = new Space.Path(50, 50);
         path.progress(50, 50);
 
         assert.strictEqual(path.points.length, 2);
@@ -21,7 +16,7 @@ describe('Path 2D', function() {
     });
 
     it('progress negative', function() {
-        let path = new SPACE.Path(50, 50);
+        let path = new Space.Path(50, 50);
         path.progress(50, 50);
         path.progress(-150, -150);
 
@@ -31,7 +26,7 @@ describe('Path 2D', function() {
     });
 
     it('closing an open path should add 1 point', function() {
-        let path = new SPACE.Path(50, 50);
+        let path = new Space.Path(50, 50);
         path.progress(50, 50);
         path.progress(-150, -150);
         path.close();
@@ -42,8 +37,30 @@ describe('Path 2D', function() {
         assert.strictEqual(path.isClosed(), true);
     });
 
+    it('Closing point and first point are different instances.', function() {
+        let path = new Space.Path(50, 50);
+        path.progress(50, 50);
+        path.progress(-150, -150);
+        path.close();
+
+        assert.strictEqual(path.points.length, 4);
+        assert.strictEqual(path.isClosed(), true);
+        assert.notEqual(path.first(), path.last());
+    });
+
+    it('Closing point and first point values are equal', function() {
+        let path = new Space.Path(50, 50);
+        path.progress(50, 50);
+        path.progress(-150, -150);
+        path.close();
+
+        assert.strictEqual(path.points.length, 4);
+        assert.strictEqual(path.isClosed(), true);
+        assert.deepStrictEqual(path.first(), path.last());
+    });
+
     it('closing an already closed path should leave path.points untouched', function() {
-        let path = new SPACE.Path(50, 50);
+        let path = new Space.Path(50, 50);
         path.progress(50, 50);
         path.progress(-150, -150);
         path.close();
@@ -62,7 +79,7 @@ describe('Path 2D', function() {
     });
 
     it('should open a closed path', function() {
-        let path = new SPACE.Path(50, 50);
+        let path = new Space.Path(50, 50);
         path.progress(50, 50);
         path.progress(-150, -150);
         path.close();
@@ -79,7 +96,7 @@ describe('Path 2D', function() {
     });
 
     it('opening an already closed path should leave path.points untouched', function() {
-        let path = new SPACE.Path(50, 50);
+        let path = new Space.Path(50, 50);
         path.progress(50, 50);
         path.progress(-150, -150);
 

@@ -1,20 +1,14 @@
-/* globals SPACE */
+/* globals Space */
 
 'use strict';
 
-let vm = require('vm');
-let fs = require('fs');
-let script = fs.readFileSync('./src/Point.js');
-script += fs.readFileSync('./src/Path.js');
-script += fs.readFileSync('./src/Polygon.js');
-vm.runInThisContext(script);
-
-var assert = require('assert');
+import Space from '../src/Space';
+import assert from 'assert';
 
 //@TODO polygon
 describe('Rectangle 2D', function() {
     it('square', function() {
-        let rect = new SPACE.Rectangle(100, 100);
+        let rect = new Space.Rectangle(100, 100);
 
         assert.strictEqual(rect.path.points.length, 5);// with path.close() it should be 5
 
