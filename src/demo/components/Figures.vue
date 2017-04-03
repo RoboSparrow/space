@@ -75,6 +75,17 @@
                 </div>
             </section>
 
+            <section>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.tanslate[0]" v-on:change="init()" >
+                    <label>X</label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.tanslate[1]" v-on:change="init()" >
+                    <label>Y</label>
+                </div>
+            </section>
+
             <pre>{{state}}</pre>
         </form>
     </div>
@@ -129,6 +140,14 @@ const compute = function (figure, state, canvas) {
             fig = null;
         }
 
+    }
+    // translate
+    const hasTranslate = state.tanslate.reduce((a, b) => {
+        return a + b;
+    });
+    console.log(fig.path);
+    if (hasTranslate) {
+        fig.path.translate(state.tanslate[0], state.tanslate[1]);
     }
 
     return (typeof fig.path !== 'undefined') ? fig.path : fig;
@@ -187,6 +206,7 @@ export default {
                 }),
                 fill: true,
                 stroke: true,
+                tanslate: [0, 0],
                 Path: {
                     segments: 25
                 },
