@@ -3783,7 +3783,10 @@ header a {
   padding-left: 5px;
   padding-right: 5px; }
 
-#sidebar .mui-form--inline .mui-textfield {
+#sidebar .mui-form--inline section {
+  margin-top: 5px; }
+
+#sidebar .mui-form--inline section div {
   padding-right: 5px;
   max-width: 75px; }
 

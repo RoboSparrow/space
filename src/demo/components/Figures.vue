@@ -17,14 +17,14 @@
         </div>
         <p></p>
         <form class="mui-form--inline">
-            
+
             <section v-if="figure === 'Path'">
                 <div class="mui-textfield">
-                    <input type="range" v-model.number="state.Path.segments" v-on:change="init()" min="1" max="100">
+                    <input type="text" v-model.number="state.Path.segments" v-on:change="init()" >
                     <label>Segments <small>({{ state.Path.segments }})</small></label>
-                </div>  
+                </div>
             </section>
-            
+
             <section v-if="figure === 'Polygon'">
                 <div class="mui-textfield">
                     <input type="text" v-model.number="state.Polygon.segments" v-on:change="init()" >
@@ -35,7 +35,7 @@
                     <label>Radius</label>
                 </div>
             </section>
-            
+
             <section v-if="figure === 'Star'">
                 <div class="mui-textfield">
                     <input type="text" v-model.number="state.Star.segments" v-on:change="init()" >
@@ -50,7 +50,7 @@
                     <label>inner Radius</label>
                 </div>
             </section>
-            
+
             <section v-if="figure === 'Rectangle'">
                 <div class="mui-textfield">
                     <input type="text" v-model.number="state.Rectangle.width" v-on:change="init()" >
@@ -61,7 +61,20 @@
                     <label>Height</label>
                 </div>
             </section>
-            
+
+            <section>
+                <div class="mui-checkbox">
+                    <label>
+                        <input type="checkbox" v-model="state.fill" v-on:change="init()" > Fill
+                    </label>
+                </div>
+                <div class="mui-checkbox">
+                    <label>
+                        <input type="checkbox" v-model="state.stroke" v-on:change="init()" > Stroke
+                    </label>
+                </div>
+            </section>
+
             <pre>{{state}}</pre>
         </form>
     </div>
@@ -125,8 +138,8 @@ const compute = function (figure, state, canvas) {
 const draw = function (figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
-    canvas.ctx.fillStyle = (figure !== 'Path') ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
+    canvas.ctx.fillStyle = (state.fill && figure !== 'Path') ? state.canvas.fillStyle : null;
+    canvas.ctx.strokeStyle = (state.stroke) ? state.canvas.strokeStyle : null;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
     // path
@@ -172,6 +185,8 @@ export default {
                     fillStyle: 'rgba(255, 255, 255, 1)',
                     lineWidth: 2
                 }),
+                fill: true,
+                stroke: true,
                 Path: {
                     segments: 25
                 },

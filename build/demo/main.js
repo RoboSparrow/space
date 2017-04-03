@@ -806,8 +806,8 @@ var compute$5 = function compute$5(figure, state, canvas) {
 var draw$1 = function draw$1(figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
-    canvas.ctx.fillStyle = figure !== 'Path' ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
+    canvas.ctx.fillStyle = state.fill && figure !== 'Path' ? state.canvas.fillStyle : null;
+    canvas.ctx.strokeStyle = state.stroke ? state.canvas.strokeStyle : null;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
     // path
@@ -836,10 +836,12 @@ var Figures = { render: function render() {
             return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
                         _vm.goTo(fig);
                     } } }, [_vm._v(_vm._s(fig.name))])]) : _vm._e();
-        }))]), _c('p'), _c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "100" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
+        }))]), _c('p'), _c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
                     _vm.init();
-                }, "__r": function __r($event) {
-                    _vm.state.Path.segments = _vm._n($event.target.value);
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Path.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
                 } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _vm.figure === 'Polygon' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Polygon.segments, expression: "state.Polygon.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Polygon.segments }, on: { "change": function change($event) {
@@ -898,7 +900,37 @@ var Figures = { render: function render() {
                     }_vm.state.Rectangle.height = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _c('section', [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill, expression: "state.fill" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill) ? _vm._i(_vm.state.fill, null) > -1 : _vm.state.fill }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.fill,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.fill = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.fill = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.fill = $$c;
+                    }
+                } } }), _vm._v(" Fill")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke, expression: "state.stroke" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke) ? _vm._i(_vm.state.stroke, null) > -1 : _vm.state.stroke }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.stroke,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.stroke = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.stroke = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.stroke = $$c;
+                    }
+                } } }), _vm._v(" Stroke")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
     }, staticRenderFns: [],
     name: 'Figures',
     props: ['animation', 'appState', 'canvas'],
@@ -917,6 +949,8 @@ var Figures = { render: function render() {
                     fillStyle: 'rgba(255, 255, 255, 1)',
                     lineWidth: 2
                 }),
+                fill: true,
+                stroke: true,
                 Path: {
                     segments: 25
                 },
