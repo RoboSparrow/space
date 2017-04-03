@@ -31,6 +31,15 @@ Path.prototype.progress = function (x, y, z) {
     // return this?
 };
 
+Path.prototype.translate = function (x, y, z) {
+    let i;
+    const v = new Point.Cartesian(x, y, z);
+    const length = this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].add(v);
+    }
+};
+
 Path.prototype.last = function () {
     return this.points[this.points.length - 1];
 };
@@ -48,13 +57,13 @@ Path.prototype.open = function () {
 
 Path.prototype.close = function () {
     if (!this.isClosed()) {
-        this.points.push(this.first());
+        this.points.push(this.first().clone());
     }
     return this.last();
 };
 
 Path.prototype.isClosed = function () {
-    return this.last() === this.first();
+    return this.last().equals(this.first());
 };
 
 export default Path;

@@ -66,15 +66,15 @@ const Rectangle = function (width, height, center) {
 ////
 
 const Star = function (segments, outerRadius, innerRadius, center) {
-    center = center || null;// node v8: no default params
 
-    const _point = function(radius, delta, center){
+    const _point = function (radius, delta, center) {
         let point = new Point.Polar(radius, delta);
         point = point.toCartesian();
         point.add(center);
         return point;
     };
 
+    center = center || null;// node v8: no default params
     const path = new Path();
     let i = 0;
 

@@ -64,6 +64,10 @@ Point.Cartesian.prototype.substract = function (p) {
     this.z -= p.z;
 };
 
+Point.Cartesian.prototype.equals = function (p) {
+    return ((this.x === p.x) && (this.y === p.y) && (this.z === p.z));
+};
+
 ////
 // Point.Polar
 ////
