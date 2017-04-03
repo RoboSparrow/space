@@ -34,7 +34,7 @@
 
         <footer id="footer">
             <div class="app--footer-content mui-container-fluid mui--align-middle">
-                Demo made with <a href="https://vuejs.org/">Vue</a> & <a href="https://www.muicss.com">MUICSS</a>
+                Demo made with <a href="https://vuejs.org/">Vue</a> & <a href="https://www.muicss.com">MUI</a>
             </div>
         </footer>
 

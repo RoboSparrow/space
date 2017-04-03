@@ -7,11 +7,20 @@ import Figures from './components/Figures.vue';
 
 const routes = [
     {
-        name: 'Home',
+        name: '',
         path: '/',
+        component: Path,
+        meta: {
+            menu: false,
+            figure: false
+        }
+    },
+    {
+        name: 'Home',
+        path: '/Home',
         component: Home,
         meta: {
-            menu: true,
+            menu: false,
             figure: false
         }
     },

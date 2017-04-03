@@ -739,6 +739,95 @@ var Star = { render: function render() {
     if (document) {
         var head = document.head || document.getElementsByTagName('head')[0],
             style = document.createElement('style'),
+            css = " .app--color-picker pre { text-align: center; border: 1px solid white; padding: 10px; font-size: 10px; } ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var match = function match(str, model) {
+    var i = void 0;
+    var n = void 0;
+    var matches = str.match(/\d+/g);
+    for (i = 0; i < matches.length; i += 1) {
+        n = parseInt(matches[i], 10);
+        if (!isNaN(n)) {
+            model[i] = matches[i];
+        }
+    }
+    return matches;
+};
+
+var ColorPicker = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "app--color-picker" }, [_c('table', { staticClass: "mui-table" }, [_c('tbody', [_c('tr', [_c('td', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.RGBA[0], expression: "RGBA[0]", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "255" }, domProps: { "value": _vm.RGBA[0] }, on: { "__r": function __r($event) {
+                    var $$exp = _vm.RGBA,
+                        $$idx = 0;if (!Array.isArray($$exp)) {
+                        _vm.RGBA[0] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } })]), _c('td', [_c('strong', { staticClass: "app--indicator", style: { color: 'rgb(' + _vm.RGBA[0] + ', 0, 0)' } }, [_vm._v("◼")])]), _c('td', [_c('small', [_vm._v("Red(" + _vm._s(_vm.RGBA[0]) + ")")])])]), _c('tr', [_c('td', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.RGBA[1], expression: "RGBA[1]", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "255" }, domProps: { "value": _vm.RGBA[1] }, on: { "__r": function __r($event) {
+                    var $$exp = _vm.RGBA,
+                        $$idx = 1;if (!Array.isArray($$exp)) {
+                        _vm.RGBA[1] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } })]), _c('td', [_c('strong', { staticClass: "app--indicator", style: { color: 'rgb(0, ' + _vm.RGBA[1] + ', 0)' } }, [_vm._v("◼")])]), _c('td', [_c('small', [_vm._v("Green(" + _vm._s(_vm.RGBA[1]) + ")")])])]), _c('tr', [_c('td', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.RGBA[2], expression: "RGBA[2]", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "255" }, domProps: { "value": _vm.RGBA[2] }, on: { "__r": function __r($event) {
+                    var $$exp = _vm.RGBA,
+                        $$idx = 2;if (!Array.isArray($$exp)) {
+                        _vm.RGBA[2] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } })]), _c('td', [_c('strong', { staticClass: "app--indicator", style: { color: 'rgb(0, 0, ' + _vm.RGBA[2] + ')' } }, [_vm._v("◼")])]), _c('td', [_c('small', [_vm._v("Blue(" + _vm._s(_vm.RGBA[2]) + ")")])])]), _c('tr', [_c('td', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.RGBA[3], expression: "RGBA[3]", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "1", "step": "0.1" }, domProps: { "value": _vm.RGBA[3] }, on: { "__r": function __r($event) {
+                    var $$exp = _vm.RGBA,
+                        $$idx = 3;if (!Array.isArray($$exp)) {
+                        _vm.RGBA[3] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } })]), _c('td'), _c('td', [_c('small', [_vm._v("Alpha(" + _vm._s(_vm.RGBA[3]) + ")")])])])])]), _c('pre', { staticClass: "app--color", style: { backgroundColor: _vm.rgbaString, color: _vm.rgbaStringContrast } }, [_vm._v(_vm._s(_vm.rgbaString))]), _c('a', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+                    _vm.setColor();
+                } } }, [_vm._v("Set color")])]);
+    }, staticRenderFns: [],
+    name: 'ColorPicker',
+    props: ['rgba', 'targ'],
+    data: function data() {
+        return {
+            RGBA: match(this.rgba, [0, 0, 0, 1])
+        };
+    },
+    computed: {
+        rgbaString: function rgbaString() {
+            return 'rgba(' + this.RGBA.toString() + ')';
+        },
+        rgbaStringContrast: function rgbaStringContrast() {
+            var yiq = (this.RGBA[0] * 299 + this.RGBA[1] * 587 + this.RGBA[2] * 114) / 1000;
+            return yiq >= 128 ? 'black' : 'white';
+        }
+    },
+    methods: {
+        setColor: function setColor() {
+            this.$parent.$emit('color-picker:' + this.targ, this.rgbaString);
+        }
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
             css = " ";style.type = 'text/css';if (style.styleSheet) {
             style.styleSheet.cssText = css;
         } else {
@@ -803,7 +892,7 @@ var compute$5 = function compute$5(figure, state, canvas) {
     var hasTranslate = state.tanslate.reduce(function (a, b) {
         return a + b;
     });
-    console.log(fig.path);
+
     if (hasTranslate) {
         fig.path.translate(state.tanslate[0], state.tanslate[1]);
     }
@@ -814,8 +903,8 @@ var compute$5 = function compute$5(figure, state, canvas) {
 var draw$1 = function draw$1(figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
-    canvas.ctx.fillStyle = state.fill && figure !== 'Path' ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = state.stroke ? state.canvas.strokeStyle : null;
+    canvas.ctx.fillStyle = state.fill.show && figure !== 'Path' ? state.canvas.fillStyle : null;
+    canvas.ctx.strokeStyle = state.stroke.show && figure !== 'Path' ? state.canvas.strokeStyle : null;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
     // path
@@ -844,7 +933,7 @@ var Figures = { render: function render() {
             return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
                         _vm.goTo(fig);
                     } } }, [_vm._v(_vm._s(fig.name))])]) : _vm._e();
-        }))]), _c('p'), _c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
+        }))]), _c('p'), _c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "app--inline-field mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -908,37 +997,63 @@ var Figures = { render: function render() {
                     }_vm.state.Rectangle.height = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _c('section', [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill, expression: "state.fill" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill) ? _vm._i(_vm.state.fill, null) > -1 : _vm.state.fill }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _c('section', [_c('div', { staticClass: "mui--text-title" }, [_vm._v("Background")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.show, expression: "state.fill.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.show) ? _vm._i(_vm.state.fill.show, null) > -1 : _vm.state.fill.show }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
-                    var $$a = _vm.state.fill,
+                    var $$a = _vm.state.fill.show,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
                         var $$v = null,
                             $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.state.fill = $$a.concat($$v));
+                            $$i < 0 && (_vm.state.fill.show = $$a.concat($$v));
                         } else {
-                            $$i > -1 && (_vm.state.fill = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                            $$i > -1 && (_vm.state.fill.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
                         }
                     } else {
-                        _vm.state.fill = $$c;
+                        _vm.state.fill.show = $$c;
                     }
-                } } }), _vm._v(" Fill")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke, expression: "state.stroke" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke) ? _vm._i(_vm.state.stroke, null) > -1 : _vm.state.stroke }, on: { "change": function change($event) {
-                    _vm.init();
-                }, "__c": function __c($event) {
-                    var $$a = _vm.state.stroke,
+                } } }), _vm._v(" Show")])]), _vm.state.fill.show ? _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.edit, expression: "state.fill.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.edit) ? _vm._i(_vm.state.fill.edit, null) > -1 : _vm.state.fill.edit }, on: { "__c": function __c($event) {
+                    var $$a = _vm.state.fill.edit,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
                         var $$v = null,
                             $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.state.stroke = $$a.concat($$v));
+                            $$i < 0 && (_vm.state.fill.edit = $$a.concat($$v));
                         } else {
-                            $$i > -1 && (_vm.state.stroke = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                            $$i > -1 && (_vm.state.fill.edit = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
                         }
                     } else {
-                        _vm.state.stroke = $$c;
+                        _vm.state.fill.edit = $$c;
                     }
-                } } }), _vm._v(" Stroke")])])]), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead mui--bg-primary" }, [_vm._v("Stroke")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.show, expression: "state.stroke.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.show) ? _vm._i(_vm.state.stroke.show, null) > -1 : _vm.state.stroke.show }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.stroke.show,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.stroke.show = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.stroke.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.stroke.show = $$c;
+                    }
+                } } }), _vm._v(" Show")])]), _vm.state.stroke.show ? _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
+                    var $$a = _vm.state.stroke.edit,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.stroke.edit = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.stroke.edit = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.stroke.edit = $$c;
+                    }
+                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e(), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -974,6 +1089,20 @@ var Figures = { render: function render() {
             this.init();
         }
     },
+    created: function created() {
+        var _this = this;
+
+        this.$on('color-picker:fillStyle', function (val) {
+            _this.state.canvas.fillStyle = val;
+            _this.state.fill.edit = false;
+            _this.init();
+        });
+        this.$on('color-picker:strokeStyle', function (val) {
+            _this.state.canvas.strokeStyle = val;
+            _this.state.stroke.edit = false;
+            _this.init();
+        });
+    },
     data: function data() {
         return {
             state: {
@@ -983,9 +1112,17 @@ var Figures = { render: function render() {
                     fillStyle: 'rgba(255, 255, 255, 1)',
                     lineWidth: 2
                 }),
-                fill: true,
-                stroke: true,
+                // form
+                fill: {
+                    show: true,
+                    edit: false
+                },
+                stroke: {
+                    show: true,
+                    edit: false
+                },
                 tanslate: [0, 0],
+                // form defaults per figure
                 Path: {
                     segments: 25
                 },
@@ -1007,6 +1144,9 @@ var Figures = { render: function render() {
             figure: typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'Path'
         };
     },
+    components: {
+        ColorPicker: ColorPicker
+    },
     mounted: function mounted() {
         //@TODO cancel animation
         this.animation.only(function () {}).cancel(); // !!!!!
@@ -1015,13 +1155,13 @@ var Figures = { render: function render() {
 
     methods: {
         init: function init() {
-            var _this = this;
+            var _this2 = this;
 
             var timeout = null;
             this.canvas.clear();
             timeout = window.setTimeout(function () {
-                var path = compute$5(_this.figure, _this.state, _this.canvas.canvas);
-                draw$1(_this.figure, path, _this.state, _this.canvas);
+                var path = compute$5(_this2.figure, _this2.state, _this2.canvas.canvas);
+                draw$1(_this2.figure, path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);
             }, 100);
         },
@@ -1032,11 +1172,19 @@ var Figures = { render: function render() {
 };
 
 var routes = [{
-    name: 'Home',
+    name: '',
     path: '/',
+    component: Path,
+    meta: {
+        menu: false,
+        figure: false
+    }
+}, {
+    name: 'Home',
+    path: '/Home',
     component: Home,
     meta: {
-        menu: true,
+        menu: false,
         figure: false
     }
 }, {
@@ -1174,7 +1322,7 @@ var App = { render: function render() {
                     _vm.throttle($event.target.value);
                 } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]) : _vm._e(), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(1)]);
     }, staticRenderFns: [function () {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUICSS")])])]);
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUI")])])]);
     }, function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('main', { staticClass: "mui-container-fluid", attrs: { "id": "content" } }, [_c('div', { staticClass: "mui-row" }, [_c('div', { staticClass: "mui-col-md-12 app--canvas" })])]);
     }],

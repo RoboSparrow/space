@@ -19,7 +19,7 @@
         <form class="mui-form--inline">
 
             <section v-if="figure === 'Path'">
-                <div class="mui-textfield">
+                <div class="app--inline-field mui-textfield">
                     <input type="text" v-model.number="state.Path.segments" v-on:change="init()" >
                     <label>Segments <small>({{ state.Path.segments }})</small></label>
                 </div>
@@ -63,17 +63,40 @@
             </section>
 
             <section>
+                <div class="mui--text-title">Background</div>
                 <div class="mui-checkbox">
                     <label>
-                        <input type="checkbox" v-model="state.fill" v-on:change="init()" > Fill
+                        <input type="checkbox" v-model="state.fill.show" v-on:change="init()"> Show
                     </label>
                 </div>
-                <div class="mui-checkbox">
+                <div class="mui-checkbox" v-if="state.fill.show">
                     <label>
-                        <input type="checkbox" v-model="state.stroke" v-on:change="init()" > Stroke
+                        <input type="checkbox" v-model="state.fill.edit" > Edit
                     </label>
                 </div>
             </section>
+
+            <div class="mui-panel" v-if="state.fill.edit">
+                <color-picker :targ="'fillStyle'" :rgba="state.canvas.fillStyle"></color-picker>
+            </div>
+
+            <section>
+                <legend class="mui--text-subhead mui--bg-primary">Stroke</legend>
+                <div class="mui-checkbox">
+                    <label>
+                        <input type="checkbox" v-model="state.stroke.show" v-on:change="init()"> Show
+                    </label>
+                </div>
+                <div class="mui-checkbox" v-if="state.stroke.show">
+                    <label>
+                        <input type="checkbox" v-model="state.stroke.edit" > Edit
+                    </label>
+                </div>
+            </section>
+
+            <div class="mui-panel" v-if="state.stroke.edit">
+                <color-picker :targ="'strokeStyle'" :rgba="state.canvas.strokeStyle"></color-picker>
+            </div>
 
             <section>
                 <div class="mui-textfield">
@@ -93,6 +116,7 @@
 
 <script>
 import Routes from '../Routes';
+import ColorPicker from './form/ColorPicker.vue';
 
 const Space = window.Space;
 
@@ -145,7 +169,7 @@ const compute = function (figure, state, canvas) {
     const hasTranslate = state.tanslate.reduce((a, b) => {
         return a + b;
     });
-    console.log(fig.path);
+
     if (hasTranslate) {
         fig.path.translate(state.tanslate[0], state.tanslate[1]);
     }
@@ -157,8 +181,8 @@ const compute = function (figure, state, canvas) {
 const draw = function (figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
-    canvas.ctx.fillStyle = (state.fill && figure !== 'Path') ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = (state.stroke) ? state.canvas.strokeStyle : null;
+    canvas.ctx.fillStyle = (state.fill.show && figure !== 'Path') ? state.canvas.fillStyle : null;
+    canvas.ctx.strokeStyle = (state.stroke.show && figure !== 'Path') ? state.canvas.strokeStyle : null;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
     // path
@@ -195,6 +219,18 @@ export default {
             this.init();
         }
     },
+    created: function () {
+        this.$on('color-picker:fillStyle', (val) => {
+            this.state.canvas.fillStyle = val;
+            this.state.fill.edit = false;
+            this.init();
+        });
+        this.$on('color-picker:strokeStyle', (val) => {
+            this.state.canvas.strokeStyle = val;
+            this.state.stroke.edit = false;
+            this.init();
+        });
+    },
     data: function () {
         return {
             state: {
@@ -204,9 +240,17 @@ export default {
                     fillStyle: 'rgba(255, 255, 255, 1)',
                     lineWidth: 2
                 }),
-                fill: true,
-                stroke: true,
+                // form
+                fill: {
+                    show: true,
+                    edit: false
+                },
+                stroke: {
+                    show: true,
+                    edit: false
+                },
                 tanslate: [0, 0],
+                // form defaults per figure
                 Path: {
                     segments: 25
                 },
@@ -227,6 +271,9 @@ export default {
             figures: Routes.figures(),
             figure: (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'Path'
         };
+    },
+    components: {
+        ColorPicker
     },
     mounted() {
         //@TODO cancel animation
