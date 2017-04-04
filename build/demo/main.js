@@ -130,6 +130,7 @@ var State = {
         fillStyle: 'rgba(0, 0, 0, .08)',
         lineWidth: 0.1
     },
+
     // shallow(!) clone and merge in submitted properties
     factor: function factor(property, merge) {
         var _this = this;
@@ -140,6 +141,7 @@ var State = {
         });
         return merge;
     }
+
 };
 
 var Utils = {
@@ -335,6 +337,43 @@ var Home = { render: function render() {
     }
 })();
 
+var Dev = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.show, expression: "show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.show) ? _vm._i(_vm.show, null) > -1 : _vm.show }, on: { "__c": function __c($event) {
+                    var $$a = _vm.show,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.show = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.show = $$c;
+                    }
+                } } }), _vm._v(" " + _vm._s(_vm.label))])])])]), _vm.show ? _c('pre', [_vm._v(_vm._s(_vm.data))]) : _vm._e()]);
+    }, staticRenderFns: [],
+    name: 'Dev',
+    props: ['data', 'label'],
+    data: function data() {
+        return {
+            show: false
+        };
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
 var Space$1 = window.Space;
 
 var compute$1 = function compute$1(state, canvas) {
@@ -361,7 +400,7 @@ var compute$1 = function compute$1(state, canvas) {
 };
 
 var Path = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "800", "step": "10" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "800", "step": "10" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
                     _vm.state.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -369,10 +408,13 @@ var Path = { render: function render() {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Path',
     props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
     data: function data() {
         return {
             state: {
@@ -451,7 +493,7 @@ var compute$2 = function compute$2(state, canvas) {
 };
 
 var Polygon = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -459,10 +501,13 @@ var Polygon = { render: function render() {
                     _vm.state.radiusRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1)])]);
     }, staticRenderFns: [],
     name: 'Polygon',
     props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
     data: function data() {
         return {
             state: {
@@ -551,7 +596,7 @@ var compute$3 = function compute$3(state, canvas) {
 };
 
 var Rectangle = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
                     _vm.state.widthRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -559,10 +604,13 @@ var Rectangle = { render: function render() {
                     _vm.state.heightRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Rectangle',
     props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
     data: function data() {
         return {
             state: {
@@ -657,7 +705,7 @@ var compute$4 = function compute$4(state, canvas) {
 };
 
 var Star = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -669,10 +717,13 @@ var Star = { render: function render() {
                     _vm.state.innerRadiusRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])]), _c('pre', [_vm._v(_vm._s(_vm.state))])])]);
+                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Star',
     props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
     data: function data() {
         return {
             state: {
@@ -836,43 +887,6 @@ var ColorPicker = { render: function render() {
     }
 })();
 
-var Dev = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.show, expression: "show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.show) ? _vm._i(_vm.show, null) > -1 : _vm.show }, on: { "__c": function __c($event) {
-                    var $$a = _vm.show,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
-                        var $$v = null,
-                            $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.show = $$a.concat($$v));
-                        } else {
-                            $$i > -1 && (_vm.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
-                        }
-                    } else {
-                        _vm.show = $$c;
-                    }
-                } } }), _vm._v(" " + _vm._s(_vm.label))])])])]), _vm.show ? _c('pre', [_vm._v(_vm._s(_vm.data))]) : _vm._e()]);
-    }, staticRenderFns: [],
-    name: 'Dev',
-    props: ['data', 'label'],
-    data: function data() {
-        return {
-            show: false
-        };
-    }
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
 var Space$5 = window.Space;
 
 var compute$5 = function compute$5(figure, state, canvas) {
@@ -963,6 +977,12 @@ var draw$1 = function draw$1(figure, path, state, canvas) {
     // finish
     canvas.ctx.closePath();
     canvas.ctx.restore();
+};
+
+var defaults = {
+    strokeStyle: 'rgba(255, 255, 255, 1)',
+    fillStyle: 'rgba(255, 255, 255, 1)',
+    lineWidth: 2
 };
 
 var Figures = { render: function render() {
@@ -1090,7 +1110,15 @@ var Figures = { render: function render() {
                     } else {
                         _vm.state.stroke.edit = $$c;
                     }
-                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Translate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.canvas.lineWidth = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Width")])]), _c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Translate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1144,11 +1172,7 @@ var Figures = { render: function render() {
         return {
             state: {
                 origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(255, 255, 255, 1)',
-                    lineWidth: 2
-                }),
+                canvas: this.appState.factor('canvas', defaults),
                 // form
                 fill: {
                     show: true,
@@ -1197,6 +1221,7 @@ var Figures = { render: function render() {
 
             var timeout = null;
             this.canvas.clear();
+            //@TODO
             timeout = window.setTimeout(function () {
                 var path = compute$5(_this2.figure, _this2.state, _this2.canvas.canvas);
                 draw$1(_this2.figure, path, _this2.state, _this2.canvas);
@@ -1332,6 +1357,47 @@ var Routes = {
     }
 })();
 
+var Animation$2 = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm.animation.id ? _c('form', { staticClass: "mui-form--inline" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Animation "), _c('small', [_vm._v(_vm._s(_vm.animation.count))])]), _c('a', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+                    _vm.animation.toggle();
+                } } }, [_vm._v(_vm._s(_vm.animation.running ? 'pause' : 'play') + " ")]), _c('a', { staticClass: "mui-btn mui-btn--small app--btn", on: { "click": function click($event) {
+                    _vm.show = !_vm.show;
+                } } }, [_vm._v("Throttle")])])]) : _vm._e(), _vm.show ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
+                    _vm.throttle($event.target.value);
+                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]);
+    }, staticRenderFns: [],
+    name: 'Animation',
+    props: ['animation'],
+    data: function data() {
+        return {
+            show: false
+        };
+    },
+    methods: {
+        throttle: function throttle(value) {
+            if (value === null) {
+                return;
+            }
+            value = parseInt(value, 10);
+            if (!isNaN(value)) {
+                this.animation.fps(value);
+            }
+        }
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
 var App = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('header', { attrs: { "id": "header" } }, [_c('div', { staticClass: "mui-appbar mui--appbar-line-height mui--z1" }, [_c('div', { staticClass: "mui-container-fluid" }, [_c('table', { attrs: { "width": "100%" } }, [_c('tr', { staticClass: "mui--appbar-height" }, [_c('td', [_c('span', { staticClass: "app--brand" }), _c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v("Space "), _c('span', { staticClass: "mui--text-accent" }, [_vm._v("/")]), _vm._v(" " + _vm._s(_vm.$route.name) + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.routes, function (route) {
             return route.name ? _c('li', { class: { 'router-link-active': _vm.$route.name === route.name } }, [_c('a', { on: { "click": function click($event) {
@@ -1339,26 +1405,7 @@ var App = { render: function render() {
                     } } }, [_vm._v(_vm._s(route.name))])]) : _vm._e();
         }))])]), _c('td', [_c('a', { staticClass: "app--sidebar-trigger mui--pull-right mui--text-display1", on: { "click": function click($event) {
                     _vm.toggle();
-                } } }, [_c('i', { staticClass: "zmdi zmdi-settings" })])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm.$route.name ? _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v(_vm._s(_vm.$route.name))])]) : _vm._e(), _c('div', { staticClass: "mui-divider" }), _vm.animation.id ? _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('pre', [_vm._v("count " + _vm._s(_vm.animation.count))])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
-                    _vm.animation.toggle();
-                } } }, [_vm._v(_vm._s(_vm.animation.running ? 'Pause' : 'Run'))])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.throttlePanel, expression: "throttlePanel" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.throttlePanel) ? _vm._i(_vm.throttlePanel, null) > -1 : _vm.throttlePanel }, on: { "click": function click($event) {
-                    _vm.throttle(_vm.animation.interval < 0 ? 3 : -1);
-                }, "__c": function __c($event) {
-                    var $$a = _vm.throttlePanel,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
-                        var $$v = null,
-                            $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.throttlePanel = $$a.concat($$v));
-                        } else {
-                            $$i > -1 && (_vm.throttlePanel = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
-                        }
-                    } else {
-                        _vm.throttlePanel = $$c;
-                    }
-                } } }), _vm._v(" Throttle animation")])]), _vm.throttlePanel ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
-                    _vm.throttle($event.target.value);
-                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]) : _vm._e(), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(1)]);
+                } } }, [_c('i', { staticClass: "zmdi zmdi-settings" })])])])])])])]), _vm._m(0), _c('aside', { staticClass: "mui-panel", class: { 'visible': _vm.sidebar }, attrs: { "id": "sidebar" } }, [_vm.$route.name ? _c('div', { staticClass: "mui--appbar-line-height" }, [_c('span', { staticClass: "mui--text-title" }, [_vm._v(_vm._s(_vm.$route.name))])]) : _vm._e(), _c('div', { staticClass: "mui-divider" }), _c('animation', { attrs: { "animation": _vm.animation } }), _c('router-view', { staticClass: "view", attrs: { "app-state": _vm.appState, "animation": _vm.animation, "canvas": _vm.canvas } })], 1), _vm._m(1)]);
     }, staticRenderFns: [function () {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('footer', { attrs: { "id": "footer" } }, [_c('div', { staticClass: "app--footer-content mui-container-fluid mui--align-middle" }, [_vm._v("Demo made with "), _c('a', { attrs: { "href": "https://vuejs.org/" } }, [_vm._v("Vue")]), _vm._v(" & "), _c('a', { attrs: { "href": "https://www.muicss.com" } }, [_vm._v("MUI")])])]);
     }, function () {
@@ -1366,6 +1413,9 @@ var App = { render: function render() {
     }],
     name: 'app',
     props: ['animation', 'appState', 'canvas', 'routes'],
+    components: {
+        Animation: Animation$2
+    },
     mounted: function mounted() {
         this.sidebar = document.getElementById('sidebar');
 
@@ -1377,15 +1427,6 @@ var App = { render: function render() {
     },
 
     methods: {
-        throttle: function throttle(value) {
-            if (value === null) {
-                return;
-            }
-            value = parseInt(value, 10);
-            if (!isNaN(value)) {
-                this.animation.fps(value);
-            }
-        },
         goTo: function goTo(route) {
             var to = route.path.indexOf('/:') > -1 ? { name: route.name, params: {} } : route.path;
             this.$router.push(to);
@@ -1401,8 +1442,7 @@ var App = { render: function render() {
     },
     data: function data() {
         return {
-            sidebar: null,
-            throttlePanel: 0
+            sidebar: null
         };
     }
 };

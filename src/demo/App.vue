@@ -45,23 +45,7 @@
             </div>
             <div class="mui-divider"></div>
 
-            <form v-if="animation.id" class="mui-form">
-               <div class="mui-textfield">
-                   <pre>count {{animation.count}}</pre>
-               </div>
-               <div class="mui-textfield">
-                   <button v-on:click="animation.toggle()" class="mui-btn mui-btn--small mui-btn--primary">{{(animation.running) ? 'Pause' : 'Run'}}</button>
-               </div>
-               <div class="mui-checkbox">
-                   <label><input type="checkbox" v-model="throttlePanel" v-on:click="throttle(animation.interval < 0 ? 3 : -1)"> Throttle animation</label>
-               </div>
-               <div class="mui-panel" v-if="throttlePanel">
-                   <div class="mui-textfield" style="">
-                       <input type="range" v-on:change="throttle($event.target.value)" min="0" max="100">
-                       <label>fps <small>({{1000 / animation.interval}})</small></label>
-                   </div>
-               </div>
-           </form>
+            <animation :animation="animation"></animation>
 
            <router-view class="view"
                :app-state="appState"
@@ -80,9 +64,14 @@
 </template>
 
 <script>
+import Animation from './components/form/Animation.vue';
+
 export default {
     name: 'app',
     props: ['animation', 'appState', 'canvas', 'routes'],
+    components: {
+        Animation
+    },
     mounted() {
         this.sidebar = document.getElementById('sidebar');
 
@@ -93,15 +82,6 @@ export default {
         this.canvas.ctx.lineWidth = this.appState.canvas.lineWidth;
     },
     methods: {
-        throttle: function (value) {
-            if (value === null) {
-                return;
-            }
-            value = parseInt(value, 10);
-            if (!isNaN(value)) {
-                this.animation.fps(value);
-            }
-        },
         goTo: function (route) {
             const to = (route.path.indexOf('/:') > -1) ? { name: route.name, params: {} } : route.path;
             this.$router.push(to);
@@ -115,10 +95,9 @@ export default {
             this.sidebar.style.right = ((right < 0) ? 0 : -this.sidebar.clientWidth) + 'px';
         }
     },
-    data() {
+    data: function () {
         return {
-            sidebar: null,
-            throttlePanel: 0
+            sidebar: null
         };
     }
 };

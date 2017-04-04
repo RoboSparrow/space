@@ -95,6 +95,10 @@
             </section>
 
             <div class="mui-panel" v-if="state.stroke.edit">
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.canvas.lineWidth" v-on:change="init()" >
+                    <label>Width</label>
+                </div>
                 <color-picker :targ="'strokeStyle'" :rgba="state.canvas.strokeStyle"></color-picker>
             </div>
 
@@ -110,6 +114,7 @@
                 </div>
             </section>
         </form>
+
         <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
@@ -207,6 +212,12 @@ const draw = function (figure, path, state, canvas) {
     canvas.ctx.restore();
 };
 
+const defaults = {
+    strokeStyle: 'rgba(255, 255, 255, 1)',
+    fillStyle: 'rgba(255, 255, 255, 1)',
+    lineWidth: 2
+};
+
 export default {
     name: 'Figures',
     props: [
@@ -236,11 +247,7 @@ export default {
         return {
             state: {
                 origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(255, 255, 255, 1)',
-                    lineWidth: 2
-                }),
+                canvas: this.appState.factor('canvas', defaults),
                 // form
                 fill: {
                     show: true,
@@ -286,6 +293,7 @@ export default {
         init: function () {
             let timeout = null;
             this.canvas.clear();
+            //@TODO
             timeout = window.setTimeout(() => {
                 const path = compute(this.figure, this.state, this.canvas.canvas);
                 draw(this.figure, path, this.state, this.canvas);

@@ -6,6 +6,7 @@ const State = {
         fillStyle: 'rgba(0, 0, 0, .08)',
         lineWidth: 0.1
     },
+
     // shallow(!) clone and merge in submitted properties
     factor: function (property, merge) {
         merge = merge || {};
@@ -14,6 +15,7 @@ const State = {
         });
         return merge;
     }
+
 };
 
 export default State;

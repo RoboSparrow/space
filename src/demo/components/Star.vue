@@ -1,25 +1,30 @@
 <template>
     <div>
         <form class="mui-form">
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
-            </div>
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
-                <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
-            </div>
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
-                <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
-            </div>
-            <pre>{{state}}</pre>
+            <section>
+                <legend class="mui--text-subhead">Edit</legend>
+                <div class="mui-textfield">
+                    <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                    <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
+                    <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
+                    <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
+                </div>
+            </section>
         </form>
+
+        <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
 
 <script>
 import Utils from '../Utils';
+import Dev from './form/Dev.vue';
 
 const Space = window.Space;
 
@@ -49,6 +54,9 @@ export default {
         'appState',
         'canvas'
     ],
+    components: {
+        Dev
+    },
     data: function () {
         return {
             state: {

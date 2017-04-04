@@ -67,10 +67,10 @@ const Rectangle = function (width, height, center) {
 
 const Star = function (segments, outerRadius, innerRadius, center) {
 
-    const _point = function (radius, delta, center) {
+    const _point = function (radius, delta, _center) {
         let point = new Point.Polar(radius, delta);
         point = point.toCartesian();
-        point.add(center);
+        point.add(_center);
         return point;
     };
 

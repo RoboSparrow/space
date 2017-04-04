@@ -1,21 +1,26 @@
 <template>
     <div>
         <form class="mui-form">
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.widthRange" min="5" max="1000">
-                <label>Width Range <small>({{ state.widthRange }})</small></label>
-            </div>
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.heightRange" min="5" max="1000">
-                <label>Height Range <small>({{ state.heightRange }})</small></label>
-            </div>
-            <pre>{{state}}</pre>
+            <section>
+                <legend class="mui--text-subhead">Edit</legend>
+                <div class="mui-textfield">
+                    <input type="range" v-model.number="state.widthRange" min="5" max="1000">
+                    <label>Width Range <small>({{ state.widthRange }})</small></label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="range" v-model.number="state.heightRange" min="5" max="1000">
+                    <label>Height Range <small>({{ state.heightRange }})</small></label>
+                </div>
+            </section>
         </form>
+
+        <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
 
 <script>
 import Utils from '../Utils';
+import Dev from './form/Dev.vue';
 
 const Space = window.Space;
 
@@ -39,6 +44,9 @@ export default {
         'appState',
         'canvas'
     ],
+    components: {
+        Dev
+    },
     data: function () {
         return {
             state: {

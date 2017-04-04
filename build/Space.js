@@ -269,10 +269,10 @@ var Rectangle = function Rectangle(width, height, center) {
 
 var Star = function Star(segments, outerRadius, innerRadius, center) {
 
-    var _point = function _point(radius, delta, center) {
+    var _point = function _point(radius, delta, _center) {
         var point = new Point.Polar(radius, delta);
         point = point.toCartesian();
-        point.add(center);
+        point.add(_center);
         return point;
     };
 
