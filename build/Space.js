@@ -162,7 +162,7 @@ Path.prototype.add = function (x, y, z) {
 // relatve coords from last point
 Path.prototype.progress = function (x, y, z) {
     var v = new Point.Cartesian(x, y, z);
-    var p = this.last().clone(); //@TODO what if empty?
+    var p = this.last().clone();
     p.add(v);
     this.points.push(p);
     // return this?
@@ -171,18 +171,27 @@ Path.prototype.progress = function (x, y, z) {
 Path.prototype.translate = function (x, y, z) {
     var i = void 0;
     var v = new Point.Cartesian(x, y, z);
-    var length = this.points.length;
+    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
     for (i = 0; i < length; i += 1) {
         this.points[i].add(v);
     }
 };
 
+Path.prototype.scale = function (x, y, z) {
+    var i = void 0;
+    var v = new Point.Cartesian(x, y, z);
+    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].scaleBy(v);
+    }
+};
+
 Path.prototype.last = function () {
-    return this.points[this.points.length - 1];
+    return this.points.length ? this.points[this.points.length - 1] : null;
 };
 
 Path.prototype.first = function () {
-    return this.points[0];
+    return this.points.length ? this.points[0] : null;
 };
 
 Path.prototype.open = function () {
@@ -194,13 +203,13 @@ Path.prototype.open = function () {
 
 Path.prototype.close = function () {
     if (!this.isClosed()) {
-        this.points.push(this.first().clone());
+        this.points.push(this.first());
     }
     return this.last();
 };
 
 Path.prototype.isClosed = function () {
-    return this.last().equals(this.first());
+    return this.points.length > 1 && this.last() === this.first();
 };
 
 ////

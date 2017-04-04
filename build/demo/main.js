@@ -939,16 +939,20 @@ var compute$5 = function compute$5(figure, state, canvas) {
             }
 
     }
+
+    //Figure or only Path
+    var path = typeof fig.path !== 'undefined' ? fig.path : fig;
+
     // translate
     var hasTranslate = state.tanslate.reduce(function (a, b) {
         return a + b;
     });
 
     if (hasTranslate) {
-        fig.path.translate(state.tanslate[0], state.tanslate[1]);
+        path.translate(state.tanslate[0], state.tanslate[1]);
     }
 
-    return typeof fig.path !== 'undefined' ? fig.path : fig;
+    return path;
 };
 
 var draw$1 = function draw$1(figure, path, state, canvas) {

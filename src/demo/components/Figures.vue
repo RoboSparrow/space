@@ -171,16 +171,20 @@ const compute = function (figure, state, canvas) {
         }
 
     }
+
+    //Figure or only Path
+    const path = (typeof fig.path !== 'undefined') ? fig.path : fig;
+
     // translate
     const hasTranslate = state.tanslate.reduce((a, b) => {
         return a + b;
     });
 
     if (hasTranslate) {
-        fig.path.translate(state.tanslate[0], state.tanslate[1]);
+        path.translate(state.tanslate[0], state.tanslate[1]);
     }
 
-    return (typeof fig.path !== 'undefined') ? fig.path : fig;
+    return path;
 
 };
 

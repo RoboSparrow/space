@@ -37,7 +37,7 @@ describe('Path 2D', function() {
         assert.strictEqual(path.isClosed(), true);
     });
 
-    it('Closing point and first point are different instances.', function() {
+    it('Closing point and first point are the same instances.', function() {
         let path = new Space.Path(50, 50);
         path.progress(50, 50);
         path.progress(-150, -150);
@@ -45,18 +45,7 @@ describe('Path 2D', function() {
 
         assert.strictEqual(path.points.length, 4);
         assert.strictEqual(path.isClosed(), true);
-        assert.notEqual(path.first(), path.last());
-    });
-
-    it('Closing point and first point values are equal', function() {
-        let path = new Space.Path(50, 50);
-        path.progress(50, 50);
-        path.progress(-150, -150);
-        path.close();
-
-        assert.strictEqual(path.points.length, 4);
-        assert.strictEqual(path.isClosed(), true);
-        assert.deepStrictEqual(path.first(), path.last());
+        assert.strictEqual(path.first(), path.last());
     });
 
     it('closing an already closed path should leave path.points untouched', function() {
