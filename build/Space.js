@@ -137,6 +137,12 @@ Point.Spherical.prototype.lng = function () {
     return this.theta;
 };
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
 //https://github.com/d3/d3-path/blob/master/src/path.js
 /*
  * @TODO:
@@ -145,45 +151,52 @@ Point.Spherical.prototype.lng = function () {
  * rotate
  * arc
  */
-var Path = function Path(x, y, z) {
-    this.points = [];
-    if (x !== undefined) {
-        this.add(x, y, z);
+var createPoint = function createPoint(x, y, z) {
+    if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && typeof x.clone === 'function') {
+        return x;
     }
-    // return this?
+    return new Point.Cartesian(x, y, z);
 };
 
-//absolute coords
+var Path = function Path(x, y, z) {
+    this.points = [];
+
+    var origin = createPoint(x, y, z);
+
+    this.world = function (v) {
+        v.add(origin);
+        return v;
+    };
+
+    this.origin = function () {
+        return origin.clone();
+    };
+};
+
+// push to points, consider closed
+Path.prototype.addPoint = function (v) {
+    if (this.isClosed()) {
+        this.points.splice(this.points.length - 1, 0, v);
+    } else {
+        this.points.push(v);
+    }
+};
+
+// add coords relative to origin
 Path.prototype.add = function (x, y, z) {
-    this.points.push(new Point.Cartesian(x, y, z));
-    // return this?
+    var v = this.world(createPoint(x, y, z));
+    this.addPoint(v);
 };
 
 // relatve coords from last point
 Path.prototype.progress = function (x, y, z) {
-    var v = new Point.Cartesian(x, y, z);
+    if (!this.points.length) {
+        throw new Error('Path error: cannot progress on an empty path');
+    }
+    var v = createPoint(x, y, z);
     var p = this.last().clone();
     p.add(v);
-    this.points.push(p);
-    // return this?
-};
-
-Path.prototype.translate = function (x, y, z) {
-    var i = void 0;
-    var v = new Point.Cartesian(x, y, z);
-    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
-    for (i = 0; i < length; i += 1) {
-        this.points[i].add(v);
-    }
-};
-
-Path.prototype.scale = function (x, y, z) {
-    var i = void 0;
-    var v = new Point.Cartesian(x, y, z);
-    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
-    for (i = 0; i < length; i += 1) {
-        this.points[i].scaleBy(v);
-    }
+    this.addPoint(p);
 };
 
 Path.prototype.last = function () {
@@ -202,7 +215,7 @@ Path.prototype.open = function () {
 };
 
 Path.prototype.close = function () {
-    if (!this.isClosed()) {
+    if (this.points.length && !this.isClosed()) {
         this.points.push(this.first());
     }
     return this.last();
@@ -212,26 +225,28 @@ Path.prototype.isClosed = function () {
     return this.points.length > 1 && this.last() === this.first();
 };
 
+Path.prototype.translate = function (x, y, z) {
+    var i = void 0;
+    var v = createPoint(x, y, z);
+    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].add(v);
+    }
+};
+
 ////
 // Polygon
 ////
 
 /**
- * translate center
- * set center
+ * x translate
  * rotate
  * scale
  */
 
-var Polygon = function Polygon(segments, radius, center) {
-    center = center || null; // node v8: no default params
-
-    var path = new Path();
+var Polygon = function Polygon(segments, radius, origin) {
+    var path = new Path(origin);
     var i = 0;
-
-    if (!center) {
-        center = new Point.Cartesian(0, 0, 0);
-    }
 
     //@see http://stackoverflow.com/a/7198179
     var delta = Math.PI * 2 / segments;
@@ -239,7 +254,6 @@ var Polygon = function Polygon(segments, radius, center) {
     while (i < segments) {
         var p = new Point.Polar(radius, i * delta);
         var c = p.toCartesian();
-        c.add(center);
         path.add(c.x, c.y);
         i += 1;
     }
@@ -251,19 +265,14 @@ var Polygon = function Polygon(segments, radius, center) {
 // Rectangle
 ////
 
-var Rectangle = function Rectangle(width, height, center) {
-    center = center || null; // node v8: no default params
-
-    //@TODO check ispoint
-    if (!center) {
-        center = new Point.Cartesian(0, 0, 0);
-    }
+var Rectangle = function Rectangle(width, height, origin) {
+    var path = new Path(origin);
 
     //@see http://stackoverflow.com/a/7198179
-    var first = center.clone();
+    var first = path.origin();
     first.add(new Point.Cartesian(-width / 2, height / 2));
 
-    var path = new Path(first.x, first.y);
+    path.add(first);
     path.progress(width, 0);
     path.progress(0, -height);
     path.progress(-width, 0);
@@ -276,22 +285,14 @@ var Rectangle = function Rectangle(width, height, center) {
 // Star
 ////
 
-var Star = function Star(segments, outerRadius, innerRadius, center) {
+var Star = function Star(segments, outerRadius, innerRadius, origin) {
+    var path = new Path(origin);
 
-    var _point = function _point(radius, delta, _center) {
+    var _point = function _point(radius, delta) {
         var point = new Point.Polar(radius, delta);
         point = point.toCartesian();
-        point.add(_center);
         return point;
     };
-
-    center = center || null; // node v8: no default params
-    var path = new Path();
-    var i = 0;
-
-    if (!center) {
-        center = new Point.Cartesian(0, 0, 0);
-    }
 
     //@see http://stackoverflow.com/a/7198179
     var rad0 = Math.PI / 2;
@@ -299,15 +300,16 @@ var Star = function Star(segments, outerRadius, innerRadius, center) {
     var _delta = void 0;
     var inner = void 0;
     var outer = void 0;
+    var i = 0;
 
     while (i < segments) {
         _delta = i * delta - rad0;
-        outer = _point(outerRadius, _delta, center);
+        outer = _point(outerRadius, _delta);
         path.add(outer.x, outer.y);
 
         if (i <= segments - 1) {
             _delta += delta / 2;
-            inner = _point(innerRadius, _delta, center);
+            inner = _point(innerRadius, _delta);
             path.add(inner.x, inner.y);
         }
         i += 1;

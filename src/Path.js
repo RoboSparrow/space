@@ -8,45 +8,52 @@ import Point from './Point';
  * rotate
  * arc
  */
-const Path = function (x, y, z) {
-    this.points = [];
-    if (x !== undefined) {
-        this.add(x, y, z);
+const createPoint = function (x, y, z) {
+    if (typeof x === 'object' && typeof x.clone === 'function') {
+        return x;
     }
-    // return this?
+    return new Point.Cartesian(x, y, z);
 };
 
-//absolute coords
+const Path = function (x, y, z) {
+    this.points = [];
+
+    const origin = createPoint(x, y, z);
+
+    this.world = function (v) {
+        v.add(origin);
+        return v;
+    };
+
+    this.origin = function () {
+        return origin.clone();
+    };
+};
+
+// push to points, consider closed
+Path.prototype.addPoint = function (v) {
+    if (this.isClosed()) {
+        this.points.splice(this.points.length - 1, 0, v);
+    } else {
+        this.points.push(v);
+    }
+};
+
+// add coords relative to origin
 Path.prototype.add = function (x, y, z) {
-    this.points.push(new Point.Cartesian(x, y, z));
-    // return this?
+    const v = this.world(createPoint(x, y, z));
+    this.addPoint(v);
 };
 
 // relatve coords from last point
 Path.prototype.progress = function (x, y, z) {
-    const v = new Point.Cartesian(x, y, z);
+    if (!this.points.length) {
+        throw new Error('Path error: cannot progress on an empty path');
+    }
+    const v = createPoint(x, y, z);
     const p = this.last().clone();
     p.add(v);
-    this.points.push(p);
-    // return this?
-};
-
-Path.prototype.translate = function (x, y, z) {
-    let i;
-    const v = new Point.Cartesian(x, y, z);
-    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
-    for (i = 0; i < length; i += 1) {
-        this.points[i].add(v);
-    }
-};
-
-Path.prototype.scale = function (x, y, z) {
-    let i;
-    const v = new Point.Cartesian(x, y, z);
-    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
-    for (i = 0; i < length; i += 1) {
-        this.points[i].scaleBy(v);
-    }
+    this.addPoint(p);
 };
 
 Path.prototype.last = function () {
@@ -65,7 +72,7 @@ Path.prototype.open = function () {
 };
 
 Path.prototype.close = function () {
-    if (!this.isClosed()) {
+    if (this.points.length && !this.isClosed()) {
         this.points.push(this.first());
     }
     return this.last();
@@ -73,6 +80,15 @@ Path.prototype.close = function () {
 
 Path.prototype.isClosed = function () {
     return (this.points.length > 1 && this.last() === this.first());
+};
+
+Path.prototype.translate = function (x, y, z) {
+    let i;
+    const v = createPoint(x, y, z);
+    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].add(v);
+    }
 };
 
 export default Path;

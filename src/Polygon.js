@@ -6,21 +6,14 @@ import Point from './Point';
 ////
 
 /**
- * translate center
- * set center
+ * x translate
  * rotate
  * scale
  */
 
-const Polygon = function (segments, radius, center) {
-    center = center || null;// node v8: no default params
-
-    const path = new Path();
+const Polygon = function (segments, radius, origin) {
+    const path = new Path(origin);
     let i = 0;
-
-    if (!center) {
-        center = new Point.Cartesian(0, 0, 0);
-    }
 
     //@see http://stackoverflow.com/a/7198179
     const delta = (Math.PI * 2) / segments;
@@ -28,7 +21,6 @@ const Polygon = function (segments, radius, center) {
     while (i < segments) {
         const p = new Point.Polar(radius, i * delta);
         const c = p.toCartesian();
-        c.add(center);
         path.add(c.x, c.y);
         i += 1;
     }
@@ -40,19 +32,14 @@ const Polygon = function (segments, radius, center) {
 // Rectangle
 ////
 
-const Rectangle = function (width, height, center) {
-    center = center || null;// node v8: no default params
-
-    //@TODO check ispoint
-    if (!center) {
-        center = new Point.Cartesian(0, 0, 0);
-    }
+const Rectangle = function (width, height, origin) {
+    const path = new Path(origin);
 
     //@see http://stackoverflow.com/a/7198179
-    const first = center.clone();
+    const first = path.origin();
     first.add(new Point.Cartesian(-width / 2, height / 2));
 
-    const path = new Path(first.x, first.y);
+    path.add(first);
     path.progress(width, 0);
     path.progress(0, -height);
     path.progress(-width, 0);
@@ -65,22 +52,14 @@ const Rectangle = function (width, height, center) {
 // Star
 ////
 
-const Star = function (segments, outerRadius, innerRadius, center) {
+const Star = function (segments, outerRadius, innerRadius, origin) {
+    const path = new Path(origin);
 
-    const _point = function (radius, delta, _center) {
+    const _point = function (radius, delta) {
         let point = new Point.Polar(radius, delta);
         point = point.toCartesian();
-        point.add(_center);
         return point;
     };
-
-    center = center || null;// node v8: no default params
-    const path = new Path();
-    let i = 0;
-
-    if (!center) {
-        center = new Point.Cartesian(0, 0, 0);
-    }
 
     //@see http://stackoverflow.com/a/7198179
     const rad0 = Math.PI / 2;
@@ -88,15 +67,16 @@ const Star = function (segments, outerRadius, innerRadius, center) {
     let _delta;
     let inner;
     let outer;
+    let i = 0;
 
     while (i < segments) {
         _delta = (i * (delta)) - rad0;
-        outer = _point(outerRadius, _delta, center);
+        outer = _point(outerRadius, _delta);
         path.add(outer.x, outer.y);
 
         if (i <= segments - 1) {
             _delta += delta / 2;
-            inner = _point(innerRadius, _delta, center);
+            inner = _point(innerRadius, _delta);
             path.add(inner.x, inner.y);
         }
         i += 1;
