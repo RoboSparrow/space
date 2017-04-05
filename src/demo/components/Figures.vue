@@ -142,7 +142,8 @@ const compute = function (figure, state, canvas) {
             segments = state.Path.segments;
             const x = (canvas.width - (2 * margin)) / segments;
             let y = canvas.height - (2 * margin);
-            fig = new Space.Path(margin, margin);
+            fig = new Space.Path();
+            fig.add(margin, margin);
             while (segments > 0) {
                 fig.progress(x, y);
                 y = -y;

@@ -380,18 +380,17 @@ var compute$1 = function compute$1(state, canvas) {
     if (!state.prev) {
         state.prev = new Space$1.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-    var path = new Space$1.Path(state.prev.x, state.prev.y);
+    var path = new Space$1.Path();
     var range = state.segmentsRange;
     var count = 0;
-
+    var rand = void 0;
+    path.add(state.prev);
     while (count < state.segments) {
-        var segX = Utils.randInt(-range, range) * Utils.randInt();
-        var segY = Utils.randInt(-range, range) * Utils.randInt();
-        var x = path.last().x + segX;
-        var y = path.last().y + segY;
-        x = Utils.bounds(x, 0, canvas.width);
-        y = Utils.bounds(y, 0, canvas.height);
-        path.add(x, y);
+        rand = new Space$1.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
+        rand.add(path.last());
+        rand.x = Utils.bounds(rand.x, 0, canvas.width);
+        rand.y = Utils.bounds(rand.y, 0, canvas.height);
+        path.add(rand);
         count += 1;
     }
 
@@ -906,7 +905,8 @@ var compute$5 = function compute$5(figure, state, canvas) {
                 segments = state.Path.segments;
                 var x = (canvas.width - 2 * margin) / segments;
                 var y = canvas.height - 2 * margin;
-                fig = new Space$5.Path(margin, margin);
+                fig = new Space$5.Path();
+                fig.add(margin, margin);
                 while (segments > 0) {
                     fig.progress(x, y);
                     y = -y;

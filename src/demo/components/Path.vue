@@ -28,18 +28,20 @@ const compute = function (state, canvas) {
     if (!state.prev) {
         state.prev = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-    const path = new Space.Path(state.prev.x, state.prev.y);
+    const path = new Space.Path();
     const range = state.segmentsRange;
     let count = 0;
-
+    let rand;
+    path.add(state.prev);
     while (count < state.segments) {
-        const segX = Utils.randInt(-range, range) * Utils.randInt();
-        const segY = Utils.randInt(-range, range) * Utils.randInt();
-        let x = path.last().x + segX;
-        let y = path.last().y + segY;
-        x = Utils.bounds(x, 0, canvas.width);
-        y = Utils.bounds(y, 0, canvas.height);
-        path.add(x, y);
+        rand = new Space.Point.Cartesian(
+            Utils.randInt(-range, range) * Utils.randInt(),
+            Utils.randInt(-range, range) * Utils.randInt()
+        );
+        rand.add(path.last());
+        rand.x = Utils.bounds(rand.x, 0, canvas.width);
+        rand.y = Utils.bounds(rand.y, 0, canvas.height);
+        path.add(rand);
         count += 1;
     }
 

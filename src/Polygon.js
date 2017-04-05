@@ -35,11 +35,7 @@ const Polygon = function (segments, radius, origin) {
 const Rectangle = function (width, height, origin) {
     const path = new Path(origin);
 
-    //@see http://stackoverflow.com/a/7198179
-    const first = path.origin();
-    first.add(new Point.Cartesian(-width / 2, height / 2));
-
-    path.add(first);
+    path.add(-width / 2, height / 2);
     path.progress(width, 0);
     path.progress(0, -height);
     path.progress(-width, 0);

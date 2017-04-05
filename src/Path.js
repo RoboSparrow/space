@@ -91,4 +91,13 @@ Path.prototype.translate = function (x, y, z) {
     }
 };
 
+Path.prototype.scale = function (x, y, z) {
+    let i;
+    const v = createPoint(x, y, z);
+    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].add(v);
+    }
+};
+
 export default Path;

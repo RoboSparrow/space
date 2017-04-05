@@ -231,6 +231,15 @@ Path.prototype.translate = function (x, y, z) {
     }
 };
 
+Path.prototype.scale = function (x, y, z) {
+    var i = void 0;
+    var v = createPoint(x, y, z);
+    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].add(v);
+    }
+};
+
 ////
 // Polygon
 ////
@@ -265,11 +274,7 @@ var Polygon = function Polygon(segments, radius, origin) {
 var Rectangle = function Rectangle(width, height, origin) {
     var path = new Path(origin);
 
-    //@see http://stackoverflow.com/a/7198179
-    var first = path.origin();
-    first.add(new Point.Cartesian(-width / 2, height / 2));
-
-    path.add(first);
+    path.add(-width / 2, height / 2);
     path.progress(width, 0);
     path.progress(0, -height);
     path.progress(-width, 0);
