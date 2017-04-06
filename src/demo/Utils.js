@@ -1,8 +1,8 @@
 export default {
     /**
-    * Returns a random integer between min (inclusive) and max (inclusive)
-    * Using Math.round() will give you a non-uniform distribution!
-    */
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     randInt: function (min, max) {
         min = min || -1;
         max = max || 1;
@@ -11,9 +11,9 @@ export default {
     },
 
     /**
-    * Returns a random integer between min (inclusive) and max (inclusive)
-    * Using Math.round() will give you a non-uniform distribution!
-    */
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     bounds: function (val, min, max) {
         val = (min !== false && val < min) ? min : val;
         val = (max !== false && val > max) ? max : val;
@@ -21,9 +21,9 @@ export default {
     },
 
     /**
-    * Returns a random integer between min (inclusive) and max (inclusive)
-    * Using Math.round() will give you a non-uniform distribution!
-    */
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     randIntRange: function (base, range, bounce = []) {
         if (bounce.length) {
             if ((base + range[1]) > bounce[1]) {
@@ -35,5 +35,14 @@ export default {
         }
 
         return base + this.randInt(range[0], range[1]);
+    },
+ 
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    radians: function(deg) {
+        return deg * Math.PI / 180;
     }
+  
 };

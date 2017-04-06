@@ -96,7 +96,15 @@ Path.prototype.scale = function (x, y, z) {
     const v = createPoint(x, y, z);
     const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
     for (i = 0; i < length; i += 1) {
-        this.points[i].add(v);
+        this.points[i].scale(this.origin(), v);
+    }
+};
+
+Path.prototype.rotate2D = function (rad) {
+    let i;
+    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    for (i = 0; i < length; i += 1) {
+        this.points[i].rotate2D(this.origin(), rad);
     }
 };
 

@@ -113,6 +113,26 @@
                     <label>Y</label>
                 </div>
             </section>
+
+            <section>
+                <legend class="mui--text-subhead">Scale</legend>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.scale[0]" v-on:change="init()" >
+                    <label>X</label>
+                </div>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.scale[1]" v-on:change="init()" >
+                    <label>Y</label>
+                </div>
+            </section>
+            
+            <section>
+                <legend class="mui--text-subhead">Rotate</legend>
+                <div class="mui-textfield">
+                    <input type="text" v-model.number="state.rotate2D" v-on:change="init()" >
+                    <label>rad</label>
+                </div>
+            </section>
         </form>
 
         <dev :label="'State'" :data="state"></dev>
@@ -120,6 +140,7 @@
 </template>
 
 <script>
+import Utils from '../Utils';
 import Routes from '../Routes';
 import ColorPicker from './form/ColorPicker.vue';
 import Dev from './form/Dev.vue';
@@ -183,6 +204,21 @@ const compute = function (figure, state, canvas) {
 
     if (hasTranslate) {
         path.translate(state.tanslate[0], state.tanslate[1]);
+    }
+
+    // translate
+    const hasScale = state.scale.reduce((a, b) => {
+        return a * b;
+    });
+
+    // scale
+    if (hasScale !== 1) {
+        path.scale(state.scale[0], state.scale[1]);
+    }
+
+    // rotate 2d
+    if (state.rotate2D) {
+        path.rotate2D(Utils.radians(state.rotate2D));
     }
 
     return path;
@@ -263,6 +299,8 @@ export default {
                     edit: false
                 },
                 tanslate: [0, 0],
+                scale: [1, 1],
+                rotate2D: 0,
                 // form defaults per figure
                 Path: {
                     segments: 25

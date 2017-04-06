@@ -146,9 +146,9 @@ var State = {
 
 var Utils = {
     /**
-    * Returns a random integer between min (inclusive) and max (inclusive)
-    * Using Math.round() will give you a non-uniform distribution!
-    */
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     randInt: function randInt(min, max) {
         min = min || -1;
         max = max || 1;
@@ -157,9 +157,9 @@ var Utils = {
     },
 
     /**
-    * Returns a random integer between min (inclusive) and max (inclusive)
-    * Using Math.round() will give you a non-uniform distribution!
-    */
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     bounds: function bounds(val, min, max) {
         val = min !== false && val < min ? min : val;
         val = max !== false && val > max ? max : val;
@@ -167,9 +167,9 @@ var Utils = {
     },
 
     /**
-    * Returns a random integer between min (inclusive) and max (inclusive)
-    * Using Math.round() will give you a non-uniform distribution!
-    */
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     randIntRange: function randIntRange(base, range) {
         var bounce = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 
@@ -183,7 +183,16 @@ var Utils = {
         }
 
         return base + this.randInt(range[0], range[1]);
+    },
+
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    radians: function radians(deg) {
+        return deg * Math.PI / 180;
     }
+
 };
 
 (function () {
@@ -952,6 +961,21 @@ var compute$5 = function compute$5(figure, state, canvas) {
         path.translate(state.tanslate[0], state.tanslate[1]);
     }
 
+    // translate
+    var hasScale = state.scale.reduce(function (a, b) {
+        return a * b;
+    });
+
+    // scale
+    if (hasScale !== 1) {
+        path.scale(state.scale[0], state.scale[1]);
+    }
+
+    // rotate 2d
+    if (state.rotate2D) {
+        path.rotate2D(Utils.radians(state.rotate2D));
+    }
+
     return path;
 };
 
@@ -1148,7 +1172,41 @@ var Figures = { render: function render() {
                     }
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Y")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Y")])])]), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Scale")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.scale[0], expression: "state.scale[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.scale[0] }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }var $$exp = _vm.state.scale,
+                        $$idx = 0;if (!Array.isArray($$exp)) {
+                        _vm.state.scale[0] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("X")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.scale[1], expression: "state.scale[1]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.scale[1] }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }var $$exp = _vm.state.scale,
+                        $$idx = 1;if (!Array.isArray($$exp)) {
+                        _vm.state.scale[1] = _vm._n($event.target.value);
+                    } else {
+                        $$exp.splice($$idx, 1, _vm._n($event.target.value));
+                    }
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Y")])])]), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Rotate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.rotate2D, expression: "state.rotate2D", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.rotate2D }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.rotate2D = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("rad")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Figures',
     props: ['animation', 'appState', 'canvas'],
@@ -1187,6 +1245,8 @@ var Figures = { render: function render() {
                     edit: false
                 },
                 tanslate: [0, 0],
+                scale: [1, 1],
+                rotate2D: 0,
                 // form defaults per figure
                 Path: {
                     segments: 25

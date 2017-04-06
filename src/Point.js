@@ -25,6 +25,11 @@ Point.Cartesian.prototype.theta = function () {
     return Math.acos(this.z / this.r());
 };
 
+//@TODO test
+Point.Cartesian.prototype.toPolar = function () {
+    return new Point.Polar(this.r(), this.phi());
+};
+
 Point.Cartesian.prototype.toSpherical = function () {
     return new Point.Spherical(this.r(), this.phi(), this.theta());
 };
@@ -52,6 +57,23 @@ Point.Cartesian.prototype.multiply = function (p) {
     this.z *= p.z;
 };
 
+//@TODO test
+Point.Cartesian.prototype.scale = function (origin, p) {
+    this.substract(origin);
+    this.multiply(p);
+    this.add(origin);
+};
+
+Point.Cartesian.prototype.rotate2D = function (origin, phi) {
+    this.substract(origin);
+    let p = this.toPolar();
+    p.phi += phi;
+    p = p.toCartesian();
+    this.x = p.x;
+    this.y = p.y;
+    this.add(origin);
+};
+
 Point.Cartesian.prototype.add = function (p) {
     this.x += p.x;
     this.y += p.y;
@@ -66,6 +88,10 @@ Point.Cartesian.prototype.substract = function (p) {
 
 Point.Cartesian.prototype.equals = function (p) {
     return ((this.x === p.x) && (this.y === p.y) && (this.z === p.z));
+};
+
+Point.Cartesian.prototype.toArray = function () {
+    return [this.x, this.y, this.z];
 };
 
 ////
