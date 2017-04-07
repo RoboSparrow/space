@@ -36,13 +36,13 @@ export default {
 
         return base + this.randInt(range[0], range[1]);
     },
- 
+
     /**
      * Returns a random integer between min (inclusive) and max (inclusive)
      * Using Math.round() will give you a non-uniform distribution!
      */
-    radians: function(deg) {
-        return deg * Math.PI / 180;
+    radians: function (deg) {
+        return deg * (Math.PI / 180);
     }
-  
+
 };

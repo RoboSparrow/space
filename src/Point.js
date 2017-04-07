@@ -94,6 +94,14 @@ Point.Cartesian.prototype.toArray = function () {
     return [this.x, this.y, this.z];
 };
 
+// static methods
+Point.Cartesian.create = function (x, y, z) {
+    if (typeof x === 'object' && typeof x.clone === 'function') {
+        return x;
+    }
+    return new Point.Cartesian(x, y, z);
+};
+
 ////
 // Point.Polar
 ////

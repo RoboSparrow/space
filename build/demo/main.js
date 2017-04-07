@@ -190,7 +190,7 @@ var Utils = {
      * Using Math.round() will give you a non-uniform distribution!
      */
     radians: function radians(deg) {
-        return deg * Math.PI / 180;
+        return deg * (Math.PI / 180);
     }
 
 };
@@ -219,8 +219,9 @@ var compute = function compute(state, canvas) {
     var figures = {};
 
     // Path
-    var path = new Space.Path(canvas.width / 2, canvas.height / 2);
+    var path = new Space.Path(state.origin);
     var segments = Utils.randInt(10, 100);
+    path.add(origin);
     for (i = 1; i < segments; i += 1) {
         var prev = path.points[i - 1];
         path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));

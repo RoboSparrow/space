@@ -1,3 +1,9 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
 var Point = {};
 
 ////
@@ -94,6 +100,14 @@ Point.Cartesian.prototype.toArray = function () {
     return [this.x, this.y, this.z];
 };
 
+// static methods
+Point.Cartesian.create = function (x, y, z) {
+    if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && typeof x.clone === 'function') {
+        return x;
+    }
+    return new Point.Cartesian(x, y, z);
+};
+
 ////
 // Point.Polar
 ////
@@ -160,40 +174,23 @@ Point.Spherical.prototype.lng = function () {
     return this.theta;
 };
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-//https://github.com/d3/d3-path/blob/master/src/path.js
-/*
- * @TODO:
- * tranlate point
- * scale
- * rotate
- * arc
- */
-var createPoint = function createPoint(x, y, z) {
-    if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && typeof x.clone === 'function') {
-        return x;
-    }
-    return new Point.Cartesian(x, y, z);
-};
-
-var Path = function Path(x, y, z) {
-    this.points = [];
-
-    var origin = createPoint(x, y, z);
-
-    this.world = function (v) {
-        v.add(origin);
-        return v;
-    };
+var World = function World(origin) {
 
     this.origin = function () {
         return origin.clone();
     };
+
+    this.locate = function (point) {
+        point.add(origin);
+        return point;
+    };
+};
+
+//https://github.com/d3/d3-path/blob/master/src/path.js
+var Path = function Path(x, y, z) {
+    var origin = Point.Cartesian.create(x, y, z);
+    this.world = new World(origin);
+    this.points = [];
 };
 
 // push to points, consider closed
@@ -207,7 +204,7 @@ Path.prototype.addPoint = function (v) {
 
 // add coords relative to origin
 Path.prototype.add = function (x, y, z) {
-    var v = this.world(createPoint(x, y, z));
+    var v = this.world.locate(Point.Cartesian.create(x, y, z));
     this.addPoint(v);
 };
 
@@ -216,7 +213,7 @@ Path.prototype.progress = function (x, y, z) {
     if (!this.points.length) {
         throw new Error('Path error: cannot progress on an empty path');
     }
-    var v = createPoint(x, y, z);
+    var v = Point.Cartesian.create(x, y, z);
     var p = this.last().clone();
     p.add(v);
     this.addPoint(p);
@@ -248,9 +245,11 @@ Path.prototype.isClosed = function () {
     return this.points.length > 1 && this.last() === this.first();
 };
 
+// could be bundled to .transform('translate' x,y,z) ?
+
 Path.prototype.translate = function (x, y, z) {
     var i = void 0;
-    var v = createPoint(x, y, z);
+    var v = Point.Cartesian.create(x, y, z);
     var length = this.isClosed() ? this.points.length - 1 : this.points.length;
     for (i = 0; i < length; i += 1) {
         this.points[i].add(v);
@@ -259,7 +258,7 @@ Path.prototype.translate = function (x, y, z) {
 
 Path.prototype.scale = function (x, y, z) {
     var i = void 0;
-    var v = createPoint(x, y, z);
+    var v = Point.Cartesian.create(x, y, z);
     var length = this.isClosed() ? this.points.length - 1 : this.points.length;
     for (i = 0; i < length; i += 1) {
         this.points[i].scale(this.origin(), v);
@@ -273,6 +272,13 @@ Path.prototype.rotate2D = function (rad) {
         this.points[i].rotate2D(this.origin(), rad);
     }
 };
+
+var BezierPath = function BezierPath(x, y, z) {
+    Path.call(this, x, y, z);
+};
+
+BezierPath.prototype = Object.create(Path.prototype);
+BezierPath.prototype.constructor = BezierPath;
 
 ////
 // Polygon
@@ -364,7 +370,8 @@ var Polygons = Object.freeze({
 
 var Module = {
     Point: Point,
-    Path: Path
+    Path: Path,
+    BezierPath: BezierPath
 };
 
 // hm...
