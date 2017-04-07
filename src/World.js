@@ -1,10 +1,10 @@
 const World = function (origin) {
     origin = origin || null;
-    
-    if(!origin || typeof origin.clone !== 'function'){
+
+    if (!origin || typeof origin.clone !== 'function') {
         throw Error('World constructor requires a Space.Point.Cartesian instance');
     }
-    
+
     this.origin = function () {
         return origin.clone();
     };

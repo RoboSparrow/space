@@ -5,7 +5,7 @@ import World from './World';
 const Path = function (x, y, z) {
     const origin = Point.Cartesian.create(x, y, z);
     World.call(this, origin);
-    
+
     this.points = [];
 };
 
@@ -33,9 +33,8 @@ Path.prototype.progress = function (x, y, z) {
         throw new Error('Path error: cannot progress on an empty path');
     }
     const v = Point.Cartesian.create(x, y, z);
-    const p = this.last().clone();
-    p.add(v);
-    this.addPoint(p);
+    v.add(this.last());
+    this.addPoint(v);
 };
 
 Path.prototype.last = function () {

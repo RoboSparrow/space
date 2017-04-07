@@ -5,9 +5,9 @@ const Point = {};
 ////
 
 Point.Cartesian = function (x, y, z) {
-    this.x = Math.round(x) || 0;
-    this.y = Math.round(y) || 0;
-    this.z = Math.round(z) || 0;
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
 };
 
 // Convert to Spherical
@@ -72,6 +72,15 @@ Point.Cartesian.prototype.rotate2D = function (origin, phi) {
     this.x = p.x;
     this.y = p.y;
     this.add(origin);
+};
+
+Point.Cartesian.prototype.translate = function (x, y, z) {
+    x = x || 0;
+    y = y || 0;
+    z = z || 0;
+    this.x += x;
+    this.y += y;
+    this.z += z;
 };
 
 Point.Cartesian.prototype.add = function (p) {

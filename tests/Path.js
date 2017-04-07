@@ -111,6 +111,17 @@ describe('Path 2D', function() {
         assert.strictEqual(path.last().y, 100);
     });
 
+    it('progress(-x,-y,z)', function() {
+        let path = new Space.Path(50, 50);
+        path.add(50, 50);
+        path.progress(50, 50);
+        path.progress(-50, -50);
+
+        assert.strictEqual(path.points.length, 3);
+        assert.strictEqual(path.last().x, 100);
+        assert.strictEqual(path.last().y, 100);
+    });
+
     it('progress() on a empty path should throw an error', function() {
         const path = new Space.Path(50, 50);
 

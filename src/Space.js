@@ -1,10 +1,12 @@
 import Point from './Point';
 import Path from './Path';
+import BezierPath from './BezierPath';
 import * as Polygons from './Polygon';
 
 const Module = {
     Point,
-    Path
+    Path,
+    BezierPath
 };
 
 // hm...

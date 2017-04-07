@@ -11,9 +11,9 @@ var Point = {};
 ////
 
 Point.Cartesian = function (x, y, z) {
-    this.x = Math.round(x) || 0;
-    this.y = Math.round(y) || 0;
-    this.z = Math.round(z) || 0;
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
 };
 
 // Convert to Spherical
@@ -78,6 +78,15 @@ Point.Cartesian.prototype.rotate2D = function (origin, phi) {
     this.x = p.x;
     this.y = p.y;
     this.add(origin);
+};
+
+Point.Cartesian.prototype.translate = function (x, y, z) {
+    x = x || 0;
+    y = y || 0;
+    z = z || 0;
+    this.x += x;
+    this.y += y;
+    this.z += z;
 };
 
 Point.Cartesian.prototype.add = function (p) {
@@ -175,6 +184,11 @@ Point.Spherical.prototype.lng = function () {
 };
 
 var World = function World(origin) {
+    origin = origin || null;
+
+    if (!origin || typeof origin.clone !== 'function') {
+        throw Error('World constructor requires a Space.Point.Cartesian instance');
+    }
 
     this.origin = function () {
         return origin.clone();
@@ -189,9 +203,13 @@ var World = function World(origin) {
 //https://github.com/d3/d3-path/blob/master/src/path.js
 var Path = function Path(x, y, z) {
     var origin = Point.Cartesian.create(x, y, z);
-    this.world = new World(origin);
+    World.call(this, origin);
+
     this.points = [];
 };
+
+Path.prototype = Object.create(World.prototype);
+Path.prototype.constructor = Path;
 
 // push to points, consider closed
 Path.prototype.addPoint = function (v) {
@@ -204,7 +222,7 @@ Path.prototype.addPoint = function (v) {
 
 // add coords relative to origin
 Path.prototype.add = function (x, y, z) {
-    var v = this.world.locate(Point.Cartesian.create(x, y, z));
+    var v = this.locate(Point.Cartesian.create(x, y, z));
     this.addPoint(v);
 };
 
@@ -214,9 +232,8 @@ Path.prototype.progress = function (x, y, z) {
         throw new Error('Path error: cannot progress on an empty path');
     }
     var v = Point.Cartesian.create(x, y, z);
-    var p = this.last().clone();
-    p.add(v);
-    this.addPoint(p);
+    v.add(this.last());
+    this.addPoint(v);
 };
 
 Path.prototype.last = function () {
@@ -273,12 +290,76 @@ Path.prototype.rotate2D = function (rad) {
     }
 };
 
-var BezierPath = function BezierPath(x, y, z) {
-    Path.call(this, x, y, z);
+var BezierPath = function BezierPath(origin) {
+    World.call(this, origin);
+
+    this.points = [];
 };
 
-BezierPath.prototype = Object.create(Path.prototype);
+BezierPath.prototype = Object.create(World.prototype);
 BezierPath.prototype.constructor = BezierPath;
+
+// push to points, consider closed
+BezierPath.prototype.addPoint = function (v) {
+    if (this.isClosed()) {
+        this.points.splice(this.points.length - 1, 0, v);
+    } else {
+        this.points.push(v);
+    }
+};
+
+BezierPath.prototype.add = function (point, cp1, cp2) {
+    cp1 = cp1 || null;
+    cp2 = cp2 || null;
+    point = this.locate(point);
+    this.addPoint({
+        point: point,
+        cp1: cp1 ? this.locate(cp1) : point.clone(),
+        cp2: cp2 ? this.locate(cp2) : point.clone()
+    });
+};
+
+// relatve coords from last point
+BezierPath.prototype.progress = function (point, cp1, cp2) {
+    if (!this.points.length) {
+        throw new Error('Path error: cannot progress on an empty path');
+    }
+    cp1 = cp1 || null;
+    cp2 = cp2 || null;
+    var last = this.last();
+    point = point.add(last.point);
+    this.addPoint({
+        point: point,
+        cp1: cp1 ? this.locate(cp1) : point.clone(),
+        cp2: cp2 ? this.locate(cp2) : point.clone()
+    });
+};
+
+BezierPath.prototype.last = function () {
+    return this.points.length ? this.points[this.points.length - 1] : null;
+};
+
+BezierPath.prototype.first = function () {
+    return this.points.length ? this.points[0] : null;
+};
+
+BezierPath.prototype.open = function () {
+    if (this.isClosed()) {
+        this.points.splice(-1, 1);
+    }
+    return this.last();
+};
+
+BezierPath.prototype.close = function () {
+    if (this.points.length && !this.isClosed()) {
+        this.points.push(this.first());
+    }
+    return this.last();
+};
+
+BezierPath.prototype.isClosed = function () {
+    return this.points.length > 1 && this.last() === this.first();
+};
 
 ////
 // Polygon

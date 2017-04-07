@@ -19,8 +19,9 @@ const compute = function (state, canvas) {
     const figures = {};
 
     // Path
-    const path = new Space.Path(canvas.width / 2, canvas.height / 2);
+    const path = new Space.Path(state.origin);
     const segments = Utils.randInt(10, 100);
+    path.add(origin);
     for (i = 1; i < segments; i += 1) {
         const prev = path.points[i - 1];
         path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
