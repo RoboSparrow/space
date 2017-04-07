@@ -3,12 +3,14 @@ import Point from './Point';
 import World from './World';
 
 const Path = function (x, y, z) {
-    this.world = new World(Point.Cartesian.create(x, y, z));
+    const origin = Point.Cartesian.create(x, y, z);
+    World.call(this, origin);
+    
     this.points = [];
-    this.origin = function () {
-        return this.world.origin();
-    };
 };
+
+Path.prototype = Object.create(World.prototype);
+Path.prototype.constructor = Path;
 
 // push to points, consider closed
 Path.prototype.addPoint = function (v) {
@@ -21,7 +23,7 @@ Path.prototype.addPoint = function (v) {
 
 // add coords relative to origin
 Path.prototype.add = function (x, y, z) {
-    const v = this.world.locate(Point.Cartesian.create(x, y, z));
+    const v = this.locate(Point.Cartesian.create(x, y, z));
     this.addPoint(v);
 };
 
