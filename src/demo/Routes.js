@@ -62,18 +62,18 @@ const routes = [
         }
     },
     {
-        name: 'Figures',
-        path: '/Figures',
-        component: Figures,
+        name: 'Bezier', // 'BezierPath'
+        path: '/BezierPath', // '/Figures/BezierPath',
+        component: BezierPath,
         meta: {
             menu: true,
             figure: false
         }
     },
     {
-        name: 'Bezier', // 'BezierPath'
-        path: '/BezierPath', // '/Figures/BezierPath',
-        component: BezierPath,
+        name: 'Figures',
+        path: '/Figures',
+        component: Figures,
         meta: {
             menu: true,
             figure: false
