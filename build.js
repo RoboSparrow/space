@@ -61,7 +61,7 @@ let cache;
 const CONFIG = {
     project: {
         rollup: ConfigProject,
-        glob: ['./src/*.js', '!./src/demo/*'],
+        glob: ['./src/**/*.js', '!./src/demo/*'],
         extraTasks: []
     },
 

@@ -42,8 +42,8 @@ Matrix4x4.prototype.pretty = function () {
 };
 
 /**
-    *
-    */
+ *
+ */
 
 Matrix4x4.prototype.transformPoint = function (p) {
     let x = p.x;
@@ -58,9 +58,9 @@ Matrix4x4.prototype.transformPoint = function (p) {
 };
 
 /**
-    * The transpose of matrix is the matrix generated when every element in
-    * the matrix is swapped with the opposite relative to the major diagonal
-    */
+ * The transpose of matrix is the matrix generated when every element in
+ * the matrix is swapped with the opposite relative to the major diagonal
+ */
 
 Matrix4x4.prototype.transpose = function () {
     let i;

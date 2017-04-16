@@ -1,4 +1,3 @@
-//https://github.com/d3/d3-path/blob/master/src/path.js
 import Point from './Point';
 import World from './World';
 
@@ -37,14 +36,51 @@ Path.prototype.progress = function (x, y, z) {
     this.addPoint(v);
 };
 
+// replace (or set) a point at a specified index, updates closed index
+Path.prototype.set = function (index, x, y, z) {
+    const closed = this.isClosed();
+    if (closed) {
+        this.open();
+    }
+    this.points[index] = this.locate(Point.Cartesian.create(x, y, z));
+    if (closed) {
+        this.close();
+    }
+};
+
+// get a point for index
+Path.prototype.get = function (index) {
+    return (this.points[index] !== undefined) ? this.points[index] : null;
+};
+
+// get last point
 Path.prototype.last = function () {
     return (this.points.length) ? this.points[this.points.length - 1] : null;
 };
 
+// get first point
 Path.prototype.first = function () {
     return (this.points.length) ? this.points[0] : null;
 };
 
+// get  adjascent point for index
+Path.prototype.prev = function (index) {
+    if (!this.isClosed()) {
+        return this.get(index - 1);
+    }
+    // if closed the last item in array === first
+    return (index === 0) ? this.get(this.points.length - 2) : this.get(index - 1);
+};
+
+// get descendant point for index
+Path.prototype.next = function (index) {
+    if (!this.isClosed()) {
+        return this.get(index + 1);
+    }
+    return (index === this.points.length - 1) ? this.first() : this.get(index + 1);
+};
+
+// open path
 Path.prototype.open = function () {
     if (this.isClosed()) {
         this.points.splice(-1, 1);
@@ -52,6 +88,7 @@ Path.prototype.open = function () {
     return this.last();
 };
 
+// close path
 Path.prototype.close = function () {
     if (this.points.length && !this.isClosed()) {
         this.points.push(this.first());
@@ -59,12 +96,14 @@ Path.prototype.close = function () {
     return this.last();
 };
 
+// check if path is closed
 Path.prototype.isClosed = function () {
     return (this.points.length > 1 && this.last() === this.first());
 };
 
 // could be bundled to .transform('translate' x,y,z) ?
 
+// translate path
 Path.prototype.translate = function (x, y, z) {
     let i;
     const v = Point.Cartesian.create(x, y, z);
@@ -74,6 +113,7 @@ Path.prototype.translate = function (x, y, z) {
     }
 };
 
+// scale path
 Path.prototype.scale = function (x, y, z) {
     let i;
     const v = Point.Cartesian.create(x, y, z);
@@ -83,6 +123,7 @@ Path.prototype.scale = function (x, y, z) {
     }
 };
 
+// rotate path
 Path.prototype.rotate2D = function (rad) {
     let i;
     const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;

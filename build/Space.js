@@ -1,19 +1,83 @@
 var Space = (function () {
 'use strict';
 
+////
+// Spherical
+////
+
+var Spherical = function Spherical(r, phi, theta) {
+    this.r = r || 0; // distance
+    this.phi = phi || 0; // polar angle
+    this.theta = theta || 0; // azimuthal angle
+};
+
+//// Spherical conversions
+
+// Cartesian
+
+Spherical.prototype.x = function () {
+    return this.r * Math.sin(this.theta) * Math.cos(this.phi);
+};
+
+Spherical.prototype.y = function () {
+    return this.r * Math.sin(this.theta) * Math.sin(this.phi);
+};
+
+Spherical.prototype.z = function () {
+    return this.r * Math.cos(this.theta);
+};
+
+Spherical.prototype.toCartesian = function () {
+    return new Cartesian(this.x(), this.y(), this.z());
+};
+
+// Geographical
+// https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
+
+Spherical.prototype.lat = function () {
+    return this.phi - Math.PI / 2;
+};
+
+Spherical.prototype.lng = function () {
+    return this.theta;
+};
+
+////
+// Polar
+////
+
+var Polar = function Polar(r, phi) {
+    this.r = r || 0; // distance
+    this.phi = phi || 0; // polar angle
+};
+
+//// Polar conversions
+
+// Cartesian
+
+Polar.prototype.x = function () {
+    return this.r * Math.cos(this.phi);
+};
+
+Polar.prototype.y = function () {
+    return this.r * Math.sin(this.phi);
+};
+
+Polar.prototype.toCartesian = function () {
+    return new Cartesian(this.x(), this.y());
+};
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-var Point = {};
-
 ////
-// Point.Cartesian
+// Cartesian
 ////
 
-Point.Cartesian = function (x, y, z) {
+var Cartesian = function Cartesian(x, y, z) {
     this.x = x || 0;
     this.y = y || 0;
     this.z = z || 0;
@@ -21,59 +85,68 @@ Point.Cartesian = function (x, y, z) {
 
 // Convert to Spherical
 
-Point.Cartesian.prototype.r = function () {
+Cartesian.prototype.r = function () {
     // eslint-disable-next-line no-restricted-properties
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
 };
 
-Point.Cartesian.prototype.phi = function () {
+Cartesian.prototype.phi = function () {
     return Math.atan2(this.y, this.x);
 };
 
-Point.Cartesian.prototype.theta = function () {
+Cartesian.prototype.theta = function () {
     return Math.acos(this.z / this.r());
 };
 
 //@TODO test
-Point.Cartesian.prototype.toPolar = function () {
-    return new Point.Polar(this.r(), this.phi());
+Cartesian.prototype.toPolar = function () {
+    return new Polar(this.r(), this.phi());
 };
 
-Point.Cartesian.prototype.toSpherical = function () {
-    return new Point.Spherical(this.r(), this.phi(), this.theta());
+Cartesian.prototype.toSpherical = function () {
+    return new Spherical(this.r(), this.phi(), this.theta());
 };
 
 // Geographical
 // https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
 
-Point.Cartesian.prototype.lat = function () {
+Cartesian.prototype.lat = function () {
     return this.phi() - Math.PI / 2;
 };
 
-Point.Cartesian.prototype.lng = function () {
+Cartesian.prototype.lng = function () {
     return this.theta();
 };
 
-// Ops
+// Operations
 
-Point.Cartesian.prototype.clone = function () {
-    return new Point.Cartesian(this.x, this.y, this.z);
+Cartesian.prototype.add = function (p) {
+    this.x += p.x;
+    this.y += p.y;
+    this.z += p.z;
 };
 
-Point.Cartesian.prototype.multiply = function (p) {
+Cartesian.prototype.substract = function (p) {
+    this.x -= p.x;
+    this.y -= p.y;
+    this.z -= p.z;
+};
+
+Cartesian.prototype.multiply = function (p) {
     this.x *= p.x;
     this.y *= p.y;
     this.z *= p.z;
 };
 
-//@TODO test
-Point.Cartesian.prototype.scale = function (origin, p) {
+// world operations
+
+Cartesian.prototype.scale = function (origin, p) {
     this.substract(origin);
     this.multiply(p);
     this.add(origin);
 };
 
-Point.Cartesian.prototype.rotate2D = function (origin, phi) {
+Cartesian.prototype.rotate2D = function (origin, phi) {
     this.substract(origin);
     var p = this.toPolar();
     p.phi += phi;
@@ -83,7 +156,9 @@ Point.Cartesian.prototype.rotate2D = function (origin, phi) {
     this.add(origin);
 };
 
-Point.Cartesian.prototype.translate = function (x, y, z) {
+// operations with primitives
+
+Cartesian.prototype.translate = function (x, y, z) {
     x = x || 0;
     y = y || 0;
     z = z || 0;
@@ -92,98 +167,35 @@ Point.Cartesian.prototype.translate = function (x, y, z) {
     this.z += z;
 };
 
-Point.Cartesian.prototype.add = function (p) {
-    this.x += p.x;
-    this.y += p.y;
-    this.z += p.z;
-};
+// comparasion
 
-Point.Cartesian.prototype.substract = function (p) {
-    this.x -= p.x;
-    this.y -= p.y;
-    this.z -= p.z;
-};
-
-Point.Cartesian.prototype.equals = function (p) {
+Cartesian.prototype.equals = function (p) {
     return this.x === p.x && this.y === p.y && this.z === p.z;
 };
 
-Point.Cartesian.prototype.toArray = function () {
+// exports
+
+Cartesian.prototype.clone = function () {
+    return new Cartesian(this.x, this.y, this.z);
+};
+
+Cartesian.prototype.toArray = function () {
     return [this.x, this.y, this.z];
 };
 
 // static methods
-Point.Cartesian.create = function (x, y, z) {
+
+Cartesian.create = function (x, y, z) {
     if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && typeof x.clone === 'function') {
         return x;
     }
-    return new Point.Cartesian(x, y, z);
+    return new Cartesian(x, y, z);
 };
 
-////
-// Point.Polar
-////
-
-Point.Polar = function (r, phi) {
-    this.r = r || 0; // distance
-    this.phi = phi || 0; // polar angle
-};
-
-//// Point.Polar conversions
-
-// Cartesian
-
-Point.Polar.prototype.x = function () {
-    return this.r * Math.cos(this.phi);
-};
-
-Point.Polar.prototype.y = function () {
-    return this.r * Math.sin(this.phi);
-};
-
-Point.Polar.prototype.toCartesian = function () {
-    return new Point.Cartesian(this.x(), this.y());
-};
-
-////
-// Point.Spherical
-////
-
-Point.Spherical = function (r, phi, theta) {
-    this.r = r || 0; // distance
-    this.phi = phi || 0; // polar angle
-    this.theta = theta || 0; // azimuthal angle
-};
-
-//// Point.Spherical conversions
-
-// Cartesian
-
-Point.Spherical.prototype.x = function () {
-    return this.r * Math.sin(this.theta) * Math.cos(this.phi);
-};
-
-Point.Spherical.prototype.y = function () {
-    return this.r * Math.sin(this.theta) * Math.sin(this.phi);
-};
-
-Point.Spherical.prototype.z = function () {
-    return this.r * Math.cos(this.theta);
-};
-
-Point.Spherical.prototype.toCartesian = function () {
-    return new Point.Cartesian(this.x(), this.y(), this.z());
-};
-
-// Geographical
-// https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
-
-Point.Spherical.prototype.lat = function () {
-    return this.phi - Math.PI / 2;
-};
-
-Point.Spherical.prototype.lng = function () {
-    return this.theta;
+var Point = {
+    Cartesian: Cartesian,
+    Spherical: Spherical,
+    Polar: Polar
 };
 
 var World = function World(origin) {
@@ -203,7 +215,6 @@ var World = function World(origin) {
     };
 };
 
-//https://github.com/d3/d3-path/blob/master/src/path.js
 var Path = function Path(x, y, z) {
     var origin = Point.Cartesian.create(x, y, z);
     World.call(this, origin);
@@ -239,14 +250,51 @@ Path.prototype.progress = function (x, y, z) {
     this.addPoint(v);
 };
 
+// replace (or set) a point at a specified index, updates closed index
+Path.prototype.set = function (index, x, y, z) {
+    var closed = this.isClosed();
+    if (closed) {
+        this.open();
+    }
+    this.points[index] = this.locate(Point.Cartesian.create(x, y, z));
+    if (closed) {
+        this.close();
+    }
+};
+
+// get a point for index
+Path.prototype.get = function (index) {
+    return this.points[index] !== undefined ? this.points[index] : null;
+};
+
+// get last point
 Path.prototype.last = function () {
     return this.points.length ? this.points[this.points.length - 1] : null;
 };
 
+// get first point
 Path.prototype.first = function () {
     return this.points.length ? this.points[0] : null;
 };
 
+// get  adjascent point for index
+Path.prototype.prev = function (index) {
+    if (!this.isClosed()) {
+        return this.get(index - 1);
+    }
+    // if closed the last item in array === first
+    return index === 0 ? this.get(this.points.length - 2) : this.get(index - 1);
+};
+
+// get descendant point for index
+Path.prototype.next = function (index) {
+    if (!this.isClosed()) {
+        return this.get(index + 1);
+    }
+    return index === this.points.length - 1 ? this.first() : this.get(index + 1);
+};
+
+// open path
 Path.prototype.open = function () {
     if (this.isClosed()) {
         this.points.splice(-1, 1);
@@ -254,6 +302,7 @@ Path.prototype.open = function () {
     return this.last();
 };
 
+// close path
 Path.prototype.close = function () {
     if (this.points.length && !this.isClosed()) {
         this.points.push(this.first());
@@ -261,12 +310,14 @@ Path.prototype.close = function () {
     return this.last();
 };
 
+// check if path is closed
 Path.prototype.isClosed = function () {
     return this.points.length > 1 && this.last() === this.first();
 };
 
 // could be bundled to .transform('translate' x,y,z) ?
 
+// translate path
 Path.prototype.translate = function (x, y, z) {
     var i = void 0;
     var v = Point.Cartesian.create(x, y, z);
@@ -276,6 +327,7 @@ Path.prototype.translate = function (x, y, z) {
     }
 };
 
+// scale path
 Path.prototype.scale = function (x, y, z) {
     var i = void 0;
     var v = Point.Cartesian.create(x, y, z);
@@ -285,6 +337,7 @@ Path.prototype.scale = function (x, y, z) {
     }
 };
 
+// rotate path
 Path.prototype.rotate2D = function (rad) {
     var i = void 0;
     var length = this.isClosed() ? this.points.length - 1 : this.points.length;
@@ -293,75 +346,107 @@ Path.prototype.rotate2D = function (rad) {
     }
 };
 
-var BezierPath = function BezierPath(origin) {
-    World.call(this, origin);
+////
+// Group is a Group of Cartesian Points
+////
 
-    this.points = [];
+var Group = function Group(x, y, z) {
+    Cartesian.call(this, x, y, z);
+
+    // control points
+    this.members = [];
 };
 
-BezierPath.prototype = Object.create(World.prototype);
-BezierPath.prototype.constructor = BezierPath;
+Group.prototype = Object.create(Cartesian.prototype);
+Group.prototype.constructor = Group;
 
-// push to points, consider closed
-BezierPath.prototype.addPoint = function (v) {
-    if (this.isClosed()) {
-        this.points.splice(this.points.length - 1, 0, v);
-    } else {
-        this.points.push(v);
+// Operations
+
+Group.prototype.add = function (p) {
+    Cartesian.prototype.add.call(this, p);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].add(p);
     }
 };
 
-BezierPath.prototype.add = function (point, cp1, cp2) {
-    cp1 = cp1 || null;
-    cp2 = cp2 || null;
-    point = this.locate(point);
-    this.addPoint({
-        point: point,
-        cp1: cp1 ? this.locate(cp1) : point.clone(),
-        cp2: cp2 ? this.locate(cp2) : point.clone()
-    });
-};
-
-// relatve coords from last point
-BezierPath.prototype.progress = function (point, cp1, cp2) {
-    if (!this.points.length) {
-        throw new Error('Path error: cannot progress on an empty path');
+Group.prototype.substract = function (p) {
+    Cartesian.prototype.substract.call(this, p);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].substract(p);
     }
-    cp1 = cp1 || null;
-    cp2 = cp2 || null;
-    var last = this.last();
-    point = point.add(last.point);
-    this.addPoint({
-        point: point,
-        cp1: cp1 ? this.locate(cp1) : point.clone(),
-        cp2: cp2 ? this.locate(cp2) : point.clone()
-    });
 };
 
-BezierPath.prototype.last = function () {
-    return this.points.length ? this.points[this.points.length - 1] : null;
-};
-
-BezierPath.prototype.first = function () {
-    return this.points.length ? this.points[0] : null;
-};
-
-BezierPath.prototype.open = function () {
-    if (this.isClosed()) {
-        this.points.splice(-1, 1);
+Group.prototype.multiply = function (p) {
+    Cartesian.prototype.multiply.call(this, p);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].multiply(p);
     }
-    return this.last();
 };
 
-BezierPath.prototype.close = function () {
-    if (this.points.length && !this.isClosed()) {
-        this.points.push(this.first());
+// world operations
+
+Group.prototype.scale = function (origin, p) {
+    Cartesian.prototype.scale.call(this, origin, p);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].scale(origin, p);
     }
-    return this.last();
 };
 
-BezierPath.prototype.isClosed = function () {
-    return this.points.length > 1 && this.last() === this.first();
+Group.prototype.rotate2D = function (origin, phi) {
+    Cartesian.prototype.rotate2D.call(this, origin, phi);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].rotate2Dy(origin, phi);
+    }
+};
+
+// operations with primitives
+
+Group.prototype.translate = function (x, y, z) {
+    Cartesian.prototype.translate.call(this, x, y, z);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].translate(x, y, z);
+    }
+};
+
+// exports
+
+Group.prototype.clone = function () {
+    var clone = new Group(this.x, this.y, this.z);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        clone.members[i] = this.members[i];
+    }
+    return clone;
+};
+
+Group.prototype.toArray = function () {
+    var arr = [this.x, this.y, this.z];
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        arr.push(this.members[i].x, this.members[i].y, this.members[i].z);
+    }
+    return arr;
+};
+
+// static methods
+
+Group.create = function (x, y, z) {
+    //is point like
+    if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && typeof x.clone === 'function') {
+        // is a a group already
+        if (typeof x.members !== 'undefined') {
+            return x;
+        }
+        // is a cartesian point
+        return new Group(x.x, x.y, x.z);
+    }
+    return new Group(x, y, z);
 };
 
 ////
@@ -452,10 +537,87 @@ var Polygons = Object.freeze({
 	Star: Star
 });
 
+/**
+ * Rob Spencer's algorithm
+ * @see http://scaledinnovation.com/analytics/splines/aboutSplines.html
+ */
+var smoothPoint = function smoothPoint(prev, curr, next, tension) {
+
+    //@TODO, this is a temporary workaround
+    curr = Group.create(curr); //expensive
+
+    if (!next || !prev) {
+        return curr;
+    }
+
+    //  prev.x,prev.y,curr.x,curr.y are the coordinates of the end (knot) pts of this segment
+    //  next.x,next.y is the next knot -- not connected here but needed to calculate p2
+    //  p1 is the control curr calculated here, from curr.x back toward prev.x.
+    //  p2 is the next control curr, calculated here and returned to become the
+    //  next segment's p1.
+    //  t is the 'tension' which controls how far the control currs spread.
+
+    //  Scaling factors: distances from this knot to the previous and following knots
+
+    /* eslint-disable no-restricted-properties */
+    var d01 = Math.sqrt(Math.pow(curr.x - prev.x, 2) + Math.pow(curr.y - prev.y, 2));
+    var d12 = Math.sqrt(Math.pow(next.x - curr.x, 2) + Math.pow(next.y - curr.y, 2));
+    /* eslint-enable no-restricted-properties */
+
+    var fa = tension * (d01 / (d01 + d12)); // scaling factor for triangle Ta
+    var fb = tension - fa; // ditto for Tb, simplifies to fb=t-fa
+
+    var p1x = curr.x + fa * (prev.x - next.x); // x2-x0 is the width of triangle T
+    var p1y = curr.y + fa * (prev.y - next.y); // y2-y0 is the height of T
+
+    var p2x = curr.x - fb * (prev.x - next.x);
+    var p2y = curr.y - fb * (prev.y - next.y);
+
+    //return [new curr.Cartesian(p1x, p1y), new curr.Cartesian(p2x, p2y)];
+
+    curr.members[0] = new Point.Cartesian(p1x, p1y);
+    curr.members[1] = new Point.Cartesian(p2x, p2y);
+
+    // Everything else in the code is just bookkeeping.
+    // In these sketches we found two control points, but for different bezier curves:
+    //  - control point p1 (Figure 4) is needed to draw the left bezier (red in Figures 1 & 2)
+    //  - and p2 is needed to draw the right (orange) bezier.
+    // This just means that we have to calculate all of the control points
+    // (or at least those a knot fore and aft of where we are) before drawing.
+    // Closed curves need the control points at the "beginning" and "end" points (wherever you start and end),
+    // more bookkeeping.
+    // But the result is a simple, fast bezier spline routine with only one parameter to adjust the curvature.
+
+    // Note in the demo that when t=0 the curves become straight lines connecting the knot points,
+    // and when t=1 the curves are "too curvy" for the open zigzag curve,
+    // but actually for the square (lower left), t=1 makes a nice "rounded square" that might be a useful shape.
+    // There is no upper bound to t, but above t=1 you're almost guaranteed to get distracting cusps and loops.
+    // For that matter, t can be negative, which is great for drawing knots.
+
+    return curr;
+};
+
+var smoothPath = function smoothPath(path, curviness) {
+    //@TODO, only sections params
+    //@TODO, cache handles
+    var bezier = void 0;
+    var length = path.isClosed() ? path.points.length - 1 : path.points.length;
+    for (var i = 0; i < length; i += 1) {
+        bezier = smoothPoint(path.prev(i), path.get(i), path.next(i), curviness);
+        path.set(i, bezier);
+    }
+};
+
+var Bezier = {
+    smoothPath: smoothPath,
+    smoothPoint: smoothPoint
+};
+
 var Module = {
     Point: Point,
     Path: Path,
-    BezierPath: BezierPath
+    Group: Group,
+    Bezier: Bezier
 };
 
 // hm...

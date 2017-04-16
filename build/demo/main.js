@@ -472,6 +472,52 @@ var Path = { render: function render() {
     }
 };
 
+var Helpers = {
+    drawLine: function drawLine(ctx, from, to, theme) {
+        ctx.save();
+
+        ctx.fillStyle = theme;
+        ctx.strokeStyle = theme;
+        //ctx.lineWidth = 0.5;
+
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+
+        ctx.restore();
+    },
+
+    drawPoint: function drawPoint(ctx, point, name, theme) {
+        ctx.save();
+
+        ctx.fillStyle = theme;
+        ctx.strokeStyle = theme;
+
+        ctx.fillText("" + name, point.x + 10, point.y + 10);
+        ctx.fillRect(point.x - 5, point.y - 5, 10, 10);
+
+        ctx.restore();
+    },
+
+    drawHandle: function drawHandle(ctx, point, handle, name, theme) {
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.fillStyle = theme;
+        ctx.strokeStyle = theme;
+        ctx.lineWidth = 0.5;
+        ctx.fillText("" + name, handle.x + 10, handle.y);
+        ctx.fillRect(handle.x - 5, handle.y - 5, 10, 10);
+        ctx.moveTo(point.x, point.y);
+        ctx.lineTo(handle.x, handle.y);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+};
+
 (function () {
     if (document) {
         var head = document.head || document.getElementsByTagName('head')[0],
@@ -575,101 +621,78 @@ var ColorPicker = { render: function render() {
 
 var Space$2 = window.Space;
 
-var compute$2 = function compute$2(state, canvas) {
-
-    if (!state.origin) {
-        state.origin = new Space$2.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-
-    var bezier = new Space$2.BezierPath(new Space$2.Point.Cartesian());
-    var i = void 0;
-    for (i = 1; i < state.segments; i += 1) {
-        //const point = new Space.Point.Cartesian(
-        //    Utils.randInt(0, state.origin.x),
-        //    Utils.randInt(0, state.origin.y)
-        //);
-        var point = new Space$2.Point.Cartesian(i * 50, i * 50);
-
-        var cp1 = point.clone();
-        cp1.translate(Utils.randInt(-state.origin.x, state.origin.x), Utils.randInt(-state.origin.y, state.origin.y));
-
-        var cp2 = point.clone();
-        cp2.translate(Utils.randInt(-state.origin.x, state.origin.x), Utils.randInt(-state.origin.y, state.origin.y));
-
-        bezier.add(point, cp1, cp2);
-    }
-    console.log(JSON.stringify(bezier.points));
-    console.log(bezier.points);
-    return bezier;
-};
-
-var Helpers = {
-    drawPoint: function drawPoint(ctx, point, name, theme) {
-        ctx.save();
-
-        ctx.fillStyle = theme;
-        ctx.strokeStyle = theme;
-
-        ctx.fillText('' + name, point.x + 20, point.y + 20);
-        ctx.strokeRect(point.x - 5, point.y - 5, 10, 10);
-
-        ctx.restore();
-    },
-
-    drawHandle: function drawHandle(ctx, point, handle, name, theme) {
-        ctx.save();
-
-        ctx.beginPath();
-        ctx.fillStyle = theme;
-        ctx.strokeStyle = theme;
-        ctx.lineWidth = .5;
-        ctx.fillText('' + name, handle.x + 20, handle.y + 20);
-        ctx.fillRect(handle.x - 5, handle.y - 5, 10, 10);
-        ctx.moveTo(point.x, point.y);
-        ctx.lineTo(handle.x, handle.y);
-        ctx.stroke();
-
-        ctx.restore();
-    }
+var compute$2 = function compute$2(path, state) {
+    Space$2.Bezier.smoothPath(path, state.tension);
+    return path;
 };
 
 var draw$1 = function draw$1(path, state, canvas) {
     canvas.ctx.save();
-    // styles
-    canvas.ctx.fillStyle = state.fill.show ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = state.stroke.show ? state.canvas.strokeStyle : null;
+    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
-    // path
-
-    canvas.ctx.moveTo(0, 0);
-    canvas.ctx.beginPath();
-    path.points.forEach(function (point, index) {
-        if (index === 0) {
-            return;
+    var length = path.points.length;
+    var prev = void 0;
+    var point = void 0;
+    var i = void 0;
+    for (i = 0; i < length; i += 1) {
+        prev = path.prev(i);
+        if (!prev) {
+            continue;
         }
-        canvas.ctx.moveTo(path.points[index - 1].point.x, path.points[index - 1].point.y);
-        canvas.ctx.bezierCurveTo(point.cp1.x, point.cp1.y, point.cp2.x, point.cp2.y, point.point.x, point.point.y);
-    });
+        point = path.get(i);
 
-    // draw
-    if (state.canvas.fillStyle) {
-        canvas.ctx.fill();
-    }
-    canvas.ctx.stroke();
+        //// helpers
+        if (state.showHelpers) {
+            if (point.members.length > 1) {
+                Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
+                Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
+            }
+            Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+            Helpers.drawLine(canvas.ctx, prev, point, '#666666');
+        }
 
-    // finish
-    canvas.ctx.closePath();
-    canvas.ctx.restore();
+        //// curve
+        canvas.ctx.beginPath();
+        canvas.ctx.moveTo(prev.x, prev.y);
 
-    if (state.drawHelpers) {
-        path.points.forEach(function (point, index) {
-            Helpers.drawHandle(canvas.ctx, point.point, point.cp1, index + ':cp1', 'red');
-            Helpers.drawHandle(canvas.ctx, point.point, point.cp2, index + ':cp2', 'blue');
-            Helpers.drawPoint(canvas.ctx, point.point, index + ':point', 'yellow');
-        });
+        // middle
+        if (prev.members.length > 1 && point.members.length > 1) {
+            canvas.ctx.bezierCurveTo(prev.members[1].x, prev.members[1].y, point.members[0].x, point.members[0].y, point.x, point.y);
+        }
+        // start
+        if (!prev.members.length && point.members.length) {
+            canvas.ctx.quadraticCurveTo(point.members[0].x, point.members[0].y, point.x, point.y);
+        }
+        // end
+        if (prev.members.length && !point.members.length) {
+            canvas.ctx.quadraticCurveTo(prev.members[1].x, prev.members[1].y, point.x, point.y);
+        }
+        canvas.ctx.stroke();
     }
 };
+
+// *****************************
+// * Circle (closed)
+// *****************************
+
+var path1 = new Space$2.Path();
+path1.points = [new Space$2.Point.Cartesian(50, 50), //(50, 200),
+new Space$2.Point.Cartesian(150, 50), //(150, 200),
+new Space$2.Point.Cartesian(150, 150), //(150, 300),
+new Space$2.Point.Cartesian(50, 150) //(50, 300)
+];
+path1.close();
+path1.scale(1.5, 1.5);
+path1.translate(200, 200);
+
+// *****************************
+// * Open
+// *****************************
+
+var path2 = new Space$2.Path();
+path2.points = [new Space$2.Point.Cartesian(20, 50), new Space$2.Point.Cartesian(100, 100), new Space$2.Point.Cartesian(150, 50), new Space$2.Point.Cartesian(200, 150), new Space$2.Point.Cartesian(250, 50), new Space$2.Point.Cartesian(300, 70), new Space$2.Point.Cartesian(310, 130), new Space$2.Point.Cartesian(380, 30)];
+path2.translate(350, 200);
 
 var defaults = {
     strokeStyle: 'rgba(255, 255, 255, 1)',
@@ -678,58 +701,22 @@ var defaults = {
 };
 
 var BezierPath = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "app--inline-field mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
-                    _vm.init();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.state.Path.segments = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Background")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.show, expression: "state.fill.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.show) ? _vm._i(_vm.state.fill.show, null) > -1 : _vm.state.fill.show }, on: { "change": function change($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHelpers, expression: "state.showHelpers" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHelpers) ? _vm._i(_vm.state.showHelpers, null) > -1 : _vm.state.showHelpers }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
-                    var $$a = _vm.state.fill.show,
+                    var $$a = _vm.state.showHelpers,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
                         var $$v = null,
                             $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.state.fill.show = $$a.concat($$v));
+                            $$i < 0 && (_vm.state.showHelpers = $$a.concat($$v));
                         } else {
-                            $$i > -1 && (_vm.state.fill.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                            $$i > -1 && (_vm.state.showHelpers = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
                         }
                     } else {
-                        _vm.state.fill.show = $$c;
+                        _vm.state.showHelpers = $$c;
                     }
-                } } }), _vm._v(" Show")])]), _vm.state.fill.show ? _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.edit, expression: "state.fill.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.edit) ? _vm._i(_vm.state.fill.edit, null) > -1 : _vm.state.fill.edit }, on: { "__c": function __c($event) {
-                    var $$a = _vm.state.fill.edit,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
-                        var $$v = null,
-                            $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.state.fill.edit = $$a.concat($$v));
-                        } else {
-                            $$i > -1 && (_vm.state.fill.edit = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
-                        }
-                    } else {
-                        _vm.state.fill.edit = $$c;
-                    }
-                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Stroke")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.show, expression: "state.stroke.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.show) ? _vm._i(_vm.state.stroke.show, null) > -1 : _vm.state.stroke.show }, on: { "change": function change($event) {
-                    _vm.init();
-                }, "__c": function __c($event) {
-                    var $$a = _vm.state.stroke.show,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
-                        var $$v = null,
-                            $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.state.stroke.show = $$a.concat($$v));
-                        } else {
-                            $$i > -1 && (_vm.state.stroke.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
-                        }
-                    } else {
-                        _vm.state.stroke.show = $$c;
-                    }
-                } } }), _vm._v(" Show")])]), _vm.state.stroke.show ? _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
+                } } }), _vm._v(" Handles")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
                     var $$a = _vm.state.stroke.edit,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
@@ -742,7 +729,13 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.stroke.edit = $$c;
                     }
-                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
+                } } }), _vm._v(" Stroke")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__r": function __r($event) {
+                    _vm.state.tension = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -757,11 +750,6 @@ var BezierPath = { render: function render() {
     created: function created() {
         var _this = this;
 
-        this.$on('color-picker:fillStyle', function (val) {
-            _this.state.canvas.fillStyle = val;
-            _this.state.fill.edit = false;
-            _this.init();
-        });
         this.$on('color-picker:strokeStyle', function (val) {
             _this.state.canvas.strokeStyle = val;
             _this.state.stroke.edit = false;
@@ -773,17 +761,11 @@ var BezierPath = { render: function render() {
             state: {
                 origin: null,
                 canvas: this.appState.factor('canvas', defaults),
-                // form
-                fill: {
-                    show: false,
-                    edit: false
-                },
                 stroke: {
-                    show: true,
                     edit: false
                 },
-                segments: 15,
-                drawHelpers: true
+                tension: 0.5,
+                showHelpers: true
             }
         };
     },
@@ -805,8 +787,12 @@ var BezierPath = { render: function render() {
             this.canvas.clear();
             //@TODO
             timeout = window.setTimeout(function () {
-                var path = compute$2(_this2.state, _this2.canvas.canvas);
-                draw$1(path, _this2.state, _this2.canvas);
+                compute$2(path1, _this2.state, _this2.canvas.canvas);
+                draw$1(path1, _this2.state, _this2.canvas);
+
+                compute$2(path2, _this2.state, _this2.canvas.canvas);
+                draw$1(path2, _this2.state, _this2.canvas);
+
                 window.clearTimeout(timeout);
             }, 100);
         }
@@ -1608,17 +1594,17 @@ var routes = [{
         figure: false
     }
 }, {
-    name: 'Figure',
-    path: '/Figures/:figure',
-    component: Figures,
+    name: 'Bezier', // 'BezierPath'
+    path: '/BezierPath', // '/Figures/BezierPath',
+    component: BezierPath,
     meta: {
-        menu: false,
+        menu: true,
         figure: false
     }
 }, {
-    name: 'test', // 'BezierPath'
-    path: '/test', // '/Figures/BezierPath',
-    component: BezierPath,
+    name: 'Figure',
+    path: '/Figures/:figure',
+    component: Figures,
     meta: {
         menu: false,
         figure: false
