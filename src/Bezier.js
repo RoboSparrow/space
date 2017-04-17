@@ -4,6 +4,9 @@ import Group from './Group';
 /**
  * Rob Spencer's algorithm
  * @see http://scaledinnovation.com/analytics/splines/aboutSplines.html
+ * @TODO angles. Angles from tangent (positive, negative) It might be worth to check if we can use Point.polar ops in general
+ * @TODO tension as absolute progression value (pixels) if tension is an array add instead multiply
+ * function bezier(prev, curr, next, [100, 50], [45, -25])
  */
 const smoothPoint = function (prev, curr, next, tension) {
 
