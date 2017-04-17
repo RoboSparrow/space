@@ -1,9 +1,10 @@
 import Home from './components/Home.vue';
 import Path from './components/Path.vue';
-import BezierPath from './Figures/BezierPath.vue';
 import Polygon from './components/Polygon.vue';
 import Rectangle from './components/Rectangle.vue';
 import Star from './components/Star.vue';
+import Bezier from './components/Bezier.vue';
+import BezierPath from './Figures/BezierPath.vue';
 import Figures from './components/Figures.vue';
 
 const routes = [
@@ -63,6 +64,15 @@ const routes = [
     },
     {
         name: 'Bezier', // 'BezierPath'
+        path: '/Bezier', // '/Figures/BezierPath',
+        component: Bezier,
+        meta: {
+            menu: true,
+            figure: false
+        }
+    },
+    {
+        name: 'BezierPath', // 'BezierPath'
         path: '/BezierPath', // '/Figures/BezierPath',
         component: BezierPath,
         meta: {

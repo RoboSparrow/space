@@ -56,9 +56,6 @@ const draw = function (path, state, canvas) {
     let i;
     for (i = 0; i < length; i += 1) {
         prev = path.prev(i);
-        if (!prev) {
-            continue;
-        }
         point = path.get(i);
 
         //// helpers
@@ -70,23 +67,10 @@ const draw = function (path, state, canvas) {
             Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
             Canvas2dHelpers.drawLine(canvas.ctx, prev, point, '#666666');
         }
-    
+
         //// curve
         canvas.ctx.beginPath();
-        canvas.ctx.moveTo(prev.x, prev.y);
-      
-        // middle
-        if (prev.members.length > 1 && point.members.length > 1) {
-            canvas.ctx.bezierCurveTo(prev.members[1].x, prev.members[1].y, point.members[0].x, point.members[0].y, point.x, point.y);
-        }
-        // start
-        if (!prev.members.length && point.members.length) {
-            canvas.ctx.quadraticCurveTo(point.members[0].x, point.members[0].y, point.x, point.y);
-        }
-        // end
-        if (prev.members.length && !point.members.length) {
-            canvas.ctx.quadraticCurveTo(prev.members[1].x, prev.members[1].y, point.x, point.y);
-        }
+        Canvas2dHelpers.bezierLine(canvas.ctx, prev, point);
         canvas.ctx.stroke();
 
     }
@@ -174,10 +158,10 @@ export default {
             timeout = window.setTimeout(() => {
                 compute(path1, this.state, this.canvas.canvas);
                 draw(path1, this.state, this.canvas);
-                
+
                 compute(path2, this.state, this.canvas.canvas);
                 draw(path2, this.state, this.canvas);
-                
+
                 window.clearTimeout(timeout);
             }, 100);
         }
