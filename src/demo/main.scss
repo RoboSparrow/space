@@ -131,9 +131,12 @@ header a {
     background-color: rgba($app-sidebar-fg-color, .3);
 }
 
-#sidebar .mui-textfield > input {
-    background-color: rgba($app-sidebar-fg-color, .3);
+#sidebar .app--btn.active{
+    background-color: $mui-primary-color;
+}
 
+#sidebar .mui-textfield > input[type='text'] {
+    background-color: rgba($app-sidebar-fg-color, .3);
     border-bottom-color: rgba($app-fg-color, .5);
     padding-left:  5px;
     padding-right: 5px;

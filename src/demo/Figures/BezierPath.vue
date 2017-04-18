@@ -2,6 +2,12 @@
     <div>
         <form class="mui-form">
 
+            <div class="mui-textfield">
+                <button class="mui-btn mui-btn--small app--btn" v-on:click="init('circle')" v-bind:class="{active: state.figure == 'circle'}">Circle</button>
+                <button class="mui-btn mui-btn--small app--btn" v-on:click="init('free')"   v-bind:class="{active: state.figure == 'free'}">Open Path</button>
+                <button class="mui-btn mui-btn--small app--btn" v-on:click="init('random')" v-bind:class="{active: state.figure == 'random'}">Random</button>
+            </div>
+
             <div class="mui-checkbox">
                 <label>
                     <input type="checkbox" v-model="state.showHelpers" v-on:change="init()"> Handles
@@ -25,7 +31,7 @@
                 </div>
                 <color-picker :targ="'strokeStyle'" :rgba="state.canvas.strokeStyle"></color-picker>
             </div>
-            
+
         </form>
 
         <dev :label="'State'" :data="state"></dev>
@@ -34,6 +40,7 @@
 
 <script>
 import Canvas2dHelpers from '../Canvas2dHelpers';
+import Utils from '../Utils';
 
 import ColorPicker from '../components/form/ColorPicker.vue';
 import Dev from '../components/form/Dev.vue';
@@ -76,37 +83,62 @@ const draw = function (path, state, canvas) {
     }
 };
 
-// *****************************
-// * Circle (closed)
-// *****************************
+////
+// Figures
+////
 
-const path1 = new Space.Path();
-path1.points = [
-    new Space.Point.Cartesian(50, 50), //(50, 200),
-    new Space.Point.Cartesian(150, 50), //(150, 200),
-    new Space.Point.Cartesian(150, 150), //(150, 300),
-    new Space.Point.Cartesian(50, 150) //(50, 300)
-];
-path1.close();
-path1.scale(1.5, 1.5);
-path1.translate(200, 200);
+const Figures = {
+    // circle
+    circle: function () {
+        const path = new Space.Path();
+        path.points = [
+            new Space.Point.Cartesian(50, 50), //(50, 200),
+            new Space.Point.Cartesian(150, 50), //(150, 200),
+            new Space.Point.Cartesian(150, 150), //(150, 300),
+            new Space.Point.Cartesian(50, 150) //(50, 300)
+        ];
+        path.close();
+        path.scale(1.5, 1.5);
+        path.translate(200, 200);
+        return path;
+    },
 
-// *****************************
-// * Open
-// *****************************
+    free: function () {
+        const path = new Space.Path();
+        path.points = [
+            new Space.Point.Cartesian(20, 50),
+            new Space.Point.Cartesian(100, 100),
+            new Space.Point.Cartesian(150, 50),
+            new Space.Point.Cartesian(200, 150),
+            new Space.Point.Cartesian(250, 50),
+            new Space.Point.Cartesian(300, 70),
+            new Space.Point.Cartesian(310, 130),
+            new Space.Point.Cartesian(380, 30)
+        ];
+        path.scale(2, 2);
+        path.translate(200, 200);
+        return path;
+    },
 
-const path2 = new Space.Path();
-path2.points = [
-    new Space.Point.Cartesian(20, 50),
-    new Space.Point.Cartesian(100, 100),
-    new Space.Point.Cartesian(150, 50),
-    new Space.Point.Cartesian(200, 150),
-    new Space.Point.Cartesian(250, 50),
-    new Space.Point.Cartesian(300, 70),
-    new Space.Point.Cartesian(310, 130),
-    new Space.Point.Cartesian(380, 30)
-];
-path2.translate(350, 200);
+    random: function (state, canvas) {
+        const path = new Space.Path();
+        const segments = Utils.randInt(10, 100);
+        const range = 200;
+        let rand;
+        path.add(new Space.Group(canvas.width / 2, canvas.height / 2));
+        for (let i = 0; i < segments; i += 1) {
+            rand = new Space.Point.Cartesian(
+                Utils.randInt(-range, range) * Utils.randInt(),
+                Utils.randInt(-range, range) * Utils.randInt()
+            );
+            rand.add(path.last());
+            rand.x = Utils.bounds(rand.x, 0, canvas.width);
+            rand.y = Utils.bounds(rand.y, 0, canvas.height);
+            path.add(rand);
+        }
+        return path;
+    }
+};
 
 const defaults = {
     strokeStyle: 'rgba(255, 255, 255, 1)',
@@ -137,7 +169,8 @@ export default {
                     edit: false
                 },
                 tension: 0.5,
-                showHelpers: true
+                showHelpers: true,
+                figure: 'free'
             }
         };
     },
@@ -151,17 +184,17 @@ export default {
         this.init();
     },
     methods: {
-        init: function () {
+        init: function (figure) {
+            if (figure !== undefined) {
+                this.state.figure = figure;
+            }
+            const path = Figures[this.state.figure](this.state, this.canvas.canvas);
             let timeout = null;
             this.canvas.clear();
             //@TODO
             timeout = window.setTimeout(() => {
-                compute(path1, this.state, this.canvas.canvas);
-                draw(path1, this.state, this.canvas);
-
-                compute(path2, this.state, this.canvas.canvas);
-                draw(path2, this.state, this.canvas);
-
+                compute(path, this.state, this.canvas.canvas);
+                draw(path, this.state, this.canvas);
                 window.clearTimeout(timeout);
             }, 100);
         }

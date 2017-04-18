@@ -1121,27 +1121,49 @@ var draw$1 = function draw$1(path, state, canvas) {
     }
 };
 
-// *****************************
-// * Circle (closed)
-// *****************************
+////
+// Figures
+////
 
-var path1 = new Space$6.Path();
-path1.points = [new Space$6.Point.Cartesian(50, 50), //(50, 200),
-new Space$6.Point.Cartesian(150, 50), //(150, 200),
-new Space$6.Point.Cartesian(150, 150), //(150, 300),
-new Space$6.Point.Cartesian(50, 150) //(50, 300)
-];
-path1.close();
-path1.scale(1.5, 1.5);
-path1.translate(200, 200);
+var Figures = {
+    // circle
+    circle: function circle() {
+        var path = new Space$6.Path();
+        path.points = [new Space$6.Point.Cartesian(50, 50), //(50, 200),
+        new Space$6.Point.Cartesian(150, 50), //(150, 200),
+        new Space$6.Point.Cartesian(150, 150), //(150, 300),
+        new Space$6.Point.Cartesian(50, 150) //(50, 300)
+        ];
+        path.close();
+        path.scale(1.5, 1.5);
+        path.translate(200, 200);
+        return path;
+    },
 
-// *****************************
-// * Open
-// *****************************
+    free: function free() {
+        var path = new Space$6.Path();
+        path.points = [new Space$6.Point.Cartesian(20, 50), new Space$6.Point.Cartesian(100, 100), new Space$6.Point.Cartesian(150, 50), new Space$6.Point.Cartesian(200, 150), new Space$6.Point.Cartesian(250, 50), new Space$6.Point.Cartesian(300, 70), new Space$6.Point.Cartesian(310, 130), new Space$6.Point.Cartesian(380, 30)];
+        path.scale(2, 2);
+        path.translate(200, 200);
+        return path;
+    },
 
-var path2 = new Space$6.Path();
-path2.points = [new Space$6.Point.Cartesian(20, 50), new Space$6.Point.Cartesian(100, 100), new Space$6.Point.Cartesian(150, 50), new Space$6.Point.Cartesian(200, 150), new Space$6.Point.Cartesian(250, 50), new Space$6.Point.Cartesian(300, 70), new Space$6.Point.Cartesian(310, 130), new Space$6.Point.Cartesian(380, 30)];
-path2.translate(350, 200);
+    random: function random(state, canvas) {
+        var path = new Space$6.Path();
+        var segments = Utils.randInt(10, 100);
+        var range = 200;
+        var rand = void 0;
+        path.add(new Space$6.Group(canvas.width / 2, canvas.height / 2));
+        for (var i = 0; i < segments; i += 1) {
+            rand = new Space$6.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
+            rand.add(path.last());
+            rand.x = Utils.bounds(rand.x, 0, canvas.width);
+            rand.y = Utils.bounds(rand.y, 0, canvas.height);
+            path.add(rand);
+        }
+        return path;
+    }
+};
 
 var defaults = {
     strokeStyle: 'rgba(255, 255, 255, 1)',
@@ -1150,7 +1172,13 @@ var defaults = {
 };
 
 var BezierPath = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHelpers, expression: "state.showHelpers" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHelpers) ? _vm._i(_vm.state.showHelpers, null) > -1 : _vm.state.showHelpers }, on: { "change": function change($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'circle' }, on: { "click": function click($event) {
+                    _vm.init('circle');
+                } } }, [_vm._v("Circle")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'free' }, on: { "click": function click($event) {
+                    _vm.init('free');
+                } } }, [_vm._v("Open Path")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'random' }, on: { "click": function click($event) {
+                    _vm.init('random');
+                } } }, [_vm._v("Random")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHelpers, expression: "state.showHelpers" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHelpers) ? _vm._i(_vm.state.showHelpers, null) > -1 : _vm.state.showHelpers }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.showHelpers,
@@ -1214,7 +1242,8 @@ var BezierPath = { render: function render() {
                     edit: false
                 },
                 tension: 0.5,
-                showHelpers: true
+                showHelpers: true,
+                figure: 'free'
             }
         };
     },
@@ -1229,19 +1258,19 @@ var BezierPath = { render: function render() {
     },
 
     methods: {
-        init: function init() {
+        init: function init(figure) {
             var _this2 = this;
 
+            if (figure !== undefined) {
+                this.state.figure = figure;
+            }
+            var path = Figures[this.state.figure](this.state, this.canvas.canvas);
             var timeout = null;
             this.canvas.clear();
             //@TODO
             timeout = window.setTimeout(function () {
-                compute$6(path1, _this2.state, _this2.canvas.canvas);
-                draw$1(path1, _this2.state, _this2.canvas);
-
-                compute$6(path2, _this2.state, _this2.canvas.canvas);
-                draw$1(path2, _this2.state, _this2.canvas);
-
+                compute$6(path, _this2.state, _this2.canvas.canvas);
+                draw$1(path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);
             }, 100);
         }
@@ -1348,7 +1377,7 @@ var draw$2 = function draw$2(figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
     canvas.ctx.fillStyle = state.fill.show && figure !== 'Path' ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = state.stroke.show && figure !== 'Path' ? state.canvas.strokeStyle : null;
+    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
     // path
@@ -1378,7 +1407,7 @@ var defaults$1 = {
     lineWidth: 2
 };
 
-var Figures = { render: function render() {
+var Figures$1 = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figure ? _vm.figure : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures, function (fig) {
             return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
                         _vm.goTo(fig);
@@ -1447,7 +1476,7 @@ var Figures = { render: function render() {
                     }_vm.state.Rectangle.height = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Background")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.show, expression: "state.fill.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.show) ? _vm._i(_vm.state.fill.show, null) > -1 : _vm.state.fill.show }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _vm.state.fill.form ? _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Background")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.show, expression: "state.fill.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.show) ? _vm._i(_vm.state.fill.show, null) > -1 : _vm.state.fill.show }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.fill.show,
@@ -1475,7 +1504,7 @@ var Figures = { render: function render() {
                     } else {
                         _vm.state.fill.edit = $$c;
                     }
-                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Stroke")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.show, expression: "state.stroke.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.show) ? _vm._i(_vm.state.stroke.show, null) > -1 : _vm.state.stroke.show }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit")])]) : _vm._e()]) : _vm._e(), _vm.state.fill.form && _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Stroke")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.show, expression: "state.stroke.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.show) ? _vm._i(_vm.state.stroke.show, null) > -1 : _vm.state.stroke.show }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.stroke.show,
@@ -1578,6 +1607,7 @@ var Figures = { render: function render() {
     watch: {
         '$route': function $route(to) {
             this.figure = to.params.figure;
+            this.state.canvas = this.appState.factor('canvas', defaults$1);
             this.init();
         }
     },
@@ -1602,6 +1632,7 @@ var Figures = { render: function render() {
                 canvas: this.appState.factor('canvas', defaults$1),
                 // form
                 fill: {
+                    form: true,
                     show: true,
                     edit: false
                 },
@@ -1650,12 +1681,16 @@ var Figures = { render: function render() {
 
             var timeout = null;
             this.canvas.clear();
+            this.initForms();
             //@TODO
             timeout = window.setTimeout(function () {
                 var path = compute$7(_this2.figure, _this2.state, _this2.canvas.canvas);
                 draw$2(_this2.figure, path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);
             }, 100);
+        },
+        initForms: function initForms() {
+            this.state.fill.form = this.figure === 'Path';
         },
         goTo: function goTo(figure) {
             this.$router.push({ name: 'Figure', params: { figure: figure.name } });
@@ -1730,7 +1765,7 @@ var routes = [{
 }, {
     name: 'Figures',
     path: '/Figures',
-    component: Figures,
+    component: Figures$1,
     meta: {
         menu: true,
         figure: false
@@ -1738,7 +1773,7 @@ var routes = [{
 }, {
     name: 'Figure',
     path: '/Figures/:figure',
-    component: Figures,
+    component: Figures$1,
     meta: {
         menu: false,
         figure: false

@@ -62,7 +62,7 @@
                 </div>
             </section>
 
-            <section>
+            <section v-if="state.fill.form">
                 <legend class="mui--text-subhead">Background</legend>
                 <div class="mui-checkbox">
                     <label>
@@ -76,7 +76,7 @@
                 </div>
             </section>
 
-            <div class="mui-panel" v-if="state.fill.edit">
+            <div class="mui-panel" v-if="state.fill.form && state.fill.edit">
                 <color-picker :targ="'fillStyle'" :rgba="state.canvas.fillStyle"></color-picker>
             </div>
 
@@ -125,7 +125,7 @@
                     <label>Y</label>
                 </div>
             </section>
-            
+
             <section>
                 <legend class="mui--text-subhead">Rotate</legend>
                 <div class="mui-textfield">
@@ -229,7 +229,7 @@ const draw = function (figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
     canvas.ctx.fillStyle = (state.fill.show && figure !== 'Path') ? state.canvas.fillStyle : null;
-    canvas.ctx.strokeStyle = (state.stroke.show && figure !== 'Path') ? state.canvas.strokeStyle : null;
+    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
     // path
@@ -269,6 +269,7 @@ export default {
     watch: {
         '$route'(to) {
             this.figure = to.params.figure;
+            this.state.canvas = this.appState.factor('canvas', defaults);
             this.init();
         }
     },
@@ -291,6 +292,7 @@ export default {
                 canvas: this.appState.factor('canvas', defaults),
                 // form
                 fill: {
+                    form: true,
                     show: true,
                     edit: false
                 },
@@ -336,12 +338,16 @@ export default {
         init: function () {
             let timeout = null;
             this.canvas.clear();
+            this.initForms();
             //@TODO
             timeout = window.setTimeout(() => {
                 const path = compute(this.figure, this.state, this.canvas.canvas);
                 draw(this.figure, path, this.state, this.canvas);
                 window.clearTimeout(timeout);
             }, 100);
+        },
+        initForms: function () {
+            this.state.fill.form = (this.figure === 'Path');
         },
         goTo(figure) {
             this.$router.push({ name: 'Figure', params: { figure: figure.name } });
