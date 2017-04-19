@@ -315,6 +315,18 @@ Path.prototype.isClosed = function () {
     return this.points.length > 1 && this.last() === this.first();
 };
 
+// bounding box
+//@TODO
+Path.prototype.bounds = function () {
+    var min = new Point.Cartesian(this.first().y, this.first().y);
+    var max = new Point.Cartesian(this.first().y, this.first().y);
+    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    for (var i = 0; i < length; i += 1) {
+        //...
+    }
+    return [min, max];
+};
+
 // could be bundled to .transform('translate' x,y,z) ?
 
 // translate path
@@ -540,6 +552,9 @@ var Polygons = Object.freeze({
 /**
  * Rob Spencer's algorithm
  * @see http://scaledinnovation.com/analytics/splines/aboutSplines.html
+ * @TODO angles. Angles from tangent (positive, negative) It might be worth to check if we can use Point.polar ops in general
+ * @TODO tension as absolute progression value (pixels) if tension is an array add instead multiply
+ * function bezier(prev, curr, next, [100, 50], [45, -25])
  */
 var smoothPoint = function smoothPoint(prev, curr, next, tension) {
 

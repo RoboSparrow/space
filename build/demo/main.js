@@ -827,6 +827,19 @@ var Helpers = {
         ctx.restore();
     },
 
+    drawCircle: function drawCircle(ctx, point, name, theme) {
+        ctx.save();
+
+        ctx.fillStyle = theme;
+
+        ctx.fillText('' + name, point.x + 10, point.y + 10);
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.restore();
+    },
+
     drawHandle: function drawHandle(ctx, point, handle, name, theme) {
         ctx.save();
 
@@ -1096,17 +1109,22 @@ var draw$1 = function draw$1(path, state, canvas) {
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
+    if (state.showHelpers) {
+        Helpers.drawCircle(canvas.ctx, path.origin(), 'origin:' + path.origin().toArray(), 'yellow');
+    }
+
     var length = path.points.length;
     var prev = void 0;
     var point = void 0;
     var i = void 0;
+
     for (i = 0; i < length; i += 1) {
         prev = path.prev(i);
         point = path.get(i);
 
         //// helpers
         if (state.showHelpers) {
-            if (point.members.length > 1) {
+            if (point.members !== undefined && point.members.length > 1) {
                 Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
                 Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
             }
@@ -1138,6 +1156,15 @@ var Figures = {
         path.scale(1.5, 1.5);
         path.translate(200, 200);
         return path;
+    },
+
+    star: function star(state, canvas) {
+        var dim = state.origin.x < state.origin.y ? state.origin.x : state.origin.y;
+        var margin = dim * 0.2;
+        var outer = dim - margin;
+        var inner = margin;
+        var figure = new Space$6.Star(6, outer, inner, state.origin);
+        return figure.path;
     },
 
     free: function free() {
@@ -1178,7 +1205,9 @@ var BezierPath = { render: function render() {
                     _vm.init('free');
                 } } }, [_vm._v("Open Path")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'random' }, on: { "click": function click($event) {
                     _vm.init('random');
-                } } }, [_vm._v("Random")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHelpers, expression: "state.showHelpers" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHelpers) ? _vm._i(_vm.state.showHelpers, null) > -1 : _vm.state.showHelpers }, on: { "change": function change($event) {
+                } } }, [_vm._v("Random")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'star' }, on: { "click": function click($event) {
+                    _vm.init('star');
+                } } }, [_vm._v("Star")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHelpers, expression: "state.showHelpers" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHelpers) ? _vm._i(_vm.state.showHelpers, null) > -1 : _vm.state.showHelpers }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.showHelpers,
@@ -1264,11 +1293,17 @@ var BezierPath = { render: function render() {
             if (figure !== undefined) {
                 this.state.figure = figure;
             }
+
             var path = Figures[this.state.figure](this.state, this.canvas.canvas);
             var timeout = null;
             this.canvas.clear();
             //@TODO
             timeout = window.setTimeout(function () {
+                // !in timeout
+                if (!_this2.state.origin) {
+                    _this2.state.origin = new Space$6.Point.Cartesian(_this2.canvas.canvas.width / 2, _this2.canvas.canvas.height / 2);
+                }
+
                 compute$6(path, _this2.state, _this2.canvas.canvas);
                 draw$1(path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);

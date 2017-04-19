@@ -6,6 +6,7 @@
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="init('circle')" v-bind:class="{active: state.figure == 'circle'}">Circle</button>
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="init('free')"   v-bind:class="{active: state.figure == 'free'}">Open Path</button>
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="init('random')" v-bind:class="{active: state.figure == 'random'}">Random</button>
+                <button class="mui-btn mui-btn--small app--btn" v-on:click="init('star')" v-bind:class="{active: state.figure == 'star'}">Star</button>
             </div>
 
             <div class="mui-checkbox">
@@ -57,17 +58,22 @@ const draw = function (path, state, canvas) {
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
+    if (state.showHelpers) {
+        Canvas2dHelpers.drawCircle(canvas.ctx, path.origin(), 'origin:' + path.origin().toArray(), 'yellow');
+    }
+
     const length = path.points.length;
     let prev;
     let point;
     let i;
+
     for (i = 0; i < length; i += 1) {
         prev = path.prev(i);
         point = path.get(i);
 
         //// helpers
         if (state.showHelpers) {
-            if (point.members.length > 1) {
+            if (point.members !== undefined && point.members.length > 1) {
                 Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
                 Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
             }
@@ -101,6 +107,15 @@ const Figures = {
         path.scale(1.5, 1.5);
         path.translate(200, 200);
         return path;
+    },
+
+    star: function (state, canvas) {
+        const dim = (state.origin.x < state.origin.y) ? state.origin.x : state.origin.y;
+        const margin = dim * 0.2;
+        const outer = dim - margin;
+        const inner = margin;
+        const figure = new Space.Star(6, outer, inner, state.origin);
+        return figure.path;
     },
 
     free: function () {
@@ -188,11 +203,17 @@ export default {
             if (figure !== undefined) {
                 this.state.figure = figure;
             }
+
             const path = Figures[this.state.figure](this.state, this.canvas.canvas);
             let timeout = null;
             this.canvas.clear();
             //@TODO
             timeout = window.setTimeout(() => {
+                // !in timeout
+                if (!this.state.origin) {
+                    this.state.origin = new Space.Point.Cartesian(this.canvas.canvas.width / 2, this.canvas.canvas.height / 2);
+                }
+
                 compute(path, this.state, this.canvas.canvas);
                 draw(path, this.state, this.canvas);
                 window.clearTimeout(timeout);

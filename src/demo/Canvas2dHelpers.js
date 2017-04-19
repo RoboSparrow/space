@@ -30,6 +30,19 @@ const Helpers = {
         ctx.restore();
     },
 
+    drawCircle: function (ctx, point, name, theme) {
+        ctx.save();
+
+        ctx.fillStyle = theme;
+
+        ctx.fillText(`${name}`, point.x + 10, point.y + 10);
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.restore();
+    },
+
     drawHandle: function (ctx, point, handle, name, theme) {
         ctx.save();
 

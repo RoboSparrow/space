@@ -101,6 +101,18 @@ Path.prototype.isClosed = function () {
     return (this.points.length > 1 && this.last() === this.first());
 };
 
+// bounding box
+//@TODO
+Path.prototype.bounds = function () {
+    const min = new Point.Cartesian(this.first().y, this.first().y);
+    const max = new Point.Cartesian(this.first().y, this.first().y);
+    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    for (let i = 0; i < length; i += 1) {
+        //...
+    }
+    return [min, max];
+};
+
 // could be bundled to .transform('translate' x,y,z) ?
 
 // translate path
