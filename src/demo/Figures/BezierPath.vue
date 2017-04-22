@@ -5,7 +5,7 @@
             <div class="mui-textfield">
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('circle')" v-bind:class="{active: state.figure == 'circle'}">Circle</button>
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('free')"   v-bind:class="{active: state.figure == 'free'}">Open Path</button>
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('random')" v-bind:class="{active: state.figure == 'random'}">Random</button>
+                <button class="mui-btn mui-btn--small app--btn" v-on:click="(state.figure == 'random') ? init('random') : goTo('random')" v-bind:class="{active: state.figure == 'random'}">Random</button>
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('star')" v-bind:class="{active: state.figure == 'star'}">Star</button>
                 <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('triplet')" v-bind:class="{active: state.figure == 'triplet'}">Triplet</button>
             </div>
@@ -148,16 +148,13 @@ const draw = function (path, state, canvas) {
 const Figures = {
     // circle
     circle: function (state) {
-        const path = new Space.Path();
-        path.points = [
-            new Space.Point.Cartesian(50, 50), //(50, 200),
-            new Space.Point.Cartesian(150, 50), //(150, 200),
-            new Space.Point.Cartesian(150, 150), //(150, 300),
-            new Space.Point.Cartesian(50, 150) //(50, 300)
-        ];
+        const path = new Space.Path(state.origin.x, state.origin.y);
+        path.add(50, 50);
+        path.add(150, 50);
+        path.add(150, 150);
+        path.add(50, 150);
         path.close();
         path.scale(1.5, 1.5);
-        path.translate(state.origin.x, state.origin.y);
         return path;
     },
 
@@ -253,7 +250,7 @@ export default {
                 showHandles: true,
                 showPath: false,
                 showBounds: false,
-                figure: 'free',
+                figure: (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'free'
             },
             path: null
         };

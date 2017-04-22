@@ -1184,15 +1184,13 @@ var draw$1 = function draw$1(path, state, canvas) {
 var Figures = {
     // circle
     circle: function circle(state) {
-        var path = new Space$6.Path();
-        path.points = [new Space$6.Point.Cartesian(50, 50), //(50, 200),
-        new Space$6.Point.Cartesian(150, 50), //(150, 200),
-        new Space$6.Point.Cartesian(150, 150), //(150, 300),
-        new Space$6.Point.Cartesian(50, 150) //(50, 300)
-        ];
+        var path = new Space$6.Path(state.origin.x, state.origin.y);
+        path.add(50, 50);
+        path.add(150, 50);
+        path.add(150, 150);
+        path.add(50, 150);
         path.close();
         path.scale(1.5, 1.5);
-        path.translate(state.origin.x, state.origin.y);
         return path;
     },
 
@@ -1250,7 +1248,7 @@ var BezierPath = { render: function render() {
                 } } }, [_vm._v("Circle")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'free' }, on: { "click": function click($event) {
                     _vm.goTo('free');
                 } } }, [_vm._v("Open Path")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'random' }, on: { "click": function click($event) {
-                    _vm.goTo('random');
+                    _vm.state.figure == 'random' ? _vm.init('random') : _vm.goTo('random');
                 } } }, [_vm._v("Random")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'star' }, on: { "click": function click($event) {
                     _vm.goTo('star');
                 } } }, [_vm._v("Star")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'triplet' }, on: { "click": function click($event) {
@@ -1406,7 +1404,7 @@ var BezierPath = { render: function render() {
                 showHandles: true,
                 showPath: false,
                 showBounds: false,
-                figure: 'free'
+                figure: typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'free'
             },
             path: null
         };
