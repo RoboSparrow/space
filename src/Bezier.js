@@ -71,9 +71,8 @@ const smoothPath = function (path, curviness) {
     const length = (path.isClosed()) ? path.points.length - 1 : path.points.length;
     for (let i = 0; i < length; i += 1) {
         bezier = smoothPoint(path.prev(i), path.get(i), path.next(i), curviness);
-        path.set(i, bezier);
+        path.replace(i, bezier);
     }
-
 };
 
 export default {

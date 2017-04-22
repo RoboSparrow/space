@@ -3810,6 +3810,10 @@ header a {
   padding-right: 5px;
   max-width: 75px; }
 
+#sidebar .mui-form--inline section div {
+  padding-right: 5px;
+  max-width: 75px; }
+
 @media (min-width: 768px) {
   #sidebar {
     width: 300px;

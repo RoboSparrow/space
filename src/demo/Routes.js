@@ -63,8 +63,8 @@ const routes = [
         }
     },
     {
-        name: 'Bezier', // 'BezierPath'
-        path: '/Bezier', // '/Figures/BezierPath',
+        name: 'Bezier',
+        path: '/Bezier',
         component: Bezier,
         meta: {
             menu: true,
@@ -72,29 +72,20 @@ const routes = [
         }
     },
     {
-        name: 'BezierPath', // 'BezierPath'
-        path: '/BezierPath', // '/Figures/BezierPath',
+        name: 'Figures',
+        path: '/Figures/:figure?',
+        component: Figures,
+        meta: {
+            menu: true,
+            figure: false
+        }
+    },
+    {
+        name: 'BezierPaths',
+        path: '/BezierPath/:figure?',
         component: BezierPath,
         meta: {
             menu: true,
-            figure: false
-        }
-    },
-    {
-        name: 'Figures',
-        path: '/Figures',
-        component: Figures,
-        meta: {
-            menu: true,
-            figure: false
-        }
-    },
-    {
-        name: 'Figure',
-        path: '/Figures/:figure',
-        component: Figures,
-        meta: {
-            menu: false,
             figure: false
         }
     },

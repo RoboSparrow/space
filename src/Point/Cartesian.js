@@ -101,6 +101,18 @@ Cartesian.prototype.equals = function (p) {
     return ((this.x === p.x) && (this.y === p.y) && (this.z === p.z));
 };
 
+// min, max
+
+Cartesian.prototype.min = function (v) {
+    this.x = (this.x > v.x) ? v.x : this.x;
+    this.y = (this.y > v.y) ? v.y : this.y;
+};
+
+Cartesian.prototype.max = function (v) {
+    this.x = (this.x < v.x) ? v.x : this.x;
+    this.y = (this.y < v.y) ? v.y : this.y;
+};
+
 // exports
 
 Cartesian.prototype.clone = function () {

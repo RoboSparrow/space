@@ -796,6 +796,11 @@ var Star = { render: function render() {
 };
 
 var Helpers = {
+
+    ////
+    // Controls
+    ////
+
     drawLine: function drawLine(ctx, from, to, theme) {
         if (!from) {
             return;
@@ -855,6 +860,34 @@ var Helpers = {
 
         ctx.restore();
     },
+
+    drawBoundingBox: function drawBoundingBox(ctx, path, theme) {
+        var bounds = path.bounds();
+        if (!path.bounds()) {
+            return;
+        }
+        ctx.save();
+
+        ctx.fillStyle = theme;
+        ctx.strokeStyle = theme;
+        ctx.lineWidth = 0.2;
+
+        ctx.setLineDash([2, 2]);
+        ctx.strokeRect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y);
+
+        ctx.beginPath();
+        ctx.moveTo(bounds.center.x, bounds.min.y);
+        ctx.lineTo(bounds.center.x, bounds.max.y);
+        ctx.moveTo(bounds.min.x, bounds.center.y);
+        ctx.lineTo(bounds.max.x, bounds.center.y);
+        ctx.stroke();
+
+        ctx.restore();
+    },
+
+    ////
+    // lines
+    ////
 
     line: function line(ctx, prev, point) {
         if (!prev) {
@@ -1123,13 +1156,18 @@ var draw$1 = function draw$1(path, state, canvas) {
         point = path.get(i);
 
         //// helpers
-        if (state.showHelpers) {
+        if (state.showHandles) {
             if (point.members !== undefined && point.members.length > 1) {
                 Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
                 Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
             }
             Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+        }
+        if (state.showPath) {
             Helpers.drawLine(canvas.ctx, prev, point, '#666666');
+        }
+        if (state.showBounds) {
+            Helpers.drawBoundingBox(canvas.ctx, path, 'yellow');
         }
 
         //// curve
@@ -1145,7 +1183,7 @@ var draw$1 = function draw$1(path, state, canvas) {
 
 var Figures = {
     // circle
-    circle: function circle() {
+    circle: function circle(state) {
         var path = new Space$6.Path();
         path.points = [new Space$6.Point.Cartesian(50, 50), //(50, 200),
         new Space$6.Point.Cartesian(150, 50), //(150, 200),
@@ -1154,11 +1192,11 @@ var Figures = {
         ];
         path.close();
         path.scale(1.5, 1.5);
-        path.translate(200, 200);
+        path.translate(state.origin.x, state.origin.y);
         return path;
     },
 
-    star: function star(state, canvas) {
+    star: function star(state) {
         var dim = state.origin.x < state.origin.y ? state.origin.x : state.origin.y;
         var margin = dim * 0.2;
         var outer = dim - margin;
@@ -1167,11 +1205,11 @@ var Figures = {
         return figure.path;
     },
 
-    free: function free() {
+    free: function free(state) {
         var path = new Space$6.Path();
         path.points = [new Space$6.Point.Cartesian(20, 50), new Space$6.Point.Cartesian(100, 100), new Space$6.Point.Cartesian(150, 50), new Space$6.Point.Cartesian(200, 150), new Space$6.Point.Cartesian(250, 50), new Space$6.Point.Cartesian(300, 70), new Space$6.Point.Cartesian(310, 130), new Space$6.Point.Cartesian(380, 30)];
         path.scale(2, 2);
-        path.translate(200, 200);
+        path.translate(50, state.origin.y / 2);
         return path;
     },
 
@@ -1189,6 +1227,14 @@ var Figures = {
             path.add(rand);
         }
         return path;
+    },
+
+    triplet: function triplet(state) {
+        var path = new Space$6.Path(state.origin.x, state.origin.y);
+        path.add(-200, -200);
+        path.progress(100, 200);
+        path.progress(100, -200);
+        return path;
     }
 };
 
@@ -1200,29 +1246,67 @@ var defaults = {
 
 var BezierPath = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'circle' }, on: { "click": function click($event) {
-                    _vm.init('circle');
+                    _vm.goTo('circle');
                 } } }, [_vm._v("Circle")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'free' }, on: { "click": function click($event) {
-                    _vm.init('free');
+                    _vm.goTo('free');
                 } } }, [_vm._v("Open Path")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'random' }, on: { "click": function click($event) {
-                    _vm.init('random');
+                    _vm.goTo('random');
                 } } }, [_vm._v("Random")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'star' }, on: { "click": function click($event) {
-                    _vm.init('star');
-                } } }, [_vm._v("Star")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHelpers, expression: "state.showHelpers" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHelpers) ? _vm._i(_vm.state.showHelpers, null) > -1 : _vm.state.showHelpers }, on: { "change": function change($event) {
+                    _vm.goTo('star');
+                } } }, [_vm._v("Star")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'triplet' }, on: { "click": function click($event) {
+                    _vm.goTo('triplet');
+                } } }, [_vm._v("Triplet")])]), _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHandles, expression: "state.showHandles" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHandles) ? _vm._i(_vm.state.showHandles, null) > -1 : _vm.state.showHandles }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
-                    var $$a = _vm.state.showHelpers,
+                    var $$a = _vm.state.showHandles,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
                         var $$v = null,
                             $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.state.showHelpers = $$a.concat($$v));
+                            $$i < 0 && (_vm.state.showHandles = $$a.concat($$v));
                         } else {
-                            $$i > -1 && (_vm.state.showHelpers = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                            $$i > -1 && (_vm.state.showHandles = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
                         }
                     } else {
-                        _vm.state.showHelpers = $$c;
+                        _vm.state.showHandles = $$c;
                     }
-                } } }), _vm._v(" Handles")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
+                } } }), _vm._v(" Handles")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPath, expression: "state.showPath" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPath) ? _vm._i(_vm.state.showPath, null) > -1 : _vm.state.showPath }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showPath,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showPath = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showPath = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showPath = $$c;
+                    }
+                } } }), _vm._v(" Path")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showBounds, expression: "state.showBounds" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showBounds) ? _vm._i(_vm.state.showBounds, null) > -1 : _vm.state.showBounds }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showBounds,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showBounds = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showBounds = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showBounds = $$c;
+                    }
+                } } }), _vm._v(" Bounding Box")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__r": function __r($event) {
+                    _vm.state.tension = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
                     var $$a = _vm.state.stroke.edit,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
@@ -1235,13 +1319,7 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.stroke.edit = $$c;
                     }
-                } } }), _vm._v(" Stroke")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "change": function change($event) {
-                    _vm.init();
-                }, "__r": function __r($event) {
-                    _vm.state.tension = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit Stroke")])]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1249,7 +1327,55 @@ var BezierPath = { render: function render() {
                     }_vm.state.canvas.lineWidth = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Width")])]), _c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e()]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Width")])]), _c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e()]), _vm.state.figure === 'triplet' ? _c('div', { staticClass: "mui-panel mui-form--inline" }, [_c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[0].x, expression: "path.points[0].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[0].x }, on: { "change": function change($event) {
+                    _vm.update();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.path.points[0].x = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("left.x")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[0].y, expression: "path.points[0].y", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[0].y }, on: { "change": function change($event) {
+                    _vm.update();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.path.points[0].y = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("left.y")])])]), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[1].x, expression: "path.points[1].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[1].x }, on: { "change": function change($event) {
+                    _vm.update();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.path.points[1].x = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("middle.x")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[1].y, expression: "path.points[1].y", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[1].y }, on: { "change": function change($event) {
+                    _vm.update();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.path.points[1].y = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("middle.y")])])]), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[2].x, expression: "path.points[2].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[2].x }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.path.points[2].x = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("right.x")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[2].y, expression: "path.points[2].y", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[2].y }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.path.points[2].y = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("right.y")])])])]) : _vm._e(), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'BezierPath',
     props: ['animation', 'appState', 'canvas'],
@@ -1262,6 +1388,12 @@ var BezierPath = { render: function render() {
             _this.init();
         });
     },
+    watch: {
+        '$route': function $route(to) {
+            this.state.figure = to.params.figure;
+            this.init();
+        }
+    },
     data: function data() {
         return {
             state: {
@@ -1271,9 +1403,12 @@ var BezierPath = { render: function render() {
                     edit: false
                 },
                 tension: 0.5,
-                showHelpers: true,
+                showHandles: true,
+                showPath: false,
+                showBounds: false,
                 figure: 'free'
-            }
+            },
+            path: null
         };
     },
     components: {
@@ -1287,27 +1422,47 @@ var BezierPath = { render: function render() {
     },
 
     methods: {
+
+        // compute path and draw
         init: function init(figure) {
             var _this2 = this;
 
             if (figure !== undefined) {
                 this.state.figure = figure;
             }
-
-            var path = Figures[this.state.figure](this.state, this.canvas.canvas);
             var timeout = null;
             this.canvas.clear();
+
             //@TODO
             timeout = window.setTimeout(function () {
                 // !in timeout
                 if (!_this2.state.origin) {
                     _this2.state.origin = new Space$6.Point.Cartesian(_this2.canvas.canvas.width / 2, _this2.canvas.canvas.height / 2);
                 }
+                _this2.path = Figures[_this2.state.figure](_this2.state, _this2.canvas.canvas);
 
-                compute$6(path, _this2.state, _this2.canvas.canvas);
-                draw$1(path, _this2.state, _this2.canvas);
+                compute$6(_this2.path, _this2.state, _this2.canvas.canvas);
+                draw$1(_this2.path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);
             }, 100);
+        },
+
+        // draws from state path
+        update: function update() {
+            var _this3 = this;
+
+            var timeout = null;
+            this.canvas.clear();
+
+            //@TODO
+            timeout = window.setTimeout(function () {
+                draw$1(_this3.path, _this3.state, _this3.canvas);
+                window.clearTimeout(timeout);
+            }, 100);
+        },
+
+        goTo: function goTo(figure) {
+            this.$router.push({ name: this.$route.name, params: { figure: figure } });
         }
     }
 };
@@ -1782,35 +1937,27 @@ var routes = [{
         figure: true
     }
 }, {
-    name: 'Bezier', // 'BezierPath'
-    path: '/Bezier', // '/Figures/BezierPath',
+    name: 'Bezier',
+    path: '/Bezier',
     component: Bezier,
     meta: {
         menu: true,
         figure: false
     }
 }, {
-    name: 'BezierPath', // 'BezierPath'
-    path: '/BezierPath', // '/Figures/BezierPath',
+    name: 'Figures',
+    path: '/Figures/:figure?',
+    component: Figures$1,
+    meta: {
+        menu: true,
+        figure: false
+    }
+}, {
+    name: 'BezierPaths',
+    path: '/BezierPath/:figure?',
     component: BezierPath,
     meta: {
         menu: true,
-        figure: false
-    }
-}, {
-    name: 'Figures',
-    path: '/Figures',
-    component: Figures$1,
-    meta: {
-        menu: true,
-        figure: false
-    }
-}, {
-    name: 'Figure',
-    path: '/Figures/:figure',
-    component: Figures$1,
-    meta: {
-        menu: false,
         figure: false
     }
 },

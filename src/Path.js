@@ -20,6 +20,18 @@ Path.prototype.addPoint = function (v) {
     }
 };
 
+// replace (or set) a point at a specified index, updates closed index, doe NOT locate point to origin
+Path.prototype.replace = function (index, v) {
+    const closed = this.isClosed();
+    if (closed) {
+        this.open();
+    }
+    this.points[index] = v;
+    if (closed) {
+        this.close();
+    }
+};
+
 // add coords relative to origin
 Path.prototype.add = function (x, y, z) {
     const v = this.locate(Point.Cartesian.create(x, y, z));
@@ -38,14 +50,7 @@ Path.prototype.progress = function (x, y, z) {
 
 // replace (or set) a point at a specified index, updates closed index
 Path.prototype.set = function (index, x, y, z) {
-    const closed = this.isClosed();
-    if (closed) {
-        this.open();
-    }
-    this.points[index] = this.locate(Point.Cartesian.create(x, y, z));
-    if (closed) {
-        this.close();
-    }
+    this.replace(index, this.locate(Point.Cartesian.create(x, y, z)));
 };
 
 // get a point for index
@@ -104,13 +109,20 @@ Path.prototype.isClosed = function () {
 // bounding box
 //@TODO
 Path.prototype.bounds = function () {
-    const min = new Point.Cartesian(this.first().y, this.first().y);
-    const max = new Point.Cartesian(this.first().y, this.first().y);
+    if (!this.points.length) {
+        return null;
+    }
+    const min = this.first().clone();
+    const max = this.first().clone();
     const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
     for (let i = 0; i < length; i += 1) {
-        //...
+        min.min(this.points[i]);
+        max.max(this.points[i]);
     }
-    return [min, max];
+    //TODO point.between()
+    const center = min.clone();
+    center.translate((max.x - min.x) / 2, (max.y - min.y) / 2, (max.z - min.z) / 2);
+    return { min, max, center };
 };
 
 // could be bundled to .transform('translate' x,y,z) ?

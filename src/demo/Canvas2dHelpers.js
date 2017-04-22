@@ -1,4 +1,9 @@
 const Helpers = {
+
+    ////
+    // Controls
+    ////
+
     drawLine: function (ctx, from, to, theme) {
         if (!from) {
             return;
@@ -58,6 +63,34 @@ const Helpers = {
 
         ctx.restore();
     },
+
+    drawBoundingBox: function (ctx, path, theme) {
+        const bounds = path.bounds();
+        if (!path.bounds()) {
+            return;
+        }
+        ctx.save();
+
+        ctx.fillStyle = theme;
+        ctx.strokeStyle = theme;
+        ctx.lineWidth = 0.2;
+
+        ctx.setLineDash([2, 2]);
+        ctx.strokeRect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y);
+
+        ctx.beginPath();
+        ctx.moveTo(bounds.center.x, bounds.min.y);
+        ctx.lineTo(bounds.center.x, bounds.max.y);
+        ctx.moveTo(bounds.min.x, bounds.center.y);
+        ctx.lineTo(bounds.max.x, bounds.center.y);
+        ctx.stroke();
+
+        ctx.restore();
+    },
+
+    ////
+    // lines
+    ////
 
     line: function (ctx, prev, point) {
         if (!prev) {

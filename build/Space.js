@@ -173,6 +173,18 @@ Cartesian.prototype.equals = function (p) {
     return this.x === p.x && this.y === p.y && this.z === p.z;
 };
 
+// min, max
+
+Cartesian.prototype.min = function (v) {
+    this.x = this.x > v.x ? v.x : this.x;
+    this.y = this.y > v.y ? v.y : this.y;
+};
+
+Cartesian.prototype.max = function (v) {
+    this.x = this.x < v.x ? v.x : this.x;
+    this.y = this.y < v.y ? v.y : this.y;
+};
+
 // exports
 
 Cartesian.prototype.clone = function () {
@@ -234,6 +246,18 @@ Path.prototype.addPoint = function (v) {
     }
 };
 
+// replace (or set) a point at a specified index, updates closed index, doe NOT locate point to origin
+Path.prototype.replace = function (index, v) {
+    var closed = this.isClosed();
+    if (closed) {
+        this.open();
+    }
+    this.points[index] = v;
+    if (closed) {
+        this.close();
+    }
+};
+
 // add coords relative to origin
 Path.prototype.add = function (x, y, z) {
     var v = this.locate(Point.Cartesian.create(x, y, z));
@@ -252,14 +276,7 @@ Path.prototype.progress = function (x, y, z) {
 
 // replace (or set) a point at a specified index, updates closed index
 Path.prototype.set = function (index, x, y, z) {
-    var closed = this.isClosed();
-    if (closed) {
-        this.open();
-    }
-    this.points[index] = this.locate(Point.Cartesian.create(x, y, z));
-    if (closed) {
-        this.close();
-    }
+    this.replace(index, this.locate(Point.Cartesian.create(x, y, z)));
 };
 
 // get a point for index
@@ -318,13 +335,20 @@ Path.prototype.isClosed = function () {
 // bounding box
 //@TODO
 Path.prototype.bounds = function () {
-    var min = new Point.Cartesian(this.first().y, this.first().y);
-    var max = new Point.Cartesian(this.first().y, this.first().y);
+    if (!this.points.length) {
+        return null;
+    }
+    var min = this.first().clone();
+    var max = this.first().clone();
     var length = this.isClosed() ? this.points.length - 1 : this.points.length;
     for (var i = 0; i < length; i += 1) {
-        //...
+        min.min(this.points[i]);
+        max.max(this.points[i]);
     }
-    return [min, max];
+    //TODO point.between()
+    var center = min.clone();
+    center.translate((max.x - min.x) / 2, (max.y - min.y) / 2, (max.z - min.z) / 2);
+    return { min: min, max: max, center: center };
 };
 
 // could be bundled to .transform('translate' x,y,z) ?
@@ -619,7 +643,7 @@ var smoothPath = function smoothPath(path, curviness) {
     var length = path.isClosed() ? path.points.length - 1 : path.points.length;
     for (var i = 0; i < length; i += 1) {
         bezier = smoothPoint(path.prev(i), path.get(i), path.next(i), curviness);
-        path.set(i, bezier);
+        path.replace(i, bezier);
     }
 };
 
