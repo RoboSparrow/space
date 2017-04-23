@@ -125,6 +125,16 @@ Path.prototype.bounds = function () {
     return { min, max, center };
 };
 
+// rotate path
+Path.prototype.toArray = function () {
+    const arr = [];
+    const length = this.points.length;
+    for (let i = 0; i < length; i += 1) {
+        arr.push(this.points[i].toArray());
+    }
+    return arr;
+};
+
 // could be bundled to .transform('translate' x,y,z) ?
 
 // translate path

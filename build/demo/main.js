@@ -1150,7 +1150,7 @@ var draw$1 = function draw$1(path, state, canvas) {
     var prev = void 0;
     var point = void 0;
     var i = void 0;
-
+    console.log(path.toArray());
     for (i = 0; i < length; i += 1) {
         prev = path.prev(i);
         point = path.get(i);
