@@ -55,6 +55,9 @@
 
 <script>
 const match = function (str, model) {
+    if (!str || str === 'transparent') {
+        return [0, 0, 0, 1];
+    }
     let i;
     let n;
     const matches = str.match(/\d+/g);

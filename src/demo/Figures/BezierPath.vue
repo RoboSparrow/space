@@ -47,6 +47,16 @@
                 <color-picker :targ="'strokeStyle'" :rgba="state.canvas.strokeStyle"></color-picker>
             </div>
 
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.fill.edit" > Edit Fill
+                </label>
+            </div>
+            
+            <div class="mui-panel" v-if="state.fill.edit">
+                <color-picker :targ="'fillStyle'" :rgba="state.canvas.fillStyle"></color-picker>
+            </div>
+
         </form>
         
         <div class="mui-panel mui-form--inline" v-if="state.figure === 'triplet'">
@@ -104,6 +114,7 @@ const draw = function (path, state, canvas) {
     canvas.ctx.save();
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
+    canvas.ctx.fillStyle = state.canvas.fillStyle;
 
     if (state.showHelpers) {
         Canvas2dHelpers.drawCircle(canvas.ctx, path.origin(), 'origin:' + path.origin().toArray(), 'yellow');
@@ -114,11 +125,23 @@ const draw = function (path, state, canvas) {
     let point;
     let i;
 
+    //// curve
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(path.first().x, path.first().y);
+    for (i = 1; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+        Canvas2dHelpers.bezierLine(canvas.ctx, prev, point);
+    }
+    canvas.ctx.fill();
+    canvas.ctx.stroke();
+
+    //// helpers
+
     for (i = 0; i < length; i += 1) {
         prev = path.prev(i);
         point = path.get(i);
 
-        //// helpers
         if (state.showHandles) {
             if (point.members !== undefined && point.members.length > 1) {
                 Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
@@ -132,12 +155,6 @@ const draw = function (path, state, canvas) {
         if (state.showBounds) {
             Canvas2dHelpers.drawBoundingBox(canvas.ctx, path, 'yellow');
         }
-
-        //// curve
-        canvas.ctx.beginPath();
-        Canvas2dHelpers.bezierLine(canvas.ctx, prev, point);
-        canvas.ctx.stroke();
-
     }
 };
 
@@ -214,7 +231,7 @@ const Figures = {
 
 const defaults = {
     strokeStyle: 'rgba(255, 255, 255, 1)',
-    fillStyle: 'rgba(255, 255, 255, 1)',
+    fillStyle: 'transparent', //'rgba(255, 255, 255, 1)',
     lineWidth: 2
 };
 
@@ -244,6 +261,9 @@ export default {
                 origin: null,
                 canvas: this.appState.factor('canvas', defaults),
                 stroke: {
+                    edit: false
+                },
+                fill: {
                     edit: false
                 },
                 tension: 0.5,

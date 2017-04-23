@@ -65,7 +65,9 @@ export default {
                 prev: null,
                 segments: 200,
                 segmentsRange: 10,
-                canvas: this.appState.factor('canvas')
+                canvas: this.appState.factor('canvas', {
+                    fillStyle: 'transparent'
+                })
             }
         };
     },

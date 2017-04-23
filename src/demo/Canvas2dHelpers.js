@@ -13,12 +13,13 @@ const Helpers = {
         ctx.fillStyle = theme;
         ctx.strokeStyle = theme;
         //ctx.lineWidth = 0.5;
-
         ctx.setLineDash([2, 2]);
+
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         ctx.lineTo(to.x, to.y);
         ctx.stroke();
+        ctx.closePath();
 
         ctx.restore();
     },
@@ -45,6 +46,7 @@ const Helpers = {
         ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
         ctx.fill();
 
+        ctx.closePath();
         ctx.restore();
     },
 
@@ -61,6 +63,7 @@ const Helpers = {
         ctx.lineTo(handle.x, handle.y);
         ctx.stroke();
 
+        ctx.closePath();
         ctx.restore();
     },
 
@@ -85,6 +88,7 @@ const Helpers = {
         ctx.lineTo(bounds.max.x, bounds.center.y);
         ctx.stroke();
 
+        ctx.closePath();
         ctx.restore();
     },
 
@@ -104,8 +108,8 @@ const Helpers = {
         if (!prev) {
             return;
         }
-        ctx.moveTo(prev.x, prev.y);
-        const prevM = (typeof prev.members !== 'undefined') ? prev.members.length : 0;
+        //ctx.moveTo(prev.x, prev.y);//Dev
+        const prevM = (prev && typeof prev.members !== 'undefined') ? prev.members.length : 0;
         const pointM = (typeof point.members !== 'undefined') ? point.members.length : 0;
 
         // line

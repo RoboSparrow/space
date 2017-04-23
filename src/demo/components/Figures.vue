@@ -228,7 +228,7 @@ const compute = function (figure, state, canvas) {
 const draw = function (figure, path, state, canvas) {
     canvas.ctx.save();
     // styles
-    canvas.ctx.fillStyle = (state.fill.show && figure !== 'Path') ? state.canvas.fillStyle : null;
+    canvas.ctx.fillStyle = (state.fill.show && figure !== 'Path') ? state.canvas.fillStyle : 'transparent';
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
 
@@ -350,7 +350,7 @@ export default {
             this.state.fill.form = (this.figure === 'Path');
         },
         goTo(figure) {
-            this.$router.push({ name: 'Figure', params: { figure: figure.name } });
+            this.$router.push({ name: this.$route.name, params: { figure: figure.name } });
         }
     }
 };
