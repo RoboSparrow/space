@@ -1139,6 +1139,66 @@ var ColorPicker = { render: function render() {
     }
 })();
 
+var EditPathPoints = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm.path && _vm.path.points !== 'undefined' ? _c('div', { staticClass: "app--micro-form" }, _vm._l(_vm.path.points, function (point, index) {
+            return _c('section', [_c('strong', [_vm._v("Point " + _vm._s(index))]), _c('div', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: point.x, expression: "point.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": point.x }, on: { "change": function change($event) {
+                        _vm.update();
+                    }, "input": function input($event) {
+                        if ($event.target.composing) {
+                            return;
+                        }point.x = _vm._n($event.target.value);
+                    }, "blur": function blur($event) {
+                        _vm.$forceUpdate();
+                    } } }), _c('label', [_vm._v("x")]), _c('input', { directives: [{ name: "model", rawName: "v-model.number", value: point.y, expression: "point.y", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": point.y }, on: { "change": function change($event) {
+                        _vm.update();
+                    }, "input": function input($event) {
+                        if ($event.target.composing) {
+                            return;
+                        }point.y = _vm._n($event.target.value);
+                    }, "blur": function blur($event) {
+                        _vm.$forceUpdate();
+                    } } }), _c('label', [_vm._v("y")])]), _vm._l(point.members, function (member, index) {
+                return typeof point.members !== 'undefined' && point.members.length ? _c('div', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: member.x, expression: "member.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": member.x }, on: { "change": function change($event) {
+                            _vm.update();
+                        }, "input": function input($event) {
+                            if ($event.target.composing) {
+                                return;
+                            }member.x = _vm._n($event.target.value);
+                        }, "blur": function blur($event) {
+                            _vm.$forceUpdate();
+                        } } }), _c('label', [_vm._v("x")]), _c('input', { directives: [{ name: "model", rawName: "v-model.number", value: member.y, expression: "member.y", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": member.y }, on: { "change": function change($event) {
+                            _vm.update();
+                        }, "input": function input($event) {
+                            if ($event.target.composing) {
+                                return;
+                            }member.y = _vm._n($event.target.value);
+                        }, "blur": function blur($event) {
+                            _vm.$forceUpdate();
+                        } } }), _c('label', [_vm._v("y")])]) : _vm._e();
+            })], 2);
+        })) : _vm._e()]);
+    }, staticRenderFns: [],
+    name: 'EditPathPoints',
+    props: ['path'],
+    methods: {
+        update: function update() {
+            this.$parent.$emit('edit-path-points:updated');
+        }
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
 var Space$6 = window.Space;
 
 var compute$6 = function compute$6(path, state) {
@@ -1355,7 +1415,20 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.fill.edit = $$c;
                     }
-                } } }), _vm._v(" Edit Fill")])]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e()]), _vm.state.figure === 'triplet' ? _c('div', { staticClass: "mui-panel mui-form--inline" }, [_c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[0].x, expression: "path.points[0].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[0].x }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit Fill")])]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e()]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.path.edit, expression: "state.path.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.path.edit) ? _vm._i(_vm.state.path.edit, null) > -1 : _vm.state.path.edit }, on: { "__c": function __c($event) {
+                    var $$a = _vm.state.path.edit,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.path.edit = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.path.edit = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.path.edit = $$c;
+                    }
+                } } }), _vm._v(" Edit Path")])]), _vm.state.path.edit ? _c('div', { staticClass: "mui-panel" }, [_c('edit-path-points', { attrs: { "path": _vm.path } })], 1) : _vm._e(), _vm.state.figure === 'triplet' ? _c('div', { staticClass: "mui-panel mui-form--inline" }, [_c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[0].x, expression: "path.points[0].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[0].x }, on: { "change": function change($event) {
                     _vm.update();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1410,10 +1483,18 @@ var BezierPath = { render: function render() {
     created: function created() {
         var _this = this;
 
+        this.$on('color-picker:fillStyle', function (val) {
+            _this.state.canvas.fillStyle = val;
+            _this.state.fill.edit = false;
+            _this.init();
+        });
         this.$on('color-picker:strokeStyle', function (val) {
             _this.state.canvas.strokeStyle = val;
             _this.state.stroke.edit = false;
             _this.init();
+        });
+        this.$on('edit-path-points:updated', function () {
+            _this.update();
         });
     },
     watch: {
@@ -1433,6 +1514,9 @@ var BezierPath = { render: function render() {
                 fill: {
                     edit: false
                 },
+                path: {
+                    edit: false
+                },
                 tension: 0.5,
                 showHandles: true,
                 showPath: false,
@@ -1444,7 +1528,8 @@ var BezierPath = { render: function render() {
     },
     components: {
         ColorPicker: ColorPicker,
-        Dev: Dev
+        Dev: Dev,
+        EditPathPoints: EditPathPoints
     },
     mounted: function mounted() {
         //@TODO cancel animation

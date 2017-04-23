@@ -3819,6 +3819,9 @@ header a {
     width: 300px;
     right: 0; } }
 
+.app--micro-form {
+  font-size: 0.8em; }
+
 #content {
   min-height: 100%;
   overflow-x: hidden;

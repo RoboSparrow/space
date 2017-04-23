@@ -59,6 +59,15 @@
 
         </form>
         
+        <div class="mui-checkbox">
+            <label>
+                <input type="checkbox" v-model="state.path.edit" > Edit Path
+            </label>
+        </div>
+        <div class="mui-panel" v-if="state.path.edit">
+            <edit-path-points :path="path"></edit-path-points>
+        </div>
+        
         <div class="mui-panel mui-form--inline" v-if="state.figure === 'triplet'">
             <section>
                 <div class="mui-textfield">
@@ -101,6 +110,7 @@ import Canvas2dHelpers from '../Canvas2dHelpers';
 import Utils from '../Utils';
 
 import ColorPicker from '../components/form/ColorPicker.vue';
+import EditPathPoints from '../components/form/EditPathPoints.vue';
 import Dev from '../components/form/Dev.vue';
 
 const Space = window.Space;
@@ -243,10 +253,18 @@ export default {
         'canvas'
     ],
     created: function () {
+        this.$on('color-picker:fillStyle', (val) => {
+            this.state.canvas.fillStyle = val;
+            this.state.fill.edit = false;
+            this.init();
+        });
         this.$on('color-picker:strokeStyle', (val) => {
             this.state.canvas.strokeStyle = val;
             this.state.stroke.edit = false;
             this.init();
+        });
+        this.$on('edit-path-points:updated', () => {
+            this.update();
         });
     },
     watch: {
@@ -266,6 +284,9 @@ export default {
                 fill: {
                     edit: false
                 },
+                path: {
+                    edit: false
+                },
                 tension: 0.5,
                 showHandles: true,
                 showPath: false,
@@ -277,7 +298,8 @@ export default {
     },
     components: {
         ColorPicker,
-        Dev
+        Dev,
+        EditPathPoints
     },
     mounted() {
         //@TODO cancel animation
