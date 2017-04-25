@@ -1,23 +1,22 @@
 <template>
     <div>
-        <form class="mui-form">
-            <section>
-                <legend class="mui--text-subhead">Edit</legend>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.segments" min="3" max="60" step="1">
-                    <label>Segments <small>({{ state.segments }})</small></label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.segmentsRange" min="0" max="1" step="0.1">
-                    <label>Corner tension <small>({{ state.segmentsRange }})</small></label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.tension" min="-2" max="2" step="0.1">
-                    <label>Corner tension <small>({{ state.tension }})</small></label>
-                </div>
-            </section>
-        </form>
+        <section class="mui-form">
+            <legend>Edit Params</legend>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segments" min="3" max="60" step="1">
+                <label>Segments <small>({{ state.segments }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segmentsRange" min="0" max="1" step="0.1">
+                <label>Segments range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.tension" min="-2" max="2" step="0.1">
+                <label>Corner tension <small>({{ state.tension }})</small></label>
+            </div>
+        </section>
 
+        <!-- devel -->
         <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
@@ -86,20 +85,21 @@ export default {
             this.canvas.ctx.strokeStyle = this.state.canvas.strokeStyle;
             this.canvas.ctx.lineWidth = this.state.canvas.lineWidth;
 
-            // path
+            //// curve
             const length = path.points.length;
             let prev;
             let point;
             let i;
-            for (i = 0; i < length; i += 1) {
+
+            this.canvas.ctx.beginPath();
+            this.canvas.ctx.moveTo(path.first().x, path.first().y);
+            for (i = 1; i < length; i += 1) {
                 prev = path.prev(i);
                 point = path.get(i);
-                this.canvas.ctx.beginPath();
-                //Canvas2dHelpers.drawLine(this.canvas.ctx, prev, point, i, 'red');
-                //Canvas2dHelpers.drawPoint(this.canvas.ctx, point, i, 'red');
                 Canvas2dHelpers.bezierLine(this.canvas.ctx, prev, point);
-                this.canvas.ctx.stroke();
             }
+            this.canvas.ctx.fill();
+            this.canvas.ctx.stroke();
         })
         .play()
         ;

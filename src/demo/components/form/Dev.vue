@@ -1,16 +1,12 @@
 <template>
-    <div>
-        <form class="mui-form">
-            <section>
-                <div class="mui-checkbox">
-                    <label>
-                        <input type="checkbox" v-model="show"> {{label}}
-                    </label>
-                </div>
-            </section>
-        </form>
+    <section class="mui-form">
+        <div class="mui-checkbox">
+            <label>
+                <input type="checkbox" v-model="show"> Show {{label}}
+            </label>
+        </div>
         <pre v-if="show">{{data}}</pre>
-    </div>
+    </section>
 </template>
 
 <script>

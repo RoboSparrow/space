@@ -1,19 +1,18 @@
 <template>
     <div>
-        <form class="mui-form">
-            <section>
-                <legend class="mui--text-subhead">Edit</legend>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.widthRange" min="5" max="1000">
-                    <label>Width Range <small>({{ state.widthRange }})</small></label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.heightRange" min="5" max="1000">
-                    <label>Height Range <small>({{ state.heightRange }})</small></label>
-                </div>
-            </section>
-        </form>
+        <section class="mui-form">
+            <legend>Edit Params</legend>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.widthRange" min="5" max="1000">
+                <label>Width Range <small>({{ state.widthRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.heightRange" min="5" max="1000">
+                <label>Height Range <small>({{ state.heightRange }})</small></label>
+            </div>
+        </section>
 
+        <!-- devel -->
         <dev :label="'State'" :data="state"></dev>
     </div>
 </template>

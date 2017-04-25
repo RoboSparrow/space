@@ -1,139 +1,148 @@
 <template>
     <div>
-        <div class="mui-dropdown">
-            <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
-                {{ (figure) ? figure : 'Choose' }}
-                <span class="mui-caret mui--text-accent"></span>
-            </button>
-            <ul class="mui-dropdown__menu">
-                <li
-                    v-for="fig in figures"
-                    v-if="fig.name !== figure"
-                    v-bind:class="{'router-link-active': fig.name === figure}"
-                >
-                    <a v-on:click="goTo(fig)">{{ fig.name }}</a>
-                </li>
-            </ul>
-        </div>
-        <p></p>
-        <form class="mui-form--inline">
+        <section>
+            <div class="mui-dropdown">
+                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                    {{ (figure) ? figure : 'Choose' }}
+                    <span class="mui-caret mui--text-accent"></span>
+                </button>
+                <ul class="mui-dropdown__menu">
+                    <li
+                        v-for="fig in figures"
+                        v-if="fig.name !== figure"
+                        v-bind:class="{'router-link-active': fig.name === figure}"
+                    >
+                        <a v-on:click="goTo(fig)">{{ fig.name }}</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
 
-            <section v-if="figure === 'Path'">
-                <div class="app--inline-field mui-textfield">
-                    <input type="text" v-model.number="state.Path.segments" v-on:change="init()" >
-                    <label>Segments <small>({{ state.Path.segments }})</small></label>
-                </div>
-            </section>
+        <!-- figure:path -->
+        <section class="mui-form--inline" v-if="figure === 'Path'">
+            <div class="app--inline-field mui-textfield">
+                <input type="text" v-model.number="state.Path.segments" v-on:change="init()" >
+                <label>Segments <small>({{ state.Path.segments }})</small></label>
+            </div>
+        </section>
 
-            <section v-if="figure === 'Polygon'">
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Polygon.segments" v-on:change="init()" >
-                    <label>Segments</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Polygon.radius" v-on:change="init()" >
-                    <label>Radius</label>
-                </div>
-            </section>
+        <!-- figure:polygon -->
+        <section class="mui-form--inline" v-if="figure === 'Polygon'">
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Polygon.segments" v-on:change="init()" >
+                <label>Segments</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Polygon.radius" v-on:change="init()" >
+                <label>Radius</label>
+            </div>
+        </section>
 
-            <section v-if="figure === 'Star'">
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Star.segments" v-on:change="init()" >
-                    <label>Segments</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Star.outerRadius" v-on:change="init()" >
-                    <label>outer Radius</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Star.innerRadius" v-on:change="init()" >
-                    <label>inner Radius</label>
-                </div>
-            </section>
+        <!-- figure:star -->
+        <section class="mui-form--inline" v-if="figure === 'Star'">
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Star.segments" v-on:change="init()" >
+                <label>Segments</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Star.outerRadius" v-on:change="init()" >
+                <label>outer Radius</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Star.innerRadius" v-on:change="init()" >
+                <label>inner Radius</label>
+            </div>
+        </section>
 
-            <section v-if="figure === 'Rectangle'">
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Rectangle.width" v-on:change="init()" >
-                    <label>Width</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.Rectangle.height" v-on:change="init()" >
-                    <label>Height</label>
-                </div>
-            </section>
+        <!-- figure:rectangle -->
+        <section class="mui-form--inline"  v-if="figure === 'Rectangle'">
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Rectangle.width" v-on:change="init()" >
+                <label>Width</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Rectangle.height" v-on:change="init()" >
+                <label>Height</label>
+            </div>
+        </section>
 
-            <section v-if="state.fill.form">
-                <legend class="mui--text-subhead">Background</legend>
-                <div class="mui-checkbox">
-                    <label>
-                        <input type="checkbox" v-model="state.fill.show" v-on:change="init()"> Show
-                    </label>
-                </div>
-                <div class="mui-checkbox" v-if="state.fill.show">
-                    <label>
-                        <input type="checkbox" v-model="state.fill.edit" > Edit
-                    </label>
-                </div>
-            </section>
-
-            <div class="mui-panel" v-if="state.fill.form && state.fill.edit">
+        <!-- colors, stroke -->
+        <section class="mui-form--inline" v-if="state.fill.form">
+            <legend>Background</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.fill.show" v-on:change="init()"> Show
+                </label>
+            </div>
+            <div class="mui-checkbox" v-if="state.fill.show">
+                <label>
+                    <input type="checkbox" v-model="state.fill.edit" > Edit
+                </label>
+            </div>
+            <div v-if="state.fill.edit">
                 <color-picker :targ="'fillStyle'" :rgba="state.canvas.fillStyle"></color-picker>
             </div>
+        </section>
 
-            <section>
-                <legend class="mui--text-subhead">Stroke</legend>
-                <div class="mui-checkbox">
-                    <label>
-                        <input type="checkbox" v-model="state.stroke.show" v-on:change="init()"> Show
-                    </label>
-                </div>
-                <div class="mui-checkbox" v-if="state.stroke.show">
-                    <label>
-                        <input type="checkbox" v-model="state.stroke.edit" > Edit
-                    </label>
-                </div>
-            </section>
+        <!-- colors, stroke -->
+        <section class="mui-form--inline">
+            <legend>Stroke</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.stroke.show" v-on:change="init()"> Show
+                </label>
+            </div>
+            <div class="mui-checkbox" v-if="state.stroke.show">
+                <label>
+                    <input type="checkbox" v-model="state.stroke.edit" > Edit
+                </label>
+            </div>
 
-            <div class="mui-panel" v-if="state.stroke.edit">
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.canvas.lineWidth" v-on:change="init()" >
-                    <label>Width</label>
+            <div v-if="state.stroke.edit">
+                <div  class="mui-panel">
+                    <div class="mui-textfield">
+                        <input type="text" v-model.number="state.canvas.lineWidth" v-on:change="init()" >
+                        <label>Width</label>
+                    </div>
                 </div>
                 <color-picker :targ="'strokeStyle'" :rgba="state.canvas.strokeStyle"></color-picker>
             </div>
+        </section>
 
-            <section>
-                <legend class="mui--text-subhead">Translate</legend>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.tanslate[0]" v-on:change="init()" >
-                    <label>X</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.tanslate[1]" v-on:change="init()" >
-                    <label>Y</label>
-                </div>
-            </section>
+        <!-- translate -->
+        <section class="mui-form--inline">
+            <legend>Translate</legend>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.tanslate[0]" v-on:change="init()" >
+                <label>X</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.tanslate[1]" v-on:change="init()" >
+                <label>Y</label>
+            </div>
+        </section>
 
-            <section>
-                <legend class="mui--text-subhead">Scale</legend>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.scale[0]" v-on:change="init()" >
-                    <label>X</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.scale[1]" v-on:change="init()" >
-                    <label>Y</label>
-                </div>
-            </section>
+        <!-- scale-->
+        <section class="mui-form--inline">
+            <legend>Scale</legend>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.scale[0]" v-on:change="init()" >
+                <label>X</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.scale[1]" v-on:change="init()" >
+                <label>Y</label>
+            </div>
+        </section>
 
-            <section>
-                <legend class="mui--text-subhead">Rotate</legend>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="state.rotate2D" v-on:change="init()" >
-                    <label>rad</label>
-                </div>
-            </section>
-        </form>
+        <!-- rotate-->
+        <section class="mui-form--inline">
+            <legend>Rotate</legend>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.rotate2D" v-on:change="init()" >
+                <label>rad</label>
+            </div>
+        </section>
 
         <dev :label="'State'" :data="state"></dev>
     </div>
@@ -347,7 +356,7 @@ export default {
             }, 100);
         },
         initForms: function () {
-            this.state.fill.form = (this.figure === 'Path');
+            this.state.fill.form = (this.figure !== 'Path');
         },
         goTo(figure) {
             this.$router.push({ name: this.$route.name, params: { figure: figure.name } });

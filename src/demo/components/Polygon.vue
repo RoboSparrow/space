@@ -1,21 +1,19 @@
 <template>
     <div>
-        <form class="mui-form">
-            <section>
-                <legend class="mui--text-subhead">Edit</legend>
-                <form class="mui-form">
-                    <div class="mui-textfield">
-                        <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                        <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
-                    </div>
-                    <div class="mui-textfield">
-                        <input type="range" v-model.number="state.radiusRange" min="5" max="500">
-                        <label>Radius Range <small>({{ state.radiusRange }})</small></label>
-                    </div>
-                </form>
-                <dev :label="'State'" :data="state"></dev>
-            </section>
-        </form>
+        <section class="mui-form">
+            <legend>Edit Params</legend>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.radiusRange" min="5" max="500">
+                <label>Radius Range <small>({{ state.radiusRange }})</small></label>
+            </div>
+        </section>
+
+        <!-- devel -->
+        <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
 

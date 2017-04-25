@@ -348,7 +348,7 @@ var Home = { render: function render() {
 })();
 
 var Dev = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.show, expression: "show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.show) ? _vm._i(_vm.show, null) > -1 : _vm.show }, on: { "__c": function __c($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('section', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.show, expression: "show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.show) ? _vm._i(_vm.show, null) > -1 : _vm.show }, on: { "__c": function __c($event) {
                     var $$a = _vm.show,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
@@ -361,7 +361,7 @@ var Dev = { render: function render() {
                     } else {
                         _vm.show = $$c;
                     }
-                } } }), _vm._v(" " + _vm._s(_vm.label))])])])]), _vm.show ? _c('pre', [_vm._v(_vm._s(_vm.data))]) : _vm._e()]);
+                } } }), _vm._v(" Show " + _vm._s(_vm.label))])]), _vm.show ? _c('pre', [_vm._v(_vm._s(_vm.data))]) : _vm._e()]);
     }, staticRenderFns: [],
     name: 'Dev',
     props: ['data', 'label'],
@@ -409,7 +409,7 @@ var compute$1 = function compute$1(state, canvas) {
 };
 
 var Path = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "800", "step": "10" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "800", "step": "10" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
                     _vm.state.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -417,7 +417,7 @@ var Path = { render: function render() {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Path',
     props: ['animation', 'appState', 'canvas'],
@@ -430,9 +430,7 @@ var Path = { render: function render() {
                 prev: null,
                 segments: 200,
                 segmentsRange: 10,
-                canvas: this.appState.factor('canvas', {
-                    fillStyle: 'transparent'
-                })
+                canvas: this.appState.factor('canvas')
             }
         };
     },
@@ -504,7 +502,7 @@ var compute$2 = function compute$2(state, canvas) {
 };
 
 var Polygon = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -512,7 +510,7 @@ var Polygon = { render: function render() {
                     _vm.state.radiusRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1)])]);
+                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Polygon',
     props: ['animation', 'appState', 'canvas'],
@@ -607,7 +605,7 @@ var compute$3 = function compute$3(state, canvas) {
 };
 
 var Rectangle = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
                     _vm.state.widthRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -615,7 +613,7 @@ var Rectangle = { render: function render() {
                     _vm.state.heightRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Rectangle',
     props: ['animation', 'appState', 'canvas'],
@@ -716,7 +714,7 @@ var compute$4 = function compute$4(state, canvas) {
 };
 
 var Star = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -728,7 +726,7 @@ var Star = { render: function render() {
                     _vm.state.innerRadiusRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Star',
     props: ['animation', 'appState', 'canvas'],
@@ -967,7 +965,7 @@ var compute$5 = function compute$5(state, canvas) {
 };
 
 var Bezier = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Edit")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "60", "step": "1" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "60", "step": "1" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
                     _vm.state.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -975,11 +973,11 @@ var Bezier = { render: function render() {
                     _vm.state.segmentsRange = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "__r": function __r($event) {
+                } } }), _c('label', [_vm._v("Segments range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "__r": function __r($event) {
                     _vm.state.tension = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Path',
     props: ['animation', 'appState', 'canvas'],
@@ -1017,20 +1015,21 @@ var Bezier = { render: function render() {
             _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
             _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
 
-            // path
+            //// curve
             var length = path.points.length;
             var prev = void 0;
             var point = void 0;
             var i = void 0;
-            for (i = 0; i < length; i += 1) {
+
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(path.first().x, path.first().y);
+            for (i = 1; i < length; i += 1) {
                 prev = path.prev(i);
                 point = path.get(i);
-                _this.canvas.ctx.beginPath();
-                //Canvas2dHelpers.drawLine(this.canvas.ctx, prev, point, i, 'red');
-                //Canvas2dHelpers.drawPoint(this.canvas.ctx, point, i, 'red');
                 Helpers.bezierLine(_this.canvas.ctx, prev, point);
-                _this.canvas.ctx.stroke();
             }
+            _this.canvas.ctx.fill();
+            _this.canvas.ctx.stroke();
         }).play();
     }
 };
@@ -1064,7 +1063,7 @@ var match = function match(str, model) {
 };
 
 var ColorPicker = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "app--color-picker" }, [_c('table', { staticClass: "mui-table" }, [_c('tbody', [_c('tr', [_c('td', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.RGBA[0], expression: "RGBA[0]", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "255" }, domProps: { "value": _vm.RGBA[0] }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', { staticClass: "app--color-picker mui-panel" }, [_c('table', { staticClass: "mui-table" }, [_c('tbody', [_c('tr', [_c('td', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.RGBA[0], expression: "RGBA[0]", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "255" }, domProps: { "value": _vm.RGBA[0] }, on: { "__r": function __r($event) {
                     var $$exp = _vm.RGBA,
                         $$idx = 0;if (!Array.isArray($$exp)) {
                         _vm.RGBA[0] = _vm._n($event.target.value);
@@ -1157,8 +1156,8 @@ var EditPathPoints = { render: function render() {
                         }point.y = _vm._n($event.target.value);
                     }, "blur": function blur($event) {
                         _vm.$forceUpdate();
-                    } } }), _c('label', [_vm._v("y")])]), _vm._l(point.members, function (member, index) {
-                return typeof point.members !== 'undefined' && point.members.length ? _c('div', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: member.x, expression: "member.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": member.x }, on: { "change": function change($event) {
+                    } } }), _c('label', [_vm._v("y")])]), _vm._l(point.members, function (member, i) {
+                return typeof point.members !== 'undefined' && point.members.length ? _c('div', [_c('strong', [_vm._v("cp[" + _vm._s(i) + "]")]), _c('br'), _c('input', { directives: [{ name: "model", rawName: "v-model.number", value: member.x, expression: "member.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": member.x }, on: { "change": function change($event) {
                             _vm.update();
                         }, "input": function input($event) {
                             if ($event.target.composing) {
@@ -1174,8 +1173,8 @@ var EditPathPoints = { render: function render() {
                             }member.y = _vm._n($event.target.value);
                         }, "blur": function blur($event) {
                             _vm.$forceUpdate();
-                        } } }), _c('label', [_vm._v("y")])]) : _vm._e();
-            })], 2);
+                        } } }), _c('label', [_vm._v(".y")])]) : _vm._e();
+            }), _c('br')], 2);
         })) : _vm._e()]);
     }, staticRenderFns: [],
     name: 'EditPathPoints',
@@ -1201,8 +1200,16 @@ var EditPathPoints = { render: function render() {
 
 var Space$6 = window.Space;
 
+//TODO this can be moved into figure paths
 var compute$6 = function compute$6(path, state) {
-    Space$6.Bezier.smoothPath(path, state.tension);
+    var figure = state.figure;
+    switch (figure) {
+        case 'flower':
+        case 'seaStar':
+            break;
+        default:
+            Space$6.Bezier.smoothPath(path, state[figure].tension);
+    }
     return path;
 };
 
@@ -1276,7 +1283,28 @@ var Figures = {
         var margin = dim * 0.2;
         var outer = dim - margin;
         var inner = margin;
-        var figure = new Space$6.Star(6, outer, inner, state.origin);
+        var figure = new Space$6.Star(state.star.segments, outer, inner, state.origin);
+        return figure.path;
+    },
+
+    flower: function flower(state) {
+        var dim = state.origin.x < state.origin.y ? state.origin.x : state.origin.y;
+        var margin = dim * 0.2;
+        var outer = dim - margin;
+        var inner = 10;
+        var figure = new Space$6.Star(state.flower.segments, outer, inner, state.origin);
+        figure.flower(state.flower.outerTension);
+        return figure.path;
+    },
+
+    seaStar: function seaStar(state) {
+        var dim = state.origin.x < state.origin.y ? state.origin.x : state.origin.y;
+        var margin = dim * 0.2;
+        var outer = dim - margin;
+        var inner = margin;
+        console.log(state.seaStar);
+        var figure = new Space$6.Star(state.seaStar.segments, outer, inner, state.origin);
+        figure.seaStar(state.seaStar.innerTension);
         return figure.path;
     },
 
@@ -1320,7 +1348,7 @@ var defaults = {
 };
 
 var BezierPath = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('form', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'circle' }, on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'circle' }, on: { "click": function click($event) {
                     _vm.goTo('circle');
                 } } }, [_vm._v("Circle")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'free' }, on: { "click": function click($event) {
                     _vm.goTo('free');
@@ -1328,9 +1356,13 @@ var BezierPath = { render: function render() {
                     _vm.state.figure == 'random' ? _vm.init('random') : _vm.goTo('random');
                 } } }, [_vm._v("Random")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'star' }, on: { "click": function click($event) {
                     _vm.goTo('star');
-                } } }, [_vm._v("Star")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'triplet' }, on: { "click": function click($event) {
+                } } }, [_vm._v("Star")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'flower' }, on: { "click": function click($event) {
+                    _vm.goTo('flower');
+                } } }, [_vm._v("Flower")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'seaStar' }, on: { "click": function click($event) {
+                    _vm.goTo('seaStar');
+                } } }, [_vm._v("Sea Star")]), _vm._v(" "), _c('button', { staticClass: "mui-btn mui-btn--small app--btn", class: { active: _vm.state.figure == 'triplet' }, on: { "click": function click($event) {
                     _vm.goTo('triplet');
-                } } }, [_vm._v("Triplet")])]), _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHandles, expression: "state.showHandles" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHandles) ? _vm._i(_vm.state.showHandles, null) > -1 : _vm.state.showHandles }, on: { "change": function change($event) {
+                } } }, [_vm._v("Triplet")])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Helpers")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHandles, expression: "state.showHandles" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHandles) ? _vm._i(_vm.state.showHandles, null) > -1 : _vm.state.showHandles }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.showHandles,
@@ -1375,13 +1407,31 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.showBounds = $$c;
                     }
-                } } }), _vm._v(" Bounding Box")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "change": function change($event) {
+                } } }), _vm._v(" Bounding Box")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("States")]), typeof _vm.state[_vm.state.figure].tension !== 'undefined' ? _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state[_vm.state.figure].tension, expression: "state[state.figure].tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state[_vm.state.figure].tension }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__r": function __r($event) {
-                    _vm.state.tension = _vm._n($event.target.value);
+                    _vm.state[_vm.state.figure].tension = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
+                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state[_vm.state.figure].tension) + ")")])])]) : _vm._e(), typeof _vm.state[_vm.state.figure].segments !== 'undefined' ? _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state[_vm.state.figure].segments, expression: "state[state.figure].segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "20" }, domProps: { "value": _vm.state[_vm.state.figure].segments }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__r": function __r($event) {
+                    _vm.state[_vm.state.figure].segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state[_vm.state.figure].segments) + ")")])])]) : _vm._e(), typeof _vm.state[_vm.state.figure].outerTension !== 'undefined' ? _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state[_vm.state.figure].outerTension, expression: "state[state.figure].outerTension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "25", "step": "1" }, domProps: { "value": _vm.state[_vm.state.figure].outerTension }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__r": function __r($event) {
+                    _vm.state[_vm.state.figure].outerTension = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Outer corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state[_vm.state.figure].outerTension) + ")")])])]) : _vm._e(), typeof _vm.state[_vm.state.figure].innerTension !== 'undefined' ? _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state[_vm.state.figure].innerTension, expression: "state[state.figure].innerTension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "5", "step": "0.1" }, domProps: { "value": _vm.state[_vm.state.figure].innerTension }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__r": function __r($event) {
+                    _vm.state[_vm.state.figure].innerTension = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Inner corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state[_vm.state.figure].innerTension) + ")")])])]) : _vm._e()]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Appearance")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.edit, expression: "state.stroke.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.edit) ? _vm._i(_vm.state.stroke.edit, null) > -1 : _vm.state.stroke.edit }, on: { "__c": function __c($event) {
                     var $$a = _vm.state.stroke.edit,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
@@ -1415,7 +1465,7 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.fill.edit = $$c;
                     }
-                } } }), _vm._v(" Edit Fill")])]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e()]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.path.edit, expression: "state.path.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.path.edit) ? _vm._i(_vm.state.path.edit, null) > -1 : _vm.state.path.edit }, on: { "__c": function __c($event) {
+                } } }), _vm._v(" Edit Fill")])]), _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e()]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Path")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.path.edit, expression: "state.path.edit" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.path.edit) ? _vm._i(_vm.state.path.edit, null) > -1 : _vm.state.path.edit }, on: { "__c": function __c($event) {
                     var $$a = _vm.state.path.edit,
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
@@ -1428,55 +1478,7 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.path.edit = $$c;
                     }
-                } } }), _vm._v(" Edit Path")])]), _vm.state.path.edit ? _c('div', { staticClass: "mui-panel" }, [_c('edit-path-points', { attrs: { "path": _vm.path } })], 1) : _vm._e(), _vm.state.figure === 'triplet' ? _c('div', { staticClass: "mui-panel mui-form--inline" }, [_c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[0].x, expression: "path.points[0].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[0].x }, on: { "change": function change($event) {
-                    _vm.update();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.path.points[0].x = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("left.x")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[0].y, expression: "path.points[0].y", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[0].y }, on: { "change": function change($event) {
-                    _vm.update();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.path.points[0].y = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("left.y")])])]), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[1].x, expression: "path.points[1].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[1].x }, on: { "change": function change($event) {
-                    _vm.update();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.path.points[1].x = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("middle.x")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[1].y, expression: "path.points[1].y", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[1].y }, on: { "change": function change($event) {
-                    _vm.update();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.path.points[1].y = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("middle.y")])])]), _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[2].x, expression: "path.points[2].x", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[2].x }, on: { "change": function change($event) {
-                    _vm.init();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.path.points[2].x = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("right.x")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.path.points[2].y, expression: "path.points[2].y", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.path.points[2].y }, on: { "change": function change($event) {
-                    _vm.init();
-                }, "input": function input($event) {
-                    if ($event.target.composing) {
-                        return;
-                    }_vm.path.points[2].y = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("right.y")])])])]) : _vm._e(), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _vm._v(" Edit Path")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Devel")]), _vm.state.path.edit ? _c('div', { staticClass: "mui-panel" }, [_c('edit-path-points', { attrs: { "path": _vm.path } })], 1) : _vm._e(), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1)]);
     }, staticRenderFns: [],
     name: 'BezierPath',
     props: ['animation', 'appState', 'canvas'],
@@ -1517,11 +1519,35 @@ var BezierPath = { render: function render() {
                 path: {
                     edit: false
                 },
-                tension: 0.5,
                 showHandles: true,
                 showPath: false,
                 showBounds: false,
-                figure: typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'free'
+                figure: typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'free',
+                // special states
+                circle: {
+                    tension: 0.5
+                },
+                star: {
+                    segments: 6,
+                    tension: 0.5
+                },
+                flower: {
+                    segments: 6,
+                    outerTension: 15
+                },
+                seaStar: {
+                    segments: 6,
+                    innerTension: 0.5
+                },
+                free: {
+                    tension: 0.5
+                },
+                random: {
+                    tension: 0.5
+                },
+                triplet: {
+                    tension: 0.5
+                }
             },
             path: null
         };
@@ -1714,11 +1740,11 @@ var defaults$1 = {
 };
 
 var Figures$1 = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figure ? _vm.figure : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures, function (fig) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', [_c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figure ? _vm.figure : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures, function (fig) {
             return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
                         _vm.goTo(fig);
                     } } }, [_vm._v(_vm._s(fig.name))])]) : _vm._e();
-        }))]), _c('p'), _c('form', { staticClass: "mui-form--inline" }, [_vm.figure === 'Path' ? _c('section', [_c('div', { staticClass: "app--inline-field mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
+        }))])]), _vm.figure === 'Path' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "app--inline-field mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1726,7 +1752,7 @@ var Figures$1 = { render: function render() {
                     }_vm.state.Path.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _vm.figure === 'Polygon' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Polygon.segments, expression: "state.Polygon.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Polygon.segments }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.Path.segments) + ")")])])])]) : _vm._e(), _vm.figure === 'Polygon' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Polygon.segments, expression: "state.Polygon.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Polygon.segments }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1742,7 +1768,7 @@ var Figures$1 = { render: function render() {
                     }_vm.state.Polygon.radius = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Radius")])])]) : _vm._e(), _vm.figure === 'Star' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Star.segments, expression: "state.Star.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Star.segments }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Radius")])])]) : _vm._e(), _vm.figure === 'Star' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Star.segments, expression: "state.Star.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Star.segments }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1766,7 +1792,7 @@ var Figures$1 = { render: function render() {
                     }_vm.state.Star.innerRadius = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("inner Radius")])])]) : _vm._e(), _vm.figure === 'Rectangle' ? _c('section', [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Rectangle.width, expression: "state.Rectangle.width", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Rectangle.width }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("inner Radius")])])]) : _vm._e(), _vm.figure === 'Rectangle' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Rectangle.width, expression: "state.Rectangle.width", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Rectangle.width }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1782,7 +1808,7 @@ var Figures$1 = { render: function render() {
                     }_vm.state.Rectangle.height = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _vm.state.fill.form ? _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Background")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.show, expression: "state.fill.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.show) ? _vm._i(_vm.state.fill.show, null) > -1 : _vm.state.fill.show }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Height")])])]) : _vm._e(), _vm.state.fill.form ? _c('section', { staticClass: "mui-form--inline" }, [_c('legend', [_vm._v("Background")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.fill.show, expression: "state.fill.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.fill.show) ? _vm._i(_vm.state.fill.show, null) > -1 : _vm.state.fill.show }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.fill.show,
@@ -1810,7 +1836,7 @@ var Figures$1 = { render: function render() {
                     } else {
                         _vm.state.fill.edit = $$c;
                     }
-                } } }), _vm._v(" Edit")])]) : _vm._e()]) : _vm._e(), _vm.state.fill.form && _vm.state.fill.edit ? _c('div', { staticClass: "mui-panel" }, [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Stroke")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.show, expression: "state.stroke.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.show) ? _vm._i(_vm.state.stroke.show, null) > -1 : _vm.state.stroke.show }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit")])]) : _vm._e(), _vm.state.fill.edit ? _c('div', [_c('color-picker', { attrs: { "targ": 'fillStyle', "rgba": _vm.state.canvas.fillStyle } })], 1) : _vm._e()]) : _vm._e(), _c('section', { staticClass: "mui-form--inline" }, [_c('legend', [_vm._v("Stroke")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.stroke.show, expression: "state.stroke.show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.stroke.show) ? _vm._i(_vm.state.stroke.show, null) > -1 : _vm.state.stroke.show }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.stroke.show,
@@ -1838,7 +1864,7 @@ var Figures$1 = { render: function render() {
                     } else {
                         _vm.state.stroke.edit = $$c;
                     }
-                } } }), _vm._v(" Edit")])]) : _vm._e()]), _vm.state.stroke.edit ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
+                } } }), _vm._v(" Edit")])]) : _vm._e(), _vm.state.stroke.edit ? _c('div', [_c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.canvas.lineWidth, expression: "state.canvas.lineWidth", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.canvas.lineWidth }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1846,7 +1872,7 @@ var Figures$1 = { render: function render() {
                     }_vm.state.canvas.lineWidth = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Width")])]), _c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e(), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Translate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Width")])])]), _c('color-picker', { attrs: { "targ": 'strokeStyle', "rgba": _vm.state.canvas.strokeStyle } })], 1) : _vm._e()]), _c('section', { staticClass: "mui-form--inline" }, [_c('legend', [_vm._v("Translate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tanslate[0], expression: "state.tanslate[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.tanslate[0] }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1872,7 +1898,7 @@ var Figures$1 = { render: function render() {
                     }
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Y")])])]), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Scale")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.scale[0], expression: "state.scale[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.scale[0] }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Y")])])]), _c('section', { staticClass: "mui-form--inline" }, [_c('legend', [_vm._v("Scale")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.scale[0], expression: "state.scale[0]", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.scale[0] }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1898,7 +1924,7 @@ var Figures$1 = { render: function render() {
                     }
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Y")])])]), _c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Rotate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.rotate2D, expression: "state.rotate2D", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.rotate2D }, on: { "change": function change($event) {
+                } } }), _c('label', [_vm._v("Y")])])]), _c('section', { staticClass: "mui-form--inline" }, [_c('legend', [_vm._v("Rotate")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.rotate2D, expression: "state.rotate2D", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.rotate2D }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1906,7 +1932,7 @@ var Figures$1 = { render: function render() {
                     }_vm.state.rotate2D = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("rad")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("rad")])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Figures',
     props: ['animation', 'appState', 'canvas'],
@@ -1996,7 +2022,7 @@ var Figures$1 = { render: function render() {
             }, 100);
         },
         initForms: function initForms() {
-            this.state.fill.form = this.figure === 'Path';
+            this.state.fill.form = this.figure !== 'Path';
         },
         goTo: function goTo(figure) {
             this.$router.push({ name: this.$route.name, params: { figure: figure.name } });
@@ -2136,13 +2162,13 @@ var Routes = {
 })();
 
 var Animation$2 = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm.animation.id ? _c('form', { staticClass: "mui-form--inline" }, [_c('section', [_c('legend', { staticClass: "mui--text-subhead" }, [_vm._v("Animation "), _c('small', [_vm._v(_vm._s(_vm.animation.count))])]), _c('a', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm.animation.id ? _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Animation "), _c('small', [_vm._v(_vm._s(_vm.animation.count))])]), _c('a', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.animation.toggle();
                 } } }, [_vm._v(_vm._s(_vm.animation.running ? 'pause' : 'play') + " ")]), _c('a', { staticClass: "mui-btn mui-btn--small app--btn", on: { "click": function click($event) {
                     _vm.show = !_vm.show;
-                } } }, [_vm._v("Throttle")])])]) : _vm._e(), _vm.show ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
+                } } }, [_vm._v("Throttle")]), _vm.show ? _c('div', { staticClass: "mui-panel" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { attrs: { "type": "range", "min": "0", "max": "100" }, on: { "change": function change($event) {
                     _vm.throttle($event.target.value);
-                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]);
+                } } }), _c('label', [_vm._v("fps "), _c('small', [_vm._v("(" + _vm._s(1000 / _vm.animation.interval) + ")")])])])]) : _vm._e()]) : _vm._e()]);
     }, staticRenderFns: [],
     name: 'Animation',
     props: ['animation'],

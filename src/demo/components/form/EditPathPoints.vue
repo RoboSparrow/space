@@ -12,12 +12,14 @@
                 <!-- groups -->
                 <div
                     v-if="typeof point.members !== 'undefined' && point.members.length"
-                    v-for="(member, index) in point.members">
+                    v-for="(member, i) in point.members">
+                    <strong>cp[{{i}}]</strong><br>
                     <input type="text" v-model.number="member.x" v-on:change="update()" size="3">
                     <label>x</label>
                     <input type="text" v-model.number="member.y" v-on:change="update()" size="3">
-                    <label>y</label>     
+                    <label>.y</label>
                 </div>
+                <br>
             </section>
         </div>
     </div>

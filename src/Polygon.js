@@ -1,5 +1,6 @@
 import Path from './Path';
 import Point from './Point';
+import Bezier from './Bezier';
 
 ////
 // Polygon
@@ -79,6 +80,26 @@ const Star = function (segments, outerRadius, innerRadius, origin) {
     }
     path.close();
     this.path = path;
+};
+
+// apply bezier to outer points only
+Star.prototype.flower = function (tension) {
+    let bezier;
+    const length = this.path.points.length - 1;
+    for (let i = 0; i < length; i += 2) {
+        bezier = Bezier.smoothPoint(this.path.prev(i), this.path.get(i), this.path.next(i), tension);
+        this.path.replace(i, bezier);
+    }
+};
+
+// apply bezier to outer points only
+Star.prototype.seaStar = function (tension) {
+    let bezier;
+    const length = this.path.points.length - 1;
+    for (let i = 1; i < length; i += 2) {
+        bezier = Bezier.smoothPoint(this.path.prev(i), this.path.get(i), this.path.next(i), tension);
+        this.path.replace(i, bezier);
+    }
 };
 
 export {

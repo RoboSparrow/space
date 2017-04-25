@@ -120,11 +120,19 @@ header a {
 
 // sidebar > form
 
-#sidebar form legend {
+#sidebar legend {
     color: lighten($mui-text-accent, 10);
     font-size: 16px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+#sidebar section{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px dashed white;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 #sidebar .app--btn{
@@ -140,10 +148,6 @@ header a {
     border-bottom-color: rgba($app-fg-color, .5);
     padding-left:  5px;
     padding-right: 5px;
-}
-
-#sidebar .mui-form--inline section{
-    margin-top: 5px;
 }
 
 #sidebar .mui-form--inline section div{

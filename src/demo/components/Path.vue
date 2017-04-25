@@ -1,19 +1,18 @@
 <template>
     <div>
-        <form class="mui-form">
-            <section>
-                <legend class="mui--text-subhead">Edit</legend>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.segments" min="10" max="800" step="10">
-                    <label>Segments <small>({{ state.segments }})</small></label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                    <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
-                </div>
-            </section>
-        </form>
+        <section class="mui-form">
+            <legend>Edit Params</legend>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segments" min="10" max="800" step="10">
+                <label>Segments <small>({{ state.segments }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+        </section>
 
+        <!-- devel -->
         <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
@@ -65,9 +64,7 @@ export default {
                 prev: null,
                 segments: 200,
                 segmentsRange: 10,
-                canvas: this.appState.factor('canvas', {
-                    fillStyle: 'transparent'
-                })
+                canvas: this.appState.factor('canvas')
             }
         };
     },

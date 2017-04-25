@@ -2543,14 +2543,6 @@ h4, h5, h6 {
   border-radius: 2px;
   z-index: 1;
   background-clip: padding-box; }
-  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-    .mui-dropdown__menu {
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-      border-left: 1px solid rgba(0, 0, 0, 0.12); } }
-  @supports (-ms-ime-align: auto) {
-    .mui-dropdown__menu {
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-      border-left: 1px solid rgba(0, 0, 0, 0.12); } }
   .mui-dropdown__menu.mui--is-open {
     display: block; }
   .mui-dropdown__menu > li > a {
@@ -3609,8 +3601,7 @@ h4, h5, h6 {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  z-index: 0;
-  pointer-events: none; }
+  z-index: 0; }
 
 .mui-ripple {
   position: absolute;
@@ -3785,11 +3776,18 @@ header a {
 #sidebar .mui-dropdown__menu a {
   color: black; }
 
-#sidebar form legend {
+#sidebar legend {
   color: rgba(255, 115, 163, 0.87);
   font-size: 16px;
   margin-top: 10px;
   margin-bottom: 10px; }
+
+#sidebar section {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px dashed white;
+  padding-top: 5px;
+  padding-bottom: 5px; }
 
 #sidebar .app--btn {
   background-color: rgba(255, 255, 255, 0.3); }
@@ -3802,9 +3800,6 @@ header a {
   border-bottom-color: rgba(255, 255, 255, 0.5);
   padding-left: 5px;
   padding-right: 5px; }
-
-#sidebar .mui-form--inline section {
-  margin-top: 5px; }
 
 #sidebar .mui-form--inline section div {
   padding-right: 5px;

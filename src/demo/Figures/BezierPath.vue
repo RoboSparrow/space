@@ -1,37 +1,61 @@
 <template>
     <div>
-        <form class="mui-form">
+        <!-- nav -->
+        <section>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('circle')" v-bind:class="{active: state.figure == 'circle'}">Circle</button>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('free')"   v-bind:class="{active: state.figure == 'free'}">Open Path</button>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="(state.figure == 'random') ? init('random') : goTo('random')" v-bind:class="{active: state.figure == 'random'}">Random</button>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('star')" v-bind:class="{active: state.figure == 'star'}">Star</button>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('flower')" v-bind:class="{active: state.figure == 'flower'}">Flower</button>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('seaStar')" v-bind:class="{active: state.figure == 'seaStar'}">Sea Star</button>
+            <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('triplet')" v-bind:class="{active: state.figure == 'triplet'}">Triplet</button>
+        </section>
+        <!-- helpers -->
+        <section class="mui-form">
+            <legend>Helpers</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showHandles" v-on:change="init()"> Handles
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showPath" v-on:change="init()"> Path
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showBounds" v-on:change="init()"> Bounding Box
+                </label>
+            </div>
+        </section>
+        <!-- states for figure -->
+        <section class="mui-form">
+            <legend>States</legend>
 
-            <div class="mui-textfield">
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('circle')" v-bind:class="{active: state.figure == 'circle'}">Circle</button>
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('free')"   v-bind:class="{active: state.figure == 'free'}">Open Path</button>
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="(state.figure == 'random') ? init('random') : goTo('random')" v-bind:class="{active: state.figure == 'random'}">Random</button>
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('star')" v-bind:class="{active: state.figure == 'star'}">Star</button>
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="goTo('triplet')" v-bind:class="{active: state.figure == 'triplet'}">Triplet</button>
+            <div class="mui-textfield" v-if="typeof state[state.figure].tension !== 'undefined'">
+                <input type="range" v-model.number="state[state.figure].tension" min="-2" max="2" step="0.1" v-on:change="init()">
+                <label>Corner tension <small>({{ state[state.figure].tension }})</small></label>
             </div>
 
-            <section class="mui-form--inline">
-                <div class="mui-checkbox">
-                    <label>
-                        <input type="checkbox" v-model="state.showHandles" v-on:change="init()"> Handles 
-                    </label>
-                </div>
-                <div class="mui-checkbox">
-                    <label>
-                        <input type="checkbox" v-model="state.showPath" v-on:change="init()"> Path
-                    </label>
-                </div>
-                <div class="mui-checkbox">
-                    <label>
-                        <input type="checkbox" v-model="state.showBounds" v-on:change="init()"> Bounding Box
-                    </label>
-                </div>
-            </section>
-
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.tension" min="-2" max="2" step="0.1" v-on:change="init()">
-                <label>Corner tension <small>({{ state.tension }})</small></label>
+            <div class="mui-textfield" v-if="typeof state[state.figure].segments !== 'undefined'">
+                <input type="range" v-model.number="state[state.figure].segments" min="3" max="20" v-on:change="init()">
+                <label>Segments <small>({{ state[state.figure].segments }})</small></label>
             </div>
+
+            <div class="mui-textfield" v-if="typeof state[state.figure].outerTension !== 'undefined'">
+                <input type="range" v-model.number="state[state.figure].outerTension" min="0" max="25" step="1" v-on:change="init()">
+                <label>Outer corner tension <small>({{ state[state.figure].outerTension }})</small></label>
+            </div>
+
+            <div class="mui-textfield" v-if="typeof state[state.figure].innerTension !== 'undefined'">
+                <input type="range" v-model.number="state[state.figure].innerTension" min="0" max="5" step="0.1" v-on:change="init()">
+                <label>Inner corner tension <small>({{ state[state.figure].innerTension }})</small></label>
+            </div>
+        </section>
+        <!-- colors, stroke -->
+        <section class="mui-form">
+            <legend>Appearance</legend>
 
             <div class="mui-checkbox">
                 <label>
@@ -52,56 +76,29 @@
                     <input type="checkbox" v-model="state.fill.edit" > Edit Fill
                 </label>
             </div>
-            
+
             <div class="mui-panel" v-if="state.fill.edit">
                 <color-picker :targ="'fillStyle'" :rgba="state.canvas.fillStyle"></color-picker>
             </div>
+        </section>
+        <!-- edit path points -->
+        <section class="mui-form">
+            <legend>Path</legend>
 
-        </form>
-        
-        <div class="mui-checkbox">
-            <label>
-                <input type="checkbox" v-model="state.path.edit" > Edit Path
-            </label>
-        </div>
-        <div class="mui-panel" v-if="state.path.edit">
-            <edit-path-points :path="path"></edit-path-points>
-        </div>
-        
-        <div class="mui-panel mui-form--inline" v-if="state.figure === 'triplet'">
-            <section>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="path.points[0].x" v-on:change="update()">
-                    <label>left.x</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="path.points[0].y" v-on:change="update()">
-                    <label>left.y</label>
-                </div>
-            </section>
-            <section>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="path.points[1].x" v-on:change="update()">
-                    <label>middle.x</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="path.points[1].y" v-on:change="update()">
-                    <label>middle.y</label>
-                </div>
-            </section>
-            <section>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="path.points[2].x" v-on:change="init()">
-                    <label>right.x</label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="text" v-model.number="path.points[2].y" v-on:change="init()">
-                    <label>right.y</label>
-                </div>
-            </section>
-        </div>
-            
-        <dev :label="'State'" :data="state"></dev>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.path.edit" > Edit Path
+                </label>
+            </div>
+        </section>
+        <!-- devel -->
+        <section class="mui-form">
+            <legend>Devel</legend>
+            <div class="mui-panel" v-if="state.path.edit">
+                <edit-path-points :path="path"></edit-path-points>
+            </div>
+            <dev :label="'State'" :data="state"></dev>
+        </section>
     </div>
 </template>
 
@@ -115,8 +112,16 @@ import Dev from '../components/form/Dev.vue';
 
 const Space = window.Space;
 
+//TODO this can be moved into figure paths
 const compute = function (path, state) {
-    Space.Bezier.smoothPath(path, state.tension);
+    const figure = state.figure;
+    switch (figure) {
+        case 'flower':
+        case 'seaStar':
+            break;
+        default:
+            Space.Bezier.smoothPath(path, state[figure].tension);
+    }
     return path;
 };
 
@@ -190,7 +195,28 @@ const Figures = {
         const margin = dim * 0.2;
         const outer = dim - margin;
         const inner = margin;
-        const figure = new Space.Star(6, outer, inner, state.origin);
+        const figure = new Space.Star(state.star.segments, outer, inner, state.origin);
+        return figure.path;
+    },
+
+    flower: function (state) {
+        const dim = (state.origin.x < state.origin.y) ? state.origin.x : state.origin.y;
+        const margin = dim * 0.2;
+        const outer = dim - margin;
+        const inner = 10;
+        const figure = new Space.Star(state.flower.segments, outer, inner, state.origin);
+        figure.flower(state.flower.outerTension);
+        return figure.path;
+    },
+
+    seaStar: function (state) {
+        const dim = (state.origin.x < state.origin.y) ? state.origin.x : state.origin.y;
+        const margin = dim * 0.2;
+        const outer = dim - margin;
+        const inner = margin;
+        console.log(state.seaStar);
+        const figure = new Space.Star(state.seaStar.segments, outer, inner, state.origin);
+        figure.seaStar(state.seaStar.innerTension);
         return figure.path;
     },
 
@@ -287,11 +313,35 @@ export default {
                 path: {
                     edit: false
                 },
-                tension: 0.5,
                 showHandles: true,
                 showPath: false,
                 showBounds: false,
-                figure: (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'free'
+                figure: (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'free',
+                // special states
+                circle: {
+                    tension: 0.5
+                },
+                star: {
+                    segments: 6,
+                    tension: 0.5
+                },
+                flower: {
+                    segments: 6,
+                    outerTension: 15
+                },
+                seaStar: {
+                    segments: 6,
+                    innerTension: 0.5
+                },
+                free: {
+                    tension: 0.5
+                },
+                random: {
+                    tension: 0.5
+                },
+                triplet: {
+                    tension: 0.5
+                }
             },
             path: null
         };

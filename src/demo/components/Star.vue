@@ -1,23 +1,22 @@
 <template>
     <div>
-        <form class="mui-form">
-            <section>
-                <legend class="mui--text-subhead">Edit</legend>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                    <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
-                    <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
-                </div>
-                <div class="mui-textfield">
-                    <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
-                    <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
-                </div>
-            </section>
-        </form>
+        <section class="mui-form">
+            <legend>Edit Params</legend>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
+                <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
+                <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
+            </div>
+        </section>
 
+        <!-- devel -->
         <dev :label="'State'" :data="state"></dev>
     </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <div class="app--color-picker">
+    <div class="app--color-picker mui-panel">
         <table class="mui-table">
             <tbody>
                 <tr>
