@@ -18,6 +18,26 @@
             </div>
         </section>
 
+        <!-- helpers -->
+        <section class="mui-form">
+            <legend>Helpers</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showPoints" v-on:change="init()"> Points
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showPath" v-on:change="init()"> Path
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showBounds" v-on:change="init()"> Bounding Box
+                </label>
+            </div>
+        </section>
+
         <!-- figure:path -->
         <section class="mui-form--inline" v-if="figure === 'Path'">
             <div class="app--inline-field mui-textfield">
@@ -149,6 +169,7 @@
 </template>
 
 <script>
+import Canvas2dHelpers from '../Canvas2dHelpers';
 import Utils from '../Utils';
 import Routes from '../Routes';
 import ColorPicker from './form/ColorPicker.vue';
@@ -194,6 +215,11 @@ const compute = function (figure, state, canvas) {
 
         case 'Star': {
             fig = new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
+            break;
+        }
+
+        case 'Cog': {
+            fig = new Space.Cog(state.Cog.segments, state.Cog.outerRadius, state.Cog.innerRadius, state.origin);
             break;
         }
 
@@ -260,6 +286,33 @@ const draw = function (figure, path, state, canvas) {
     // finish
     canvas.ctx.closePath();
     canvas.ctx.restore();
+
+    //// helpers
+    const length = path.points.length;
+    let prev;
+    let point;
+    let i;
+
+    for (i = 0; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+
+        if (state.showHandles) {
+            if (point.members !== undefined && point.members.length > 1) {
+                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
+                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
+            }
+        }
+        if (state.showPoints) {
+            Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+        }
+        if (state.showPath) {
+            Canvas2dHelpers.drawLine(canvas.ctx, prev, point, '#666666');
+        }
+        if (state.showBounds) {
+            Canvas2dHelpers.drawBoundingBox(canvas.ctx, path, 'yellow');
+        }
+    }
 };
 
 const defaults = {
@@ -309,9 +362,14 @@ export default {
                     show: true,
                     edit: false
                 },
+                // transform
                 tanslate: [0, 0],
                 scale: [1, 1],
                 rotate2D: 0,
+                // helpers
+                showPoints: false,
+                showPath: false,
+                showBounds: false,
                 // form defaults per figure
                 Path: {
                     segments: 25
@@ -324,6 +382,11 @@ export default {
                     segments: 5,
                     outerRadius: 200,
                     innerRadius: 70
+                },
+                Cog: {
+                    segments: 5,
+                    outerRadius: 200,
+                    innerRadius: 100
                 },
                 Rectangle: {
                     width: 300,

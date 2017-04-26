@@ -102,8 +102,67 @@ Star.prototype.seaStar = function (tension) {
     }
 };
 
+////
+// Cog
+////
+
+const Cog = function (segments, outerRadius, innerRadius, origin) {
+    const path = new Path(origin);
+
+    //@TODO, sharable function (star)
+    const _point = function (radius, delta) {
+        let point = new Point.Polar(radius, delta);
+        point = point.toCartesian();
+        return point;
+    };
+
+    //@TODO, sharable constant
+    // 5 segments > 10 outer points > 10 inner points
+    const rad0 = Math.PI / 2;
+    const delta = (Math.PI * 2) / (segments * 4);
+    let _delta;
+    let inner;
+    let outer;
+    let i = 0;
+
+    while (i < segments) {
+        _delta = (i * delta) - rad0;
+        outer = [
+            _point(outerRadius, _delta),
+            _point(outerRadius, _delta + delta)
+        ];
+
+        path.add(outer[0].x, outer[0].y);
+        path.add(outer[1].x, outer[1].y);
+
+        if (i <= segments - 1) {
+            _delta += delta / 2;
+            inner = [
+                _point(innerRadius, _delta),
+                _point(innerRadius, _delta + delta)
+            ];
+            path.add(inner[0].x, inner[0].y);
+            path.add(inner[1].x, inner[1].y);
+        }
+        i += 2;
+    }
+    path.close();
+    this.path = path;
+};
+
+// apply bezier to outer points only
+// Cog.prototype.flower = function (tension) {
+//     //@TODO
+// };
+
+// // apply bezier to outer points only
+// Cog.prototype.seaStar = function (tension) {
+//     //@TODO
+// };
+
 export {
     Polygon,
     Rectangle,
-    Star
+    Star,
+    Cog
 };

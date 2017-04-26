@@ -1219,10 +1219,6 @@ var draw$1 = function draw$1(path, state, canvas) {
     canvas.ctx.lineWidth = state.canvas.lineWidth;
     canvas.ctx.fillStyle = state.canvas.fillStyle;
 
-    if (state.showHelpers) {
-        Helpers.drawCircle(canvas.ctx, path.origin(), 'origin:' + path.origin().toArray(), 'yellow');
-    }
-
     var length = path.points.length;
     var prev = void 0;
     var point = void 0;
@@ -1250,6 +1246,8 @@ var draw$1 = function draw$1(path, state, canvas) {
                 Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
                 Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
             }
+        }
+        if (state.showPoints) {
             Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
         }
         if (state.showPath) {
@@ -1302,7 +1300,6 @@ var Figures = {
         var margin = dim * 0.2;
         var outer = dim - margin;
         var inner = margin;
-        console.log(state.seaStar);
         var figure = new Space$6.Star(state.seaStar.segments, outer, inner, state.origin);
         figure.seaStar(state.seaStar.innerTension);
         return figure.path;
@@ -1377,7 +1374,22 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.showHandles = $$c;
                     }
-                } } }), _vm._v(" Handles")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPath, expression: "state.showPath" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPath) ? _vm._i(_vm.state.showPath, null) > -1 : _vm.state.showPath }, on: { "change": function change($event) {
+                } } }), _vm._v(" Handles")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPoints, expression: "state.showPoints" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPoints) ? _vm._i(_vm.state.showPoints, null) > -1 : _vm.state.showPoints }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showPoints,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showPoints = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showPoints = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showPoints = $$c;
+                    }
+                } } }), _vm._v(" Points")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPath, expression: "state.showPath" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPath) ? _vm._i(_vm.state.showPath, null) > -1 : _vm.state.showPath }, on: { "change": function change($event) {
                     _vm.init();
                 }, "__c": function __c($event) {
                     var $$a = _vm.state.showPath,
@@ -1519,7 +1531,9 @@ var BezierPath = { render: function render() {
                 path: {
                     edit: false
                 },
+                // helpers
                 showHandles: true,
+                showPoints: true,
                 showPath: false,
                 showBounds: false,
                 figure: typeof this.$route.params.figure !== 'undefined' ? this.$route.params.figure : 'free',
@@ -1668,6 +1682,12 @@ var compute$7 = function compute$7(figure, state, canvas) {
                 break;
             }
 
+        case 'Cog':
+            {
+                fig = new Space$7.Cog(state.Cog.segments, state.Cog.outerRadius, state.Cog.innerRadius, state.origin);
+                break;
+            }
+
         default:
             {
                 fig = null;
@@ -1731,6 +1751,33 @@ var draw$2 = function draw$2(figure, path, state, canvas) {
     // finish
     canvas.ctx.closePath();
     canvas.ctx.restore();
+
+    //// helpers
+    var length = path.points.length;
+    var prev = void 0;
+    var point = void 0;
+    var i = void 0;
+
+    for (i = 0; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+
+        if (state.showHandles) {
+            if (point.members !== undefined && point.members.length > 1) {
+                Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
+                Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
+            }
+        }
+        if (state.showPoints) {
+            Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+        }
+        if (state.showPath) {
+            Helpers.drawLine(canvas.ctx, prev, point, '#666666');
+        }
+        if (state.showBounds) {
+            Helpers.drawBoundingBox(canvas.ctx, path, 'yellow');
+        }
+    }
 };
 
 var defaults$1 = {
@@ -1744,7 +1791,52 @@ var Figures$1 = { render: function render() {
             return fig.name !== _vm.figure ? _c('li', { class: { 'router-link-active': fig.name === _vm.figure } }, [_c('a', { on: { "click": function click($event) {
                         _vm.goTo(fig);
                     } } }, [_vm._v(_vm._s(fig.name))])]) : _vm._e();
-        }))])]), _vm.figure === 'Path' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "app--inline-field mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
+        }))])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Helpers")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPoints, expression: "state.showPoints" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPoints) ? _vm._i(_vm.state.showPoints, null) > -1 : _vm.state.showPoints }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showPoints,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showPoints = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showPoints = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showPoints = $$c;
+                    }
+                } } }), _vm._v(" Points")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPath, expression: "state.showPath" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPath) ? _vm._i(_vm.state.showPath, null) > -1 : _vm.state.showPath }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showPath,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showPath = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showPath = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showPath = $$c;
+                    }
+                } } }), _vm._v(" Path")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showBounds, expression: "state.showBounds" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showBounds) ? _vm._i(_vm.state.showBounds, null) > -1 : _vm.state.showBounds }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showBounds,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showBounds = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showBounds = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showBounds = $$c;
+                    }
+                } } }), _vm._v(" Bounding Box")])])]), _vm.figure === 'Path' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "app--inline-field mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Path.segments, expression: "state.Path.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Path.segments }, on: { "change": function change($event) {
                     _vm.init();
                 }, "input": function input($event) {
                     if ($event.target.composing) {
@@ -1972,9 +2064,14 @@ var Figures$1 = { render: function render() {
                     show: true,
                     edit: false
                 },
+                // transform
                 tanslate: [0, 0],
                 scale: [1, 1],
                 rotate2D: 0,
+                // helpers
+                showPoints: false,
+                showPath: false,
+                showBounds: false,
                 // form defaults per figure
                 Path: {
                     segments: 25
@@ -1987,6 +2084,11 @@ var Figures$1 = { render: function render() {
                     segments: 5,
                     outerRadius: 200,
                     innerRadius: 70
+                },
+                Cog: {
+                    segments: 5,
+                    outerRadius: 200,
+                    innerRadius: 100
                 },
                 Rectangle: {
                     width: 300,

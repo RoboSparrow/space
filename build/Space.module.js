@@ -671,12 +671,55 @@ Star.prototype.seaStar = function (tension) {
     }
 };
 
+////
+// Cog
+////
+
+var Cog = function Cog(segments, outerRadius, innerRadius, origin) {
+    var path = new Path(origin);
+
+    //@TODO, sharable function (star)
+    var _point = function _point(radius, delta) {
+        var point = new Point.Polar(radius, delta);
+        point = point.toCartesian();
+        return point;
+    };
+
+    //@TODO, sharable constant
+    // 5 segments > 10 outer points > 10 inner points
+    var rad0 = Math.PI / 2;
+    var delta = Math.PI * 2 / (segments * 4);
+    var _delta = void 0;
+    var inner = void 0;
+    var outer = void 0;
+    var i = 0;
+
+    while (i < segments) {
+        _delta = i * delta - rad0;
+        outer = [_point(outerRadius, _delta), _point(outerRadius, _delta + delta)];
+
+        path.add(outer[0].x, outer[0].y);
+        path.add(outer[1].x, outer[1].y);
+
+        if (i <= segments - 1) {
+            _delta += delta / 2;
+            inner = [_point(innerRadius, _delta), _point(innerRadius, _delta + delta)];
+            path.add(inner[0].x, inner[0].y);
+            path.add(inner[1].x, inner[1].y);
+        }
+        i += 2;
+    }
+    path.close();
+    this.path = path;
+};
+
 
 
 var Polygons = Object.freeze({
 	Polygon: Polygon,
 	Rectangle: Rectangle,
-	Star: Star
+	Star: Star,
+	Cog: Cog
 });
 
 var Module = {

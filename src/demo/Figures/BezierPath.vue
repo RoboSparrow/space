@@ -20,6 +20,11 @@
             </div>
             <div class="mui-checkbox">
                 <label>
+                    <input type="checkbox" v-model="state.showPoints" v-on:change="init()"> Points
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
                     <input type="checkbox" v-model="state.showPath" v-on:change="init()"> Path
                 </label>
             </div>
@@ -131,10 +136,6 @@ const draw = function (path, state, canvas) {
     canvas.ctx.lineWidth = state.canvas.lineWidth;
     canvas.ctx.fillStyle = state.canvas.fillStyle;
 
-    if (state.showHelpers) {
-        Canvas2dHelpers.drawCircle(canvas.ctx, path.origin(), 'origin:' + path.origin().toArray(), 'yellow');
-    }
-
     const length = path.points.length;
     let prev;
     let point;
@@ -162,6 +163,8 @@ const draw = function (path, state, canvas) {
                 Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
                 Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
             }
+        }
+        if (state.showPoints) {
             Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
         }
         if (state.showPath) {
@@ -214,7 +217,6 @@ const Figures = {
         const margin = dim * 0.2;
         const outer = dim - margin;
         const inner = margin;
-        console.log(state.seaStar);
         const figure = new Space.Star(state.seaStar.segments, outer, inner, state.origin);
         figure.seaStar(state.seaStar.innerTension);
         return figure.path;
@@ -313,7 +315,9 @@ export default {
                 path: {
                     edit: false
                 },
+                // helpers
                 showHandles: true,
+                showPoints: true,
                 showPath: false,
                 showBounds: false,
                 figure: (typeof this.$route.params.figure !== 'undefined') ? this.$route.params.figure : 'free',
