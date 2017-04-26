@@ -151,7 +151,7 @@ const draw = function (path, state, canvas) {
     }
     canvas.ctx.fill();
     canvas.ctx.stroke();
-
+    canvas.ctx.restore();
     //// helpers
 
     for (i = 0; i < length; i += 1) {
@@ -174,6 +174,7 @@ const draw = function (path, state, canvas) {
             Canvas2dHelpers.drawBoundingBox(canvas.ctx, path, 'yellow');
         }
     }
+    canvas.ctx.restore();
 };
 
 ////
