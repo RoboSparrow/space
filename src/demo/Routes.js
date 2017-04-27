@@ -7,6 +7,7 @@ import Path from './Paths/Path.vue';
 import Polygon from './Paths/Polygon.vue';
 import Rectangle from './Paths/Rectangle.vue';
 import Star from './Paths/Star.vue';
+import Cog from './Paths/Cog.vue';
 import Bezier from './BezierPaths/Bezier.vue';
 
 
@@ -60,6 +61,15 @@ const routes = [
         name: 'Star',
         path: '/Star',
         component: Star,
+        meta: {
+            menu: true,
+            figure: true
+        }
+    },
+    {
+        name: 'Cog',
+        path: '/Cog',
+        component: Cog,
         meta: {
             menu: true,
             figure: true

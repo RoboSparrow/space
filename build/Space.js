@@ -578,6 +578,15 @@ var Bezier = {
 // Polygon
 ////
 
+var TWO_PI = Math.PI * 2;
+var HALF_PI = Math.PI / 2;
+
+var cartesianFromPolar = function cartesianFromPolar(radius, delta) {
+    var point = new Point.Polar(radius, delta);
+    point = point.toCartesian();
+    return point;
+};
+
 /**
  * x translate
  * rotate
@@ -589,7 +598,7 @@ var Polygon = function Polygon(segments, radius, origin) {
     var i = 0;
 
     //@see http://stackoverflow.com/a/7198179
-    var delta = Math.PI * 2 / segments;
+    var delta = TWO_PI / segments;
 
     while (i < segments) {
         var p = new Point.Polar(radius, i * delta);
@@ -624,15 +633,9 @@ var Rectangle = function Rectangle(width, height, origin) {
 var Star = function Star(segments, outerRadius, innerRadius, origin) {
     var path = new Path(origin);
 
-    var _point = function _point(radius, delta) {
-        var point = new Point.Polar(radius, delta);
-        point = point.toCartesian();
-        return point;
-    };
-
     //@see http://stackoverflow.com/a/7198179
-    var rad0 = Math.PI / 2;
-    var delta = Math.PI * 2 / segments;
+    var rad0 = HALF_PI;
+    var delta = TWO_PI / segments;
     var _delta = void 0;
     var inner = void 0;
     var outer = void 0;
@@ -640,12 +643,12 @@ var Star = function Star(segments, outerRadius, innerRadius, origin) {
 
     while (i < segments) {
         _delta = i * delta - rad0;
-        outer = _point(outerRadius, _delta);
+        outer = cartesianFromPolar(outerRadius, _delta);
         path.add(outer.x, outer.y);
 
         if (i <= segments - 1) {
             _delta += delta / 2;
-            inner = _point(innerRadius, _delta);
+            inner = cartesianFromPolar(innerRadius, _delta);
             path.add(inner.x, inner.y);
         }
         i += 1;
@@ -678,21 +681,14 @@ Star.prototype.seaStar = function (tension) {
 // Cog
 ////
 
-// https://www.quora.com/What-is-the-difference-between-a-gear-and-a-cog
 var Cog = function Cog(segments, outerRadius, innerRadius, origin) {
     var path = new Path(origin);
 
-    //@TODO, sharable function (star)
-    var _point = function _point(radius, delta) {
-        var point = new Point.Polar(radius, delta);
-        point = point.toCartesian();
-        return point;
-    };
-
     //@TODO, sharable constant
     // 5 segments > 10 outer points > 10 inner points
-    var rad0 = Math.PI / 2;
-    var delta = Math.PI * 2 / (segments * 4);
+    var rad0 = HALF_PI;
+    var delta = TWO_PI / segments;
+    var _innerDelta = delta - delta / 2;
     var _delta = void 0;
     var inner = void 0;
     var outer = void 0;
@@ -700,18 +696,18 @@ var Cog = function Cog(segments, outerRadius, innerRadius, origin) {
 
     while (i < segments) {
         _delta = i * delta - rad0;
-        outer = [_point(outerRadius, _delta), _point(outerRadius, _delta + delta)];
-
+        outer = [cartesianFromPolar(outerRadius, _delta + _innerDelta), cartesianFromPolar(outerRadius, _delta + 2 * _innerDelta)];
+        //outer path
         path.add(outer[0].x, outer[0].y);
         path.add(outer[1].x, outer[1].y);
 
-        if (i <= segments - 1) {
-            _delta += delta / 2;
-            inner = [_point(innerRadius, _delta), _point(innerRadius, _delta + delta)];
-            path.add(inner[0].x, inner[0].y);
-            path.add(inner[1].x, inner[1].y);
-        }
-        i += 2;
+        //if (i <= segments - 1) {
+        _delta += delta / 2;
+        inner = [cartesianFromPolar(innerRadius, _delta + _innerDelta), cartesianFromPolar(innerRadius, _delta + 2 * _innerDelta)];
+        path.add(inner[0].x, inner[0].y);
+        path.add(inner[1].x, inner[1].y);
+        //}
+        i += 1;
     }
     path.close();
     this.path = path;
