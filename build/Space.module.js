@@ -675,6 +675,7 @@ Star.prototype.seaStar = function (tension) {
 // Cog
 ////
 
+// https://www.quora.com/What-is-the-difference-between-a-gear-and-a-cog
 var Cog = function Cog(segments, outerRadius, innerRadius, origin) {
     var path = new Path(origin);
 

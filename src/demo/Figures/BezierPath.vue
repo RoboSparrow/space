@@ -111,9 +111,9 @@
 import Canvas2dHelpers from '../Canvas2dHelpers';
 import Utils from '../Utils';
 
-import ColorPicker from '../components/form/ColorPicker.vue';
-import EditPathPoints from '../components/form/EditPathPoints.vue';
-import Dev from '../components/form/Dev.vue';
+import ColorPicker from '../Form/ColorPicker.vue';
+import EditPathPoints from '../Form/EditPathPoints.vue';
+import Dev from '../Form/Dev.vue';
 
 const Space = window.Space;
 

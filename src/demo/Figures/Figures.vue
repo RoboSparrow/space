@@ -172,8 +172,8 @@
 import Canvas2dHelpers from '../Canvas2dHelpers';
 import Utils from '../Utils';
 import Routes from '../Routes';
-import ColorPicker from './form/ColorPicker.vue';
-import Dev from './form/Dev.vue';
+import ColorPicker from '../Form/ColorPicker.vue';
+import Dev from '../Form/Dev.vue';
 
 const Space = window.Space;
 

@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import Animation from './components/form/Animation.vue';
+import Animation from './Form/Animation.vue';
 
 export default {
     name: 'app',

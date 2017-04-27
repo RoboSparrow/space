@@ -23,7 +23,7 @@
 
 <script>
 import Utils from '../Utils';
-import Dev from './form/Dev.vue';
+import Dev from '../Form/Dev.vue';
 import Canvas2dHelpers from '../Canvas2dHelpers';
 
 const Space = window.Space;

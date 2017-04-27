@@ -1,11 +1,14 @@
-import Home from './components/Home.vue';
-import Path from './components/Path.vue';
-import Polygon from './components/Polygon.vue';
-import Rectangle from './components/Rectangle.vue';
-import Star from './components/Star.vue';
-import Bezier from './components/Bezier.vue';
+// landing views
+import Home from './Home.vue';
 import BezierPath from './Figures/BezierPath.vue';
-import Figures from './components/Figures.vue';
+import Figures from './Figures/Figures.vue';
+// single views
+import Path from './Paths/Path.vue';
+import Polygon from './Paths/Polygon.vue';
+import Rectangle from './Paths/Rectangle.vue';
+import Star from './Paths/Star.vue';
+import Bezier from './BezierPaths/Bezier.vue';
+
 
 const routes = [
     {

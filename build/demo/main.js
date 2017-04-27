@@ -335,466 +335,6 @@ var Home = { render: function render() {
     }
 };
 
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Dev = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('section', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.show, expression: "show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.show) ? _vm._i(_vm.show, null) > -1 : _vm.show }, on: { "__c": function __c($event) {
-                    var $$a = _vm.show,
-                        $$el = $event.target,
-                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
-                        var $$v = null,
-                            $$i = _vm._i($$a, $$v);if ($$c) {
-                            $$i < 0 && (_vm.show = $$a.concat($$v));
-                        } else {
-                            $$i > -1 && (_vm.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
-                        }
-                    } else {
-                        _vm.show = $$c;
-                    }
-                } } }), _vm._v(" Show " + _vm._s(_vm.label))])]), _vm.show ? _c('pre', [_vm._v(_vm._s(_vm.data))]) : _vm._e()]);
-    }, staticRenderFns: [],
-    name: 'Dev',
-    props: ['data', 'label'],
-    data: function data() {
-        return {
-            show: false
-        };
-    }
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space$1 = window.Space;
-
-var compute$1 = function compute$1(state, canvas) {
-    if (!state.prev) {
-        state.prev = new Space$1.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-    var path = new Space$1.Path();
-    var range = state.segmentsRange;
-    var count = 0;
-    var rand = void 0;
-    path.add(state.prev);
-    while (count < state.segments) {
-        rand = new Space$1.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
-        rand.add(path.last());
-        rand.x = Utils.bounds(rand.x, 0, canvas.width);
-        rand.y = Utils.bounds(rand.y, 0, canvas.height);
-        path.add(rand);
-        count += 1;
-    }
-
-    state.prev = path.last();
-    return path;
-};
-
-var Path = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "800", "step": "10" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
-                    _vm.state.segments = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segments) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
-    }, staticRenderFns: [],
-    name: 'Path',
-    props: ['animation', 'appState', 'canvas'],
-    components: {
-        Dev: Dev
-    },
-    data: function data() {
-        return {
-            state: {
-                prev: null,
-                segments: 200,
-                segmentsRange: 10,
-                canvas: this.appState.factor('canvas')
-            }
-        };
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        var path = void 0;
-
-        this.animation
-        // .fps(1)
-        .only(function () {
-            // compute path
-            path = compute$1(_this.state, _this.canvas.canvas);
-
-            // init
-            _this.canvas.fill();
-            _this.canvas.ctx.save();
-
-            // styles
-            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
-            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
-
-            // path
-            _this.canvas.ctx.beginPath();
-            _this.canvas.ctx.moveTo(path.first().x, path.first().y);
-            path.points.forEach(function (point, index) {
-                if (index === 0) {
-                    return;
-                }
-                _this.canvas.ctx.lineTo(point.x, point.y);
-                // draw
-                _this.canvas.ctx.stroke();
-            });
-
-            // finish
-            _this.canvas.ctx.closePath();
-            _this.canvas.ctx.restore();
-        }).play();
-    }
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space$2 = window.Space;
-
-var compute$2 = function compute$2(state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space$2.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-    var radius = Math.floor(Utils.randInt(5, state.radiusRange));
-    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
-    segments = Utils.bounds(segments, false, 25);
-    radius = Utils.bounds(radius, false, canvas.width / 2);
-
-    state.prev.segments = segments;
-    state.prev.radius = radius;
-
-    return new Space$2.Polygon(segments, radius, state.origin);
-};
-
-var Polygon = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.radiusRange, expression: "state.radiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.radiusRange }, on: { "__r": function __r($event) {
-                    _vm.state.radiusRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
-    }, staticRenderFns: [],
-    name: 'Polygon',
-    props: ['animation', 'appState', 'canvas'],
-    components: {
-        Dev: Dev
-    },
-    data: function data() {
-        return {
-            state: {
-                prev: {
-                    segments: 3,
-                    radius: 50
-                },
-                segmentsRange: 10,
-                radiusRange: 200,
-                origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(99, 9, 9, .8)'
-                })
-            }
-        };
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        var polygon = void 0;
-
-        this.animation
-        // .fps(1)
-        .only(function () {
-            // compute path
-            polygon = compute$2(_this.state, _this.canvas.canvas);
-
-            // init
-            _this.canvas.fill();
-            _this.canvas.ctx.save();
-
-            // styles
-            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
-            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
-            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
-
-            // path
-            _this.canvas.ctx.beginPath();
-            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-            polygon.path.points.forEach(function (point, index) {
-                if (index === 0) {
-                    return;
-                }
-                _this.canvas.ctx.lineTo(point.x, point.y);
-            });
-
-            // draw
-            if (_this.state.canvas.fillStyle) {
-                _this.canvas.ctx.fill();
-            }
-            _this.canvas.ctx.stroke();
-
-            // finish
-            _this.canvas.ctx.closePath();
-            _this.canvas.ctx.restore();
-        }).play();
-    }
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space$3 = window.Space;
-
-var compute$3 = function compute$3(state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space$3.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-    var width = Math.floor(Utils.randInt(5, state.widthRange));
-    var height = Math.floor(Utils.randInt(3, state.heightRange));
-
-    state.prev.width = width;
-    state.prev.height = height;
-
-    return new Space$3.Rectangle(width, height, state.origin);
-};
-
-var Rectangle = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
-                    _vm.state.widthRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Width Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.widthRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.heightRange, expression: "state.heightRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.heightRange }, on: { "__r": function __r($event) {
-                    _vm.state.heightRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
-    }, staticRenderFns: [],
-    name: 'Rectangle',
-    props: ['animation', 'appState', 'canvas'],
-    components: {
-        Dev: Dev
-    },
-    data: function data() {
-        return {
-            state: {
-                prev: {
-                    width: 25,
-                    height: 50
-                },
-                widthRange: 500,
-                heightRange: 500,
-                origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(255, 255, 255, .2)'
-                })
-            }
-        };
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        var polygon = void 0;
-
-        this.animation
-        // .fps(1)
-        .only(function () {
-            // compute path
-            polygon = compute$3(_this.state, _this.canvas.canvas);
-
-            // init
-            _this.canvas.fill();
-            _this.canvas.ctx.save();
-
-            // styles
-            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
-            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
-            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
-
-            // path
-            _this.canvas.ctx.beginPath();
-            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-            polygon.path.points.forEach(function (point, index) {
-                if (index === 0) {
-                    return;
-                }
-                _this.canvas.ctx.lineTo(point.x, point.y);
-            });
-
-            // draw
-            if (_this.state.canvas.fillStyle) {
-                _this.canvas.ctx.fill();
-            }
-            _this.canvas.ctx.stroke();
-
-            // finish
-            _this.canvas.ctx.closePath();
-            _this.canvas.ctx.restore();
-        }).play();
-    }
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space$4 = window.Space;
-
-var compute$4 = function compute$4(state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space$4.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-
-    var outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
-    var innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
-    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
-    segments = Utils.bounds(segments, false, 25);
-    outerRadius = Utils.bounds(outerRadius, false, canvas.width / 2);
-    innerRadius = Utils.bounds(innerRadius, false, canvas.width / 2);
-
-    state.prev.segments = segments;
-    state.prev.outerRadius = outerRadius;
-    state.prev.innerRadius = innerRadius;
-
-    return new Space$4.Star(segments, outerRadius, innerRadius, state.origin);
-};
-
-var Star = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.outerRadiusRange, expression: "state.outerRadiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.outerRadiusRange }, on: { "__r": function __r($event) {
-                    _vm.state.outerRadiusRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Outer Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.outerRadiusRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.innerRadiusRange, expression: "state.innerRadiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.innerRadiusRange }, on: { "__r": function __r($event) {
-                    _vm.state.innerRadiusRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
-    }, staticRenderFns: [],
-    name: 'Star',
-    props: ['animation', 'appState', 'canvas'],
-    components: {
-        Dev: Dev
-    },
-    data: function data() {
-        return {
-            state: {
-                prev: {
-                    segments: 3,
-                    outerRadius: 50,
-                    innerRadius: 10
-                },
-                segmentsRange: 10,
-                outerRadiusRange: 200,
-                innerRadiusRange: 200,
-                origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(0, 99, 0, .6)'
-                })
-            }
-        };
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        var polygon = void 0;
-
-        this.animation
-        // .fps(1)
-        .only(function () {
-            // compute path
-            polygon = compute$4(_this.state, _this.canvas.canvas);
-
-            // init
-            _this.canvas.fill();
-            _this.canvas.ctx.save();
-
-            // styles
-            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
-            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
-            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
-
-            // path
-            _this.canvas.ctx.beginPath();
-            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
-            polygon.path.points.forEach(function (point, index) {
-                if (index === 0) {
-                    return;
-                }
-                _this.canvas.ctx.lineTo(point.x, point.y);
-            });
-
-            // draw
-            if (_this.state.canvas.fillStyle) {
-                _this.canvas.ctx.fill();
-            }
-            _this.canvas.ctx.stroke();
-
-            // finish
-            _this.canvas.ctx.closePath();
-            _this.canvas.ctx.restore();
-        }).play();
-    }
-};
-
 var Helpers = {
 
     ////
@@ -930,108 +470,6 @@ var Helpers = {
         }
     }
 
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space$5 = window.Space;
-
-var compute$5 = function compute$5(state, canvas) {
-    var path = new Space$5.Path();
-    var phi = Math.PI * 2 / state.segments;
-    var maxR = canvas.width < canvas.height ? canvas.width / 3 : canvas.height / 3;
-    var minR = maxR * state.segmentsRange;
-    var r = void 0;
-    var p = void 0;
-    for (var i = 0; i < state.segments; i += 1) {
-        r = Utils.randInt(minR, maxR);
-        p = new Space$5.Point.Polar(r, i * phi);
-        path.add(new Space$5.Group(p.x(), p.y()));
-    }
-    path.close();
-    path.translate(canvas.width / 2, canvas.height / 2);
-    Space$5.Bezier.smoothPath(path, state.tension);
-    return path;
-};
-
-var Bezier = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "60", "step": "1" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
-                    _vm.state.segments = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segments) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "1", "step": "0.1" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segments range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "__r": function __r($event) {
-                    _vm.state.tension = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
-    }, staticRenderFns: [],
-    name: 'Path',
-    props: ['animation', 'appState', 'canvas'],
-    components: {
-        Dev: Dev
-    },
-    data: function data() {
-        return {
-            state: {
-                segments: 10,
-                segmentsRange: 0.3,
-                canvas: this.appState.factor('canvas', {
-                    lineWidth: 0.5
-                }),
-                tension: 0.5
-            }
-        };
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        var path = void 0;
-
-        this.animation
-        // .fps(1)
-        .only(function () {
-            // compute path
-            path = compute$5(_this.state, _this.canvas.canvas);
-
-            // init
-            _this.canvas.fill();
-            _this.canvas.ctx.save();
-
-            // styles
-            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
-            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
-
-            //// curve
-            var length = path.points.length;
-            var prev = void 0;
-            var point = void 0;
-            var i = void 0;
-
-            _this.canvas.ctx.beginPath();
-            _this.canvas.ctx.moveTo(path.first().x, path.first().y);
-            for (i = 1; i < length; i += 1) {
-                prev = path.prev(i);
-                point = path.get(i);
-                Helpers.bezierLine(_this.canvas.ctx, prev, point);
-            }
-            _this.canvas.ctx.fill();
-            _this.canvas.ctx.stroke();
-        }).play();
-    }
 };
 
 (function () {
@@ -1198,17 +636,54 @@ var EditPathPoints = { render: function render() {
     }
 })();
 
-var Space$6 = window.Space;
+var Dev = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('section', { staticClass: "mui-form" }, [_c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.show, expression: "show" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.show) ? _vm._i(_vm.show, null) > -1 : _vm.show }, on: { "__c": function __c($event) {
+                    var $$a = _vm.show,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.show = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.show = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.show = $$c;
+                    }
+                } } }), _vm._v(" Show " + _vm._s(_vm.label))])]), _vm.show ? _c('pre', [_vm._v(_vm._s(_vm.data))]) : _vm._e()]);
+    }, staticRenderFns: [],
+    name: 'Dev',
+    props: ['data', 'label'],
+    data: function data() {
+        return {
+            show: false
+        };
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$1 = window.Space;
 
 //TODO this can be moved into figure paths
-var compute$6 = function compute$6(path, state) {
+var compute$1 = function compute$1(path, state) {
     var figure = state.figure;
     switch (figure) {
         case 'flower':
         case 'seaStar':
             break;
         default:
-            Space$6.Bezier.smoothPath(path, state[figure].tension);
+            Space$1.Bezier.smoothPath(path, state[figure].tension);
     }
     return path;
 };
@@ -1267,7 +742,7 @@ var draw$1 = function draw$1(path, state, canvas) {
 var Figures = {
     // circle
     circle: function circle(state) {
-        var path = new Space$6.Path(state.origin.x, state.origin.y);
+        var path = new Space$1.Path(state.origin.x, state.origin.y);
         path.add(50, 50);
         path.add(150, 50);
         path.add(150, 150);
@@ -1282,7 +757,7 @@ var Figures = {
         var margin = dim * 0.2;
         var outer = dim - margin;
         var inner = margin;
-        var figure = new Space$6.Star(state.star.segments, outer, inner, state.origin);
+        var figure = new Space$1.Star(state.star.segments, outer, inner, state.origin);
         return figure.path;
     },
 
@@ -1291,7 +766,7 @@ var Figures = {
         var margin = dim * 0.2;
         var outer = dim - margin;
         var inner = 10;
-        var figure = new Space$6.Star(state.flower.segments, outer, inner, state.origin);
+        var figure = new Space$1.Star(state.flower.segments, outer, inner, state.origin);
         figure.flower(state.flower.outerTension);
         return figure.path;
     },
@@ -1301,27 +776,27 @@ var Figures = {
         var margin = dim * 0.2;
         var outer = dim - margin;
         var inner = margin;
-        var figure = new Space$6.Star(state.seaStar.segments, outer, inner, state.origin);
+        var figure = new Space$1.Star(state.seaStar.segments, outer, inner, state.origin);
         figure.seaStar(state.seaStar.innerTension);
         return figure.path;
     },
 
     free: function free(state) {
-        var path = new Space$6.Path();
-        path.points = [new Space$6.Point.Cartesian(20, 50), new Space$6.Point.Cartesian(100, 100), new Space$6.Point.Cartesian(150, 50), new Space$6.Point.Cartesian(200, 150), new Space$6.Point.Cartesian(250, 50), new Space$6.Point.Cartesian(300, 70), new Space$6.Point.Cartesian(310, 130), new Space$6.Point.Cartesian(380, 30)];
+        var path = new Space$1.Path();
+        path.points = [new Space$1.Point.Cartesian(20, 50), new Space$1.Point.Cartesian(100, 100), new Space$1.Point.Cartesian(150, 50), new Space$1.Point.Cartesian(200, 150), new Space$1.Point.Cartesian(250, 50), new Space$1.Point.Cartesian(300, 70), new Space$1.Point.Cartesian(310, 130), new Space$1.Point.Cartesian(380, 30)];
         path.scale(2, 2);
         path.translate(50, state.origin.y / 2);
         return path;
     },
 
     random: function random(state, canvas) {
-        var path = new Space$6.Path();
+        var path = new Space$1.Path();
         var segments = Utils.randInt(10, 100);
         var range = 200;
         var rand = void 0;
-        path.add(new Space$6.Group(canvas.width / 2, canvas.height / 2));
+        path.add(new Space$1.Group(canvas.width / 2, canvas.height / 2));
         for (var i = 0; i < segments; i += 1) {
-            rand = new Space$6.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
+            rand = new Space$1.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
             rand.add(path.last());
             rand.x = Utils.bounds(rand.x, 0, canvas.width);
             rand.y = Utils.bounds(rand.y, 0, canvas.height);
@@ -1331,7 +806,7 @@ var Figures = {
     },
 
     triplet: function triplet(state) {
-        var path = new Space$6.Path(state.origin.x, state.origin.y);
+        var path = new Space$1.Path(state.origin.x, state.origin.y);
         path.add(-200, -200);
         path.progress(100, 200);
         path.progress(100, -200);
@@ -1594,11 +1069,11 @@ var BezierPath = { render: function render() {
             timeout = window.setTimeout(function () {
                 // !in timeout
                 if (!_this2.state.origin) {
-                    _this2.state.origin = new Space$6.Point.Cartesian(_this2.canvas.canvas.width / 2, _this2.canvas.canvas.height / 2);
+                    _this2.state.origin = new Space$1.Point.Cartesian(_this2.canvas.canvas.width / 2, _this2.canvas.canvas.height / 2);
                 }
                 _this2.path = Figures[_this2.state.figure](_this2.state, _this2.canvas.canvas);
 
-                compute$6(_this2.path, _this2.state, _this2.canvas.canvas);
+                compute$1(_this2.path, _this2.state, _this2.canvas.canvas);
                 draw$1(_this2.path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);
             }, 100);
@@ -1636,12 +1111,12 @@ var BezierPath = { render: function render() {
     }
 })();
 
-var Space$7 = window.Space;
+var Space$2 = window.Space;
 
-var compute$7 = function compute$7(figure, state, canvas) {
+var compute$2 = function compute$2(figure, state, canvas) {
 
     if (!state.origin) {
-        state.origin = new Space$7.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+        state.origin = new Space$2.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
 
     var fig = void 0;
@@ -1655,7 +1130,7 @@ var compute$7 = function compute$7(figure, state, canvas) {
                 segments = state.Path.segments;
                 var x = (canvas.width - 2 * margin) / segments;
                 var y = canvas.height - 2 * margin;
-                fig = new Space$7.Path();
+                fig = new Space$2.Path();
                 fig.add(margin, margin);
                 while (segments > 0) {
                     fig.progress(x, y);
@@ -1667,25 +1142,25 @@ var compute$7 = function compute$7(figure, state, canvas) {
 
         case 'Polygon':
             {
-                fig = new Space$7.Polygon(state.Polygon.segments, state.Polygon.radius, state.origin);
+                fig = new Space$2.Polygon(state.Polygon.segments, state.Polygon.radius, state.origin);
                 break;
             }
 
         case 'Rectangle':
             {
-                fig = new Space$7.Rectangle(state.Rectangle.width, state.Rectangle.height, state.origin);
+                fig = new Space$2.Rectangle(state.Rectangle.width, state.Rectangle.height, state.origin);
                 break;
             }
 
         case 'Star':
             {
-                fig = new Space$7.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
+                fig = new Space$2.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
                 break;
             }
 
         case 'Cog':
             {
-                fig = new Space$7.Cog(state.Cog.segments, state.Cog.outerRadius, state.Cog.innerRadius, state.origin);
+                fig = new Space$2.Cog(state.Cog.segments, state.Cog.outerRadius, state.Cog.innerRadius, state.origin);
                 break;
             }
 
@@ -2119,7 +1594,7 @@ var Figures$1 = { render: function render() {
             this.initForms();
             //@TODO
             timeout = window.setTimeout(function () {
-                var path = compute$7(_this2.figure, _this2.state, _this2.canvas.canvas);
+                var path = compute$2(_this2.figure, _this2.state, _this2.canvas.canvas);
                 draw$2(_this2.figure, path, _this2.state, _this2.canvas);
                 window.clearTimeout(timeout);
             }, 100);
@@ -2133,6 +1608,533 @@ var Figures$1 = { render: function render() {
     }
 };
 
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$3 = window.Space;
+
+var compute$3 = function compute$3(state, canvas) {
+    if (!state.prev) {
+        state.prev = new Space$3.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+    var path = new Space$3.Path();
+    var range = state.segmentsRange;
+    var count = 0;
+    var rand = void 0;
+    path.add(state.prev);
+    while (count < state.segments) {
+        rand = new Space$3.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
+        rand.add(path.last());
+        rand.x = Utils.bounds(rand.x, 0, canvas.width);
+        rand.y = Utils.bounds(rand.y, 0, canvas.height);
+        path.add(rand);
+        count += 1;
+    }
+
+    state.prev = path.last();
+    return path;
+};
+
+var Path = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "800", "step": "10" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+                    _vm.state.segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segments) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+    }, staticRenderFns: [],
+    name: 'Path',
+    props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
+    data: function data() {
+        return {
+            state: {
+                prev: null,
+                segments: 200,
+                segmentsRange: 10,
+                canvas: this.appState.factor('canvas')
+            }
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var path = void 0;
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            path = compute$3(_this.state, _this.canvas.canvas);
+
+            // init
+            _this.canvas.fill();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(path.first().x, path.first().y);
+            path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+                // draw
+                _this.canvas.ctx.stroke();
+            });
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$4 = window.Space;
+
+var compute$4 = function compute$4(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space$4.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+    var radius = Math.floor(Utils.randInt(5, state.radiusRange));
+    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
+    segments = Utils.bounds(segments, false, 25);
+    radius = Utils.bounds(radius, false, canvas.width / 2);
+
+    state.prev.segments = segments;
+    state.prev.radius = radius;
+
+    return new Space$4.Polygon(segments, radius, state.origin);
+};
+
+var Polygon = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.radiusRange, expression: "state.radiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.radiusRange }, on: { "__r": function __r($event) {
+                    _vm.state.radiusRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.radiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+    }, staticRenderFns: [],
+    name: 'Polygon',
+    props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    segments: 3,
+                    radius: 50
+                },
+                segmentsRange: 10,
+                radiusRange: 200,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(99, 9, 9, .8)'
+                })
+            }
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            polygon = compute$4(_this.state, _this.canvas.canvas);
+
+            // init
+            _this.canvas.fill();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
+            polygon.path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+            });
+
+            // draw
+            if (_this.state.canvas.fillStyle) {
+                _this.canvas.ctx.fill();
+            }
+            _this.canvas.ctx.stroke();
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$5 = window.Space;
+
+var compute$5 = function compute$5(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space$5.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+    var width = Math.floor(Utils.randInt(5, state.widthRange));
+    var height = Math.floor(Utils.randInt(3, state.heightRange));
+
+    state.prev.width = width;
+    state.prev.height = height;
+
+    return new Space$5.Rectangle(width, height, state.origin);
+};
+
+var Rectangle = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.widthRange, expression: "state.widthRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.widthRange }, on: { "__r": function __r($event) {
+                    _vm.state.widthRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Width Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.widthRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.heightRange, expression: "state.heightRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "1000" }, domProps: { "value": _vm.state.heightRange }, on: { "__r": function __r($event) {
+                    _vm.state.heightRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Height Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.heightRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+    }, staticRenderFns: [],
+    name: 'Rectangle',
+    props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    width: 25,
+                    height: 50
+                },
+                widthRange: 500,
+                heightRange: 500,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(255, 255, 255, .2)'
+                })
+            }
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            polygon = compute$5(_this.state, _this.canvas.canvas);
+
+            // init
+            _this.canvas.fill();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
+            polygon.path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+            });
+
+            // draw
+            if (_this.state.canvas.fillStyle) {
+                _this.canvas.ctx.fill();
+            }
+            _this.canvas.ctx.stroke();
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$6 = window.Space;
+
+var compute$6 = function compute$6(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space$6.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+
+    var outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
+    var innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
+    var segments = Math.floor(Utils.randInt(3, state.segmentsRange));
+    segments = Utils.bounds(segments, false, 25);
+    outerRadius = Utils.bounds(outerRadius, false, canvas.width / 2);
+    innerRadius = Utils.bounds(innerRadius, false, canvas.width / 2);
+
+    state.prev.segments = segments;
+    state.prev.outerRadius = outerRadius;
+    state.prev.innerRadius = innerRadius;
+
+    return new Space$6.Star(segments, outerRadius, innerRadius, state.origin);
+};
+
+var Star = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.outerRadiusRange, expression: "state.outerRadiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.outerRadiusRange }, on: { "__r": function __r($event) {
+                    _vm.state.outerRadiusRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Outer Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.outerRadiusRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.innerRadiusRange, expression: "state.innerRadiusRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "5", "max": "500" }, domProps: { "value": _vm.state.innerRadiusRange }, on: { "__r": function __r($event) {
+                    _vm.state.innerRadiusRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Inner Radius Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.innerRadiusRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+    }, staticRenderFns: [],
+    name: 'Star',
+    props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    segments: 3,
+                    outerRadius: 50,
+                    innerRadius: 10
+                },
+                segmentsRange: 10,
+                outerRadiusRange: 200,
+                innerRadiusRange: 200,
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'rgba(255, 255, 255, 1)',
+                    fillStyle: 'rgba(0, 99, 0, .6)'
+                })
+            }
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var polygon = void 0;
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            polygon = compute$6(_this.state, _this.canvas.canvas);
+
+            // init
+            _this.canvas.fill();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.fillStyle = _this.state.canvas.fillStyle;
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            // path
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(polygon.path.first().x, polygon.path.first().y);
+            polygon.path.points.forEach(function (point, index) {
+                if (index === 0) {
+                    return;
+                }
+                _this.canvas.ctx.lineTo(point.x, point.y);
+            });
+
+            // draw
+            if (_this.state.canvas.fillStyle) {
+                _this.canvas.ctx.fill();
+            }
+            _this.canvas.ctx.stroke();
+
+            // finish
+            _this.canvas.ctx.closePath();
+            _this.canvas.ctx.restore();
+        }).play();
+    }
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$7 = window.Space;
+
+var compute$7 = function compute$7(state, canvas) {
+    var path = new Space$7.Path();
+    var phi = Math.PI * 2 / state.segments;
+    var maxR = canvas.width < canvas.height ? canvas.width / 3 : canvas.height / 3;
+    var minR = maxR * state.segmentsRange;
+    var r = void 0;
+    var p = void 0;
+    for (var i = 0; i < state.segments; i += 1) {
+        r = Utils.randInt(minR, maxR);
+        p = new Space$7.Point.Polar(r, i * phi);
+        path.add(new Space$7.Group(p.x(), p.y()));
+    }
+    path.close();
+    path.translate(canvas.width / 2, canvas.height / 2);
+    Space$7.Bezier.smoothPath(path, state.tension);
+    return path;
+};
+
+var Bezier = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "60", "step": "1" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+                    _vm.state.segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segments) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "0", "max": "1", "step": "0.1" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.tension, expression: "state.tension", modifiers: { "number": true } }], attrs: { "type": "range", "min": "-2", "max": "2", "step": "0.1" }, domProps: { "value": _vm.state.tension }, on: { "__r": function __r($event) {
+                    _vm.state.tension = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Corner tension "), _c('small', [_vm._v("(" + _vm._s(_vm.state.tension) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+    }, staticRenderFns: [],
+    name: 'Path',
+    props: ['animation', 'appState', 'canvas'],
+    components: {
+        Dev: Dev
+    },
+    data: function data() {
+        return {
+            state: {
+                segments: 10,
+                segmentsRange: 0.3,
+                canvas: this.appState.factor('canvas', {
+                    lineWidth: 0.5
+                }),
+                tension: 0.5
+            }
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        var path = void 0;
+
+        this.animation
+        // .fps(1)
+        .only(function () {
+            // compute path
+            path = compute$7(_this.state, _this.canvas.canvas);
+
+            // init
+            _this.canvas.fill();
+            _this.canvas.ctx.save();
+
+            // styles
+            _this.canvas.ctx.strokeStyle = _this.state.canvas.strokeStyle;
+            _this.canvas.ctx.lineWidth = _this.state.canvas.lineWidth;
+
+            //// curve
+            var length = path.points.length;
+            var prev = void 0;
+            var point = void 0;
+            var i = void 0;
+
+            _this.canvas.ctx.beginPath();
+            _this.canvas.ctx.moveTo(path.first().x, path.first().y);
+            for (i = 1; i < length; i += 1) {
+                prev = path.prev(i);
+                point = path.get(i);
+                Helpers.bezierLine(_this.canvas.ctx, prev, point);
+            }
+            _this.canvas.ctx.fill();
+            _this.canvas.ctx.stroke();
+        }).play();
+    }
+};
+
+// landing views
+// single views
 var routes = [{
     name: '',
     path: '/',

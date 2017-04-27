@@ -19,7 +19,7 @@
 
 <script>
 import Utils from '../Utils';
-import Dev from './form/Dev.vue';
+import Dev from '../Form/Dev.vue';
 
 const Space = window.Space;
 

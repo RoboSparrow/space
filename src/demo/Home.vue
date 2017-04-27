@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Utils from '../Utils';
+import Utils from './Utils';
 
 const Space = window.Space;
 
