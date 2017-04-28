@@ -16,6 +16,7 @@
 */
 
 //@TODO morphe groups
+//@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
 const Morpher = function (path, steps, transformPoint) {
     const map = [];
 
@@ -30,10 +31,7 @@ const Morpher = function (path, steps, transformPoint) {
 
         transformPoint(path.points[i], i, origin);
         unit.substract(path.points[i]);
-        unit.x /= steps;
-        unit.y /= steps;
-        unit.z /= steps;
-
+        unit.multiplyBy(1 / steps);
         map.push([path.points[i], targ, unit]);
     }
 
@@ -51,7 +49,7 @@ Morpher.prototype.next = function () {
 
     const length = this.map.length;
     for (let i = 0; i < length; i += 1) {
-        this.map[i][0].add(this.map[i][2]);//unit
+        this.map[i][0].add(this.map[i][2]); //unit
     }
 
     this.count += 1;
@@ -66,7 +64,7 @@ Morpher.prototype.prev = function () {
 
     const length = this.map.length;
     for (let i = 0; i < length; i += 1) {
-        this.map[i][0].substract(this.map[i][2]);//unit
+        this.map[i][0].substract(this.map[i][2]); //unit
     }
 
     this.count -= 1;
@@ -74,7 +72,7 @@ Morpher.prototype.prev = function () {
 };
 
 Morpher.prototype.progress = function () {
-    if(this.direction > 0) {
+    if (this.direction > 0) {
         this.next();
         return;
     }
@@ -82,7 +80,7 @@ Morpher.prototype.progress = function () {
 };
 
 Morpher.prototype.finished = function () {
-    if(this.direction > 0) {
+    if (this.direction > 0) {
         return this.count === this.steps;
     }
     return this.count === 0;

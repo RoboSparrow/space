@@ -164,6 +164,12 @@ Cartesian.prototype.translate = function (x, y, z) {
     this.z += z;
 };
 
+Cartesian.prototype.multiplyBy = function (f) {
+    this.x *= f;
+    this.y *= f;
+    this.z *= f;
+};
+
 // comparasion
 
 Cartesian.prototype.equals = function (p) {
@@ -576,10 +582,6 @@ var Bezier = {
     smoothPoint: smoothPoint
 };
 
-////
-// Polygon
-////
-
 var TWO_PI = Math.PI * 2;
 var HALF_PI = Math.PI / 2;
 
@@ -588,6 +590,10 @@ var cartesianFromPolar = function cartesianFromPolar(radius, delta) {
     point = point.toCartesian();
     return point;
 };
+
+////
+// Line
+////
 
 var Line = function Line(from, to, segments, origin) {
     var path = new Path(origin);
@@ -598,16 +604,30 @@ var Line = function Line(from, to, segments, origin) {
     }
     this.path = path;
 };
+
 // TODO maybe this is a good general path method. if so it needs to consider open and close
 Line.prototype.segmentize = function (segments) {
     var length = this.path.length();
-    var diff = this.path.first().clone().substract(this.path.last());
-    //diff.multiplyBy();
-    if (length > 2) {
-        this.path.points.splice(1, this.path.length() - 2);
+    var segm = this.path.first().clone().substract(this.path.last());
+    var last = this.path.last();
+
+    segm.multiplyBy(1 / segments);
+
+    // remove everything except first element, keep instance
+    if (length > 1) {
+        this.path.points.splice(1, this.path.length());
     }
-    //insert after
+
+    for (var i = 0; i < segments; i += 1) {
+        this.path.progress(segm);
+    }
+    this.path.addPoint(last);
+    // no need to close path since it is a line:)
 };
+
+////
+// Polygon
+////
 
 var Polygon = function Polygon(segments, radius, origin) {
     var path = new Path(origin);
@@ -755,6 +775,7 @@ var Polygons = Object.freeze({
 */
 
 //@TODO morphe groups
+//@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
 var Morpher = function Morpher(path, steps, transformPoint) {
     var map = [];
 
@@ -769,10 +790,7 @@ var Morpher = function Morpher(path, steps, transformPoint) {
 
         transformPoint(path.points[i], i, origin);
         unit.substract(path.points[i]);
-        unit.x /= steps;
-        unit.y /= steps;
-        unit.z /= steps;
-
+        unit.multiplyBy(1 / steps);
         map.push([path.points[i], targ, unit]);
     }
 

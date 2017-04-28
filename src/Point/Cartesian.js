@@ -95,6 +95,12 @@ Cartesian.prototype.translate = function (x, y, z) {
     this.z += z;
 };
 
+Cartesian.prototype.multiplyBy = function (f) {
+    this.x *= f;
+    this.y *= f;
+    this.z *= f;
+};
+
 // comparasion
 
 Cartesian.prototype.equals = function (p) {

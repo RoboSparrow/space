@@ -2,10 +2,6 @@ import Path from './Path';
 import Point from './Point';
 import Bezier from './Bezier';
 
-////
-// Polygon
-////
-
 const TWO_PI = Math.PI * 2;
 const HALF_PI = Math.PI / 2;
 
@@ -15,25 +11,43 @@ const cartesianFromPolar = function (radius, delta) {
     return point;
 };
 
+////
+// Line
+////
+
 const Line = function (from, to, segments, origin) {
     const path = new Path(origin);
     path.add(from);
     path.add(to);
-    if(typeof segments === 'number'){
+    if (typeof segments === 'number') {
         this.segmentize(segments);
     }
     this.path = path;
 };
+
 // TODO maybe this is a good general path method. if so it needs to consider open and close
 Line.prototype.segmentize = function (segments) {
     const length = this.path.length();
-    const diff = this.path.first().clone().substract(this.path.last());
-    //diff.multiplyBy();
-    if(length > 2){
-        this.path.points.splice(1, this.path.length() - 2);
+    const segm = this.path.first().clone().substract(this.path.last());
+    const last = this.path.last();
+
+    segm.multiplyBy(1 / segments);
+    
+    // remove everything except first element, keep instance
+    if (length > 1) {
+        this.path.points.splice(1, this.path.length());
     }
-    //insert after
+    
+    for (let i = 0; i < segments; i += 1 ){
+        this.path.progress(segm);
+    }
+    this.path.addPoint(last);
+    // no need to close path since it is a line:)
 };
+
+////
+// Polygon
+////
 
 const Polygon = function (segments, radius, origin) {
     const path = new Path(origin);
