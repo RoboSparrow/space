@@ -15,11 +15,25 @@ const cartesianFromPolar = function (radius, delta) {
     return point;
 };
 
-/**
- * x translate
- * rotate
- * scale
- */
+const Line = function (from, to, segments, origin) {
+    const path = new Path(origin);
+    path.add(from);
+    path.add(to);
+    if(typeof segments === 'number'){
+        this.segmentize(segments);
+    }
+    this.path = path;
+};
+// TODO maybe this is a good general path method. if so it needs to consider open and close
+Line.prototype.segmentize = function (segments) {
+    const length = this.path.length();
+    const diff = this.path.first().clone().substract(this.path.last());
+    //diff.multiplyBy();
+    if(length > 2){
+        this.path.points.splice(1, this.path.length() - 2);
+    }
+    //insert after
+};
 
 const Polygon = function (segments, radius, origin) {
     const path = new Path(origin);
@@ -128,19 +142,18 @@ const Cog = function (segments, outerRadius, innerRadius, origin) {
             cartesianFromPolar(outerRadius, _delta + _innerDelta),
             cartesianFromPolar(outerRadius, _delta + (2 * _innerDelta))
         ];
-        //outer path
+        //outer
         path.add(outer[0].x, outer[0].y);
         path.add(outer[1].x, outer[1].y);
+        // inner
+        _delta += delta / 2;
+        inner = [
+            cartesianFromPolar(innerRadius, _delta + _innerDelta),
+            cartesianFromPolar(innerRadius, _delta + (2 * _innerDelta))
+        ];
+        path.add(inner[0].x, inner[0].y);
+        path.add(inner[1].x, inner[1].y);
 
-        //if (i <= segments - 1) {
-            _delta += delta / 2;
-            inner = [
-                cartesianFromPolar(innerRadius, _delta + _innerDelta),
-                cartesianFromPolar(innerRadius, _delta + (2 * _innerDelta))
-            ];
-            path.add(inner[0].x, inner[0].y);
-            path.add(inner[1].x, inner[1].y);
-        //}
         i += 1;
     }
     path.close();

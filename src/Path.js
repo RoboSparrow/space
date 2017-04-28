@@ -106,6 +106,11 @@ Path.prototype.isClosed = function () {
     return (this.points.length > 1 && this.last() === this.first());
 };
 
+// returns this.points length, excluding last element when path is losed
+Path.prototype.length = function () {
+    return (this.isClosed()) ? this.points.length - 1 : this.points.length;
+};
+
 // bounding box
 //@TODO
 Path.prototype.bounds = function () {
@@ -114,7 +119,7 @@ Path.prototype.bounds = function () {
     }
     const min = this.first().clone();
     const max = this.first().clone();
-    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    const length = this.length();
     for (let i = 0; i < length; i += 1) {
         min.min(this.points[i]);
         max.max(this.points[i]);
@@ -141,7 +146,7 @@ Path.prototype.toArray = function () {
 Path.prototype.translate = function (x, y, z) {
     let i;
     const v = Point.Cartesian.create(x, y, z);
-    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    const length = this.length();
     for (i = 0; i < length; i += 1) {
         this.points[i].add(v);
     }
@@ -151,7 +156,7 @@ Path.prototype.translate = function (x, y, z) {
 Path.prototype.scale = function (x, y, z) {
     let i;
     const v = Point.Cartesian.create(x, y, z);
-    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    const length = this.length();
     for (i = 0; i < length; i += 1) {
         this.points[i].scale(this.origin(), v);
     }
@@ -160,7 +165,7 @@ Path.prototype.scale = function (x, y, z) {
 // rotate path
 Path.prototype.rotate2D = function (rad) {
     let i;
-    const length = (this.isClosed()) ? this.points.length - 1 : this.points.length;
+    const length = this.length();
     for (i = 0; i < length; i += 1) {
         this.points[i].rotate2D(this.origin(), rad);
     }

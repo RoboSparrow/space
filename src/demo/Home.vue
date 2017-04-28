@@ -1,95 +1,96 @@
 <template>
     <div>
-        nothing
+        <section class="mui-form">
+            <legend>Edit Params</legend>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.steps" min="10" max="1000" step="10">
+                <label>Steps <small>( {{(morpher) ? morpher.count : 0}} of {{ state.steps }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <button class="mui-btn mui-btn--small app--btn" v-on:click="create()">Go</button>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+            </div>
+        </section>
+
+        <!-- devel -->
+        <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
 
 <script>
-import Utils from './Utils';
+import Canvas2dHelpers from './Canvas2dHelpers';
 
 const Space = window.Space;
 
-const computeTemplate = function (state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-
-    const figure = new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
-    return figure;
+const createTarget = function (state) {
+    return new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
 };
 
-const computeFigure = function (state, canvas) {
-    const figure = new Space.Path();
-    const segmentWidth = canvas.width - state.Star.segments;
-    path.add(0, canvas.height / 2);
-    for (let i = 0; i < state.Star.segments; i += 1) {
-        path.progress(segmentWidth, 0);
-    }
-    return figure;
-};
+const createMorpher = function (path, state) {
+    const x = state.canvas.width + path.length();
+    const y = state.canvas.height / 2;
 
-let count = 0; ///TODO animation.count
-const compute = function (state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-
-    if (!count) {
-        state.template = computeTarget();
-        state.figure = computeFigure();
-        count +=1;
-        return;
-    }
-    
-    //TODO point.equals
-    // Goal
-    // - define steps
-    // - set counter 0
-    // - create mrph array
-    // - target figure
-    // - src figure
-    //      - set each point to i * segment, centerY
-    //          -set each handle to 0,0,0
-    //      - targ[i].x - src[i].x / steps
-    //          - set each handle targ[i].member[k] - src[i].members[k] / steps
-    // morph from a line into a star and back
-    // better: store array of polar points in template,
-    // convert figure point to polar and check radius length
-    // star is closed, so length - 1
-    if(Math.abs(state.figure.path[0].y) < Math.abs(state.template.path[0].y)){
-        
-    }
-};
-
-const draw = function (figure, ctx) {
-    //init
-    ctx.save();
-
-    // styles
-    ctx.fillStyle = randRgba(figure.fillStyle);
-    ctx.strokeStyle = randRgba(figure.fillStyle);
-    ctx.lineWidth = 1;
-
-    // path
-    const path = figure.path;
-    ctx.beginPath();
-    ctx.moveTo(path.first().x, path.first().y);
-    path.points.forEach((point, index) => {
-        if (index === 0) {
-            return;
-        }
-        ctx.lineTo(point.x, point.y);
+    return new Space.Morpher(path, state.steps, (point, index) => {
+        point.x = index * x;
+        point.y = y;
     });
+};
 
-    // draw
-    if (ctx.fillStyle) {
-        ctx.fill();
+const compute = function (morpher) {
+    if (morpher.finished()) {
+        morpher.reverse();
     }
-    ctx.stroke();
+    morpher.progress();
+};
 
-    // finish
-    ctx.closePath();
-    ctx.restore();
+const draw = function (path, state, canvas) {
+    canvas.ctx.save();
+    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
+    canvas.ctx.lineWidth = state.canvas.lineWidth;
+    canvas.ctx.fillStyle = state.canvas.fillStyle;
+
+    const length = path.points.length;
+    let prev;
+    let point;
+    let i;
+
+    //// curve
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(path.first().x, path.first().y);
+    for (i = 1; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+        Canvas2dHelpers.bezierLine(canvas.ctx, prev, point);
+    }
+    canvas.ctx.fill();
+    canvas.ctx.stroke();
+    canvas.ctx.restore();
+    //// helpers
+
+    for (i = 0; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+
+        if (state.showHandles) {
+            if (point.members !== undefined && point.members.length > 1) {
+                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
+                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
+            }
+        }
+        if (state.showPoints) {
+            Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+        }
+        if (state.showPath) {
+            Canvas2dHelpers.drawLine(canvas.ctx, prev, point, '#666666');
+        }
+        if (state.showBounds) {
+            Canvas2dHelpers.drawBoundingBox(canvas.ctx, path, 'yellow');
+        }
+    }
+    canvas.ctx.restore();
 };
 
 export default {
@@ -106,18 +107,33 @@ export default {
                     figures: {}
                 },
                 origin: null,
-                canvas: this.appState.factor('canvas'),
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'white',
+                    lineWidth: 1
+                }),
                 Star: {
                     segments: 5,
                     outerRadius: 200,
                     innerRadius: 70
-                }
-            }
+                },
+                steps: 100
+            },
+            figure: null,
+            morpher: null
         };
     },
     created() {
         // temp redirect
         // this.$router.push('/Path');
+    },
+    methods: {
+        init: function () {
+            this.state.origin = new Space.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
+        },
+        create: function () {
+            this.figure = createTarget(this.state);
+            this.morpher = createMorpher(this.figure.path, this.state);
+        }
     },
     mounted() {
         this.canvas.fill();
@@ -125,16 +141,18 @@ export default {
         this.animation
         .fps(32)
         .only(() => {
-            // compute path
-            const figures = compute(this.state, this.canvas.canvas);
-            const tasks = Object.keys(figures);
+            // @TODO
+            if (!this.state.origin) {
+                this.init();
+                this.create();
+                return;
+            }
+
+            compute(this.morpher);
+            draw(this.figure.path, this.state, this.canvas);
             // init
             this.canvas.fill();
 
-            // draw
-            tasks.forEach((id) => {
-                draw(figures[id], this.canvas.ctx);
-            });
         })
         .play()
         ;

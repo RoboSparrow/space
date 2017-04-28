@@ -329,6 +329,11 @@ Path.prototype.isClosed = function () {
     return this.points.length > 1 && this.last() === this.first();
 };
 
+// returns this.points length, excluding last element when path is losed
+Path.prototype.length = function () {
+    return this.isClosed() ? this.points.length - 1 : this.points.length;
+};
+
 // bounding box
 //@TODO
 Path.prototype.bounds = function () {
@@ -337,7 +342,7 @@ Path.prototype.bounds = function () {
     }
     var min = this.first().clone();
     var max = this.first().clone();
-    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    var length = this.length();
     for (var i = 0; i < length; i += 1) {
         min.min(this.points[i]);
         max.max(this.points[i]);
@@ -364,7 +369,7 @@ Path.prototype.toArray = function () {
 Path.prototype.translate = function (x, y, z) {
     var i = void 0;
     var v = Point.Cartesian.create(x, y, z);
-    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    var length = this.length();
     for (i = 0; i < length; i += 1) {
         this.points[i].add(v);
     }
@@ -374,7 +379,7 @@ Path.prototype.translate = function (x, y, z) {
 Path.prototype.scale = function (x, y, z) {
     var i = void 0;
     var v = Point.Cartesian.create(x, y, z);
-    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    var length = this.length();
     for (i = 0; i < length; i += 1) {
         this.points[i].scale(this.origin(), v);
     }
@@ -383,7 +388,7 @@ Path.prototype.scale = function (x, y, z) {
 // rotate path
 Path.prototype.rotate2D = function (rad) {
     var i = void 0;
-    var length = this.isClosed() ? this.points.length - 1 : this.points.length;
+    var length = this.length();
     for (i = 0; i < length; i += 1) {
         this.points[i].rotate2D(this.origin(), rad);
     }
@@ -584,11 +589,25 @@ var cartesianFromPolar = function cartesianFromPolar(radius, delta) {
     return point;
 };
 
-/**
- * x translate
- * rotate
- * scale
- */
+var Line = function Line(from, to, segments, origin) {
+    var path = new Path(origin);
+    path.add(from);
+    path.add(to);
+    if (typeof segments === 'number') {
+        this.segmentize(segments);
+    }
+    this.path = path;
+};
+// TODO maybe this is a good general path method. if so it needs to consider open and close
+Line.prototype.segmentize = function (segments) {
+    var length = this.path.length();
+    var diff = this.path.first().clone().substract(this.path.last());
+    //diff.multiplyBy();
+    if (length > 2) {
+        this.path.points.splice(1, this.path.length() - 2);
+    }
+    //insert after
+};
 
 var Polygon = function Polygon(segments, radius, origin) {
     var path = new Path(origin);
@@ -694,16 +713,15 @@ var Cog = function Cog(segments, outerRadius, innerRadius, origin) {
     while (i < segments) {
         _delta = i * delta - rad0;
         outer = [cartesianFromPolar(outerRadius, _delta + _innerDelta), cartesianFromPolar(outerRadius, _delta + 2 * _innerDelta)];
-        //outer path
+        //outer
         path.add(outer[0].x, outer[0].y);
         path.add(outer[1].x, outer[1].y);
-
-        //if (i <= segments - 1) {
+        // inner
         _delta += delta / 2;
         inner = [cartesianFromPolar(innerRadius, _delta + _innerDelta), cartesianFromPolar(innerRadius, _delta + 2 * _innerDelta)];
         path.add(inner[0].x, inner[0].y);
         path.add(inner[1].x, inner[1].y);
-        //}
+
         i += 1;
     }
     path.close();
@@ -719,11 +737,106 @@ var Polygons = Object.freeze({
 	Cog: Cog
 });
 
+/**
+ *  Goal
+ * - define steps
+ * - set counter 0
+ * - create mrph array
+ * - target figure
+ * - src figure
+ *      - set each point to i * segment, centerY
+ *          -set each handle to 0,0,0
+ *      - targ[i].x - src[i].x / steps
+ *          - set each handle targ[i].member[k] - src[i].members[k] / steps
+ * morph from a line into a star and back
+ * better: store array of polar points in template,
+ * convert figure point to polar and check radius length
+ * star is closed, so length - 1
+*/
+
+//@TODO morphe groups
+var Morpher = function Morpher(path, steps, transformPoint) {
+    var map = [];
+
+    var origin = path.origin();
+    var length = path.length();
+
+    var targ = void 0;
+    var unit = void 0;
+    for (var i = 0; i < length; i += 1) {
+        targ = path.points[i].clone();
+        unit = targ.clone();
+
+        transformPoint(path.points[i], i, origin);
+        unit.substract(path.points[i]);
+        unit.x /= steps;
+        unit.y /= steps;
+        unit.z /= steps;
+
+        map.push([path.points[i], targ, unit]);
+    }
+
+    this.map = map;
+    this.count = 0;
+    this.steps = steps;
+    this.direction = 1;
+};
+
+Morpher.prototype.next = function () {
+    if (this.count >= this.steps) {
+        this.direction = -1;
+        return false;
+    }
+
+    var length = this.map.length;
+    for (var i = 0; i < length; i += 1) {
+        this.map[i][0].add(this.map[i][2]); //unit
+    }
+
+    this.count += 1;
+    return true;
+};
+
+Morpher.prototype.prev = function () {
+    if (this.count <= 0) {
+        this.direction = 1;
+        return false;
+    }
+
+    var length = this.map.length;
+    for (var i = 0; i < length; i += 1) {
+        this.map[i][0].substract(this.map[i][2]); //unit
+    }
+
+    this.count -= 1;
+    return true;
+};
+
+Morpher.prototype.progress = function () {
+    if (this.direction > 0) {
+        this.next();
+        return;
+    }
+    this.prev();
+};
+
+Morpher.prototype.finished = function () {
+    if (this.direction > 0) {
+        return this.count === this.steps;
+    }
+    return this.count === 0;
+};
+
+Morpher.prototype.reverse = function () {
+    this.direction *= -1;
+};
+
 var Module = {
     Point: Point,
     Path: Path,
     Group: Group,
-    Bezier: Bezier
+    Bezier: Bezier,
+    Morpher: Morpher
 };
 
 // hm...
