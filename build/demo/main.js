@@ -209,59 +209,45 @@ var Utils = {
 
 var Space = window.Space;
 
+var computeFigure = function computeFigure(state, canvas) {
+    var figure = new Space.Path();
+    var segmentWidth = canvas.width - state.Star.segments;
+    path.add(0, canvas.height / 2);
+    for (var i = 0; i < state.Star.segments; i += 1) {
+        path.progress(segmentWidth, 0);
+    }
+    return figure;
+};
+
+var count = 0; ///TODO animation.count
 var compute = function compute(state, canvas) {
     if (!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
 
-    var i = void 0;
-    var origin = void 0;
-    var figures = {};
-
-    // Path
-    var path = new Space.Path(state.origin);
-    var segments = Utils.randInt(10, 100);
-    path.add(origin);
-    for (i = 1; i < segments; i += 1) {
-        var prev = path.points[i - 1];
-        path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
+    if (!count) {
+        state.template = computeTarget();
+        state.figure = computeFigure();
+        count += 1;
+        return;
     }
 
-    figures.Path = {
-        path: path,
-        fillStyle: [255, 255, 255, 0.05]
-    };
-
-    //
-    // origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    origin = new Space.Point.Cartesian(Utils.randInt(canvas.width / 2, canvas.width), Utils.randInt(canvas.height / 2, canvas.height));
-    var star = new Space.Star(Utils.randInt(3, 15), Utils.randInt(100, 300), Utils.randInt(10, 100), origin);
-
-    figures.star = {
-        path: star.path,
-        fillStyle: [-1, -1, -1, 0.25]
-    };
-
-    // Square
-    origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
-    var dim = Utils.randInt(50, 75);
-    var square = new Space.Rectangle(dim, dim, origin);
-
-    figures.Square = {
-        path: square.path,
-        fillStyle: [-1, -1, -1, 0.25]
-    };
-
-    state.prev.figures = figures;
-    return figures;
-};
-
-var randRgba = function randRgba(rgba) {
-    var r = rgba[0] > 0 ? rgba[0] : Math.round(Utils.randInt(0, 255));
-    var g = rgba[1] > 0 ? rgba[1] : Math.round(Utils.randInt(0, 255));
-    var b = rgba[2] > 0 ? rgba[2] : Math.round(Utils.randInt(0, 255));
-    var a = rgba[3] > 0 ? rgba[3] : Math.round(Utils.randInt(0, 1));
-    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+    //TODO point.equals
+    // Goal
+    // - define steps
+    // - set counter 0
+    // - create mrph array
+    // - target figure
+    // - src figure
+    //      - set each point to i * segment, centerY
+    //          -set each handle to 0,0,0
+    //      - targ[i].x - src[i].x / steps
+    //          - set each handle targ[i].member[k] - src[i].members[k] / steps
+    // morph from a line into a star and back
+    // better: store array of polar points in template,
+    // convert figure point to polar and check radius length
+    // star is closed, so length - 1
+    if (Math.abs(state.figure.path[0].y) < Math.abs(state.template.path[0].y)) {}
 };
 
 var draw = function draw(figure, ctx) {
@@ -307,7 +293,12 @@ var Home = { render: function render() {
                     figures: {}
                 },
                 origin: null,
-                canvas: this.appState.factor('canvas')
+                canvas: this.appState.factor('canvas'),
+                Star: {
+                    segments: 5,
+                    outerRadius: 200,
+                    innerRadius: 70
+                }
             }
         };
     },
@@ -1238,14 +1229,8 @@ var draw$2 = function draw$2(figure, path, state, canvas) {
         prev = path.prev(i);
         point = path.get(i);
 
-        if (state.showHandles) {
-            if (point.members !== undefined && point.members.length > 1) {
-                Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
-                Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
-            }
-        }
         if (state.showPoints) {
-            Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+            Helpers.drawPoint(canvas.ctx, point, i + ':point', 'orange');
         }
         if (state.showPath) {
             Helpers.drawLine(canvas.ctx, prev, point, '#666666');
@@ -1358,6 +1343,30 @@ var Figures$1 = { render: function render() {
                     if ($event.target.composing) {
                         return;
                     }_vm.state.Star.innerRadius = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("inner Radius")])])]) : _vm._e(), _vm.figure === 'Cog' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Cog.segments, expression: "state.Cog.segments", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Cog.segments }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Cog.segments = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segments")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Cog.outerRadius, expression: "state.Cog.outerRadius", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Cog.outerRadius }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Cog.outerRadius = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("outer Radius")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Cog.innerRadius, expression: "state.Cog.innerRadius", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Cog.innerRadius }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "input": function input($event) {
+                    if ($event.target.composing) {
+                        return;
+                    }_vm.state.Cog.innerRadius = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
                 } } }), _c('label', [_vm._v("inner Radius")])])]) : _vm._e(), _vm.figure === 'Rectangle' ? _c('section', { staticClass: "mui-form--inline" }, [_c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.Rectangle.width, expression: "state.Rectangle.width", modifiers: { "number": true } }], attrs: { "type": "text" }, domProps: { "value": _vm.state.Rectangle.width }, on: { "change": function change($event) {
@@ -1564,7 +1573,7 @@ var Figures$1 = { render: function render() {
                 Cog: {
                     segments: 5,
                     outerRadius: 200,
-                    innerRadius: 100
+                    innerRadius: 125
                 },
                 Rectangle: {
                     width: 300,

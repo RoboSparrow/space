@@ -9,56 +9,59 @@ import Utils from './Utils';
 
 const Space = window.Space;
 
-const computeTemplate = function (state, canvas) {
-    if (!state.origin) {
-        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
-    }
-
-    const figure = new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
-    return figure;
-};
-
-const computeFigure = function (state, canvas) {
-    const figure = new Space.Path();
-    const segmentWidth = canvas.width - state.Star.segments;
-    path.add(0, canvas.height / 2);
-    for (let i = 0; i < state.Star.segments; i += 1) {
-        path.progress(segmentWidth, 0);
-    }
-    return figure;
-};
-
-let count = 0; ///TODO animation.count
 const compute = function (state, canvas) {
     if (!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
 
-    if (!count) {
-        state.template = computeTarget();
-        state.figure = computeFigure();
-        count +=1;
-        return;
+    let i;
+    let origin;
+    const figures = {};
+
+    // Path
+    const path = new Space.Path(state.origin);
+    const segments = Utils.randInt(10, 100);
+    path.add(origin);
+    for (i = 1; i < segments; i += 1) {
+        const prev = path.points[i - 1];
+        path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
     }
-    
-    //TODO point.equals
-    // Goal
-    // - define steps
-    // - set counter 0
-    // - create mrph array
-    // - target figure
-    // - src figure
-    //      - set each point to i * segment, centerY
-    //          -set each handle to 0,0,0
-    //      - targ[i].x - src[i].x / steps
-    //          - set each handle targ[i].member[k] - src[i].members[k] / steps
-    // morph from a line into a star and back
-    // better: store array of polar points in template,
-    // convert figure point to polar and check radius length
-    // star is closed, so length - 1
-    if(Math.abs(state.figure.path[0].y) < Math.abs(state.template.path[0].y)){
-        
-    }
+
+    figures.Path = {
+        path: path,
+        fillStyle: [255, 255, 255, 0.05]
+    };
+
+    //
+    // origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    origin = new Space.Point.Cartesian(Utils.randInt(canvas.width / 2, canvas.width), Utils.randInt(canvas.height / 2, canvas.height));
+    const star = new Space.Star(Utils.randInt(3, 15), Utils.randInt(100, 300), Utils.randInt(10, 100), origin);
+
+    figures.star = {
+        path: star.path,
+        fillStyle: [-1, -1, -1, 0.25]
+    };
+
+    // Square
+    origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
+    const dim = Utils.randInt(50, 75);
+    const square = new Space.Rectangle(dim, dim, origin);
+
+    figures.Square = {
+        path: square.path,
+        fillStyle: [-1, -1, -1, 0.25]
+    };
+
+    state.prev.figures = figures;
+    return figures;
+};
+
+const randRgba = function (rgba) {
+    const r = (rgba[0] > 0) ? rgba[0] : Math.round(Utils.randInt(0, 255));
+    const g = (rgba[1] > 0) ? rgba[1] : Math.round(Utils.randInt(0, 255));
+    const b = (rgba[2] > 0) ? rgba[2] : Math.round(Utils.randInt(0, 255));
+    const a = (rgba[3] > 0) ? rgba[3] : Math.round(Utils.randInt(0, 1));
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
 };
 
 const draw = function (figure, ctx) {
@@ -106,12 +109,7 @@ export default {
                     figures: {}
                 },
                 origin: null,
-                canvas: this.appState.factor('canvas'),
-                Star: {
-                    segments: 5,
-                    outerRadius: 200,
-                    innerRadius: 70
-                }
+                canvas: this.appState.factor('canvas')
             }
         };
     },

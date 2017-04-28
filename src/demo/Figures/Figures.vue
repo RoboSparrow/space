@@ -74,6 +74,22 @@
             </div>
         </section>
 
+        <!-- figure:cog -->
+        <section class="mui-form--inline" v-if="figure === 'Cog'">
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Cog.segments" v-on:change="init()" >
+                <label>Segments</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Cog.outerRadius" v-on:change="init()" >
+                <label>outer Radius</label>
+            </div>
+            <div class="mui-textfield">
+                <input type="text" v-model.number="state.Cog.innerRadius" v-on:change="init()" >
+                <label>inner Radius</label>
+            </div>
+        </section>
+
         <!-- figure:rectangle -->
         <section class="mui-form--inline"  v-if="figure === 'Rectangle'">
             <div class="mui-textfield">
@@ -297,14 +313,8 @@ const draw = function (figure, path, state, canvas) {
         prev = path.prev(i);
         point = path.get(i);
 
-        if (state.showHandles) {
-            if (point.members !== undefined && point.members.length > 1) {
-                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
-                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
-            }
-        }
         if (state.showPoints) {
-            Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+            Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', 'orange');
         }
         if (state.showPath) {
             Canvas2dHelpers.drawLine(canvas.ctx, prev, point, '#666666');
@@ -386,7 +396,7 @@ export default {
                 Cog: {
                     segments: 5,
                     outerRadius: 200,
-                    innerRadius: 100
+                    innerRadius: 125
                 },
                 Rectangle: {
                     width: 300,
