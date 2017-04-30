@@ -30,13 +30,11 @@ const createTarget = function (state) {
 };
 
 const createMorpher = function (path, state) {
-    const x = state.canvas.width + path.length();
-    const y = state.canvas.height / 2;
+    const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
+    const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
 
-    return new Space.Morpher(path, state.steps, (point, index) => {
-        point.x = index * x;
-        point.y = y;
-    });
+    const src = new Space.Line(from, to, path.length());
+    return new Space.Morpher(src.path, path, state.steps);
 };
 
 const compute = function (morpher) {

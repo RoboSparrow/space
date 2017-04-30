@@ -599,18 +599,20 @@ var Line = function Line(from, to, segments, origin) {
     var path = new Path(origin);
     path.add(from);
     path.add(to);
+    this.path = path;
+
     if (typeof segments === 'number') {
         this.segmentize(segments);
     }
-    this.path = path;
 };
 
 // TODO maybe this is a good general path method. if so it needs to consider open and close
 Line.prototype.segmentize = function (segments) {
-    var length = this.path.length();
-    var segm = this.path.first().clone().substract(this.path.last());
     var last = this.path.last();
+    var length = this.path.length();
+    var segm = this.path.first().clone();
 
+    segm.substract(this.path.last());
     segm.multiplyBy(1 / segments);
 
     // remove everything except first element, keep instance
@@ -751,6 +753,7 @@ var Cog = function Cog(segments, outerRadius, innerRadius, origin) {
 
 
 var Polygons = Object.freeze({
+	Line: Line,
 	Polygon: Polygon,
 	Rectangle: Rectangle,
 	Star: Star,
@@ -776,22 +779,18 @@ var Polygons = Object.freeze({
 
 //@TODO morphe groups
 //@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
-var Morpher = function Morpher(path, steps, transformPoint) {
+
+var Morpher = function Morpher(src, targ, steps) {
     var map = [];
 
-    var origin = path.origin();
-    var length = path.length();
-
-    var targ = void 0;
+    var length = src.length();
+    // TODO: what to do if both paths have a different length?
     var unit = void 0;
     for (var i = 0; i < length; i += 1) {
-        targ = path.points[i].clone();
-        unit = targ.clone();
-
-        transformPoint(path.points[i], i, origin);
-        unit.substract(path.points[i]);
+        unit = src.points[i].clone();
+        unit.substract(targ.points[i]);
         unit.multiplyBy(1 / steps);
-        map.push([path.points[i], targ, unit]);
+        map.push([src.points[i], targ.points[i], unit]);
     }
 
     this.map = map;

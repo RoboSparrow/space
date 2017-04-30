@@ -16,19 +16,35 @@
 */
 
 //@TODO morphe groups
-//@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
+//@TODO replace callback with just two paths to morphe, do not make them dependent on the same length
+//example, line to star
+/*
+const createMorpher = function (path, state) {
+    const x = state.canvas.width + path.length();
+    const y = state.canvas.height / 2;
 
-const Morpher = function (src, targ, steps) {
+    return new Space.Morpher(path, state.steps, (point, index) => {
+        point.x = index * x;
+        point.y = y;
+    });
+};
+*/
+const Morpher = function (path, steps, transformPoint) {
     const map = [];
 
-    const length = src.length();
-    // TODO: what to do if both paths have a different length?
+    const origin = path.origin();
+    const length = path.length();
+
+    let targ;
     let unit;
     for (let i = 0; i < length; i += 1) {
-        unit = src.points[i].clone();
-        unit.substract(targ.points[i]);
+        targ = path.points[i].clone();
+        unit = targ.clone();
+
+        transformPoint(path.points[i], i, origin);
+        unit.substract(path.points[i]);
         unit.multiplyBy(1 / steps);
-        map.push([src.points[i], targ.points[i], unit]);
+        map.push([path.points[i], targ, unit]);
     }
 
     this.map = map;

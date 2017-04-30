@@ -300,13 +300,11 @@ var createTarget = function createTarget(state) {
 };
 
 var createMorpher = function createMorpher(path, state) {
-    var x = state.canvas.width + path.length();
-    var y = state.canvas.height / 2;
+    var from = new Space.Point.Cartesian(0, state.canvas.height / 2);
+    var to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
 
-    return new Space.Morpher(path, state.steps, function (point, index) {
-        point.x = index * x;
-        point.y = y;
-    });
+    var src = new Space.Line(from, to, path.length());
+    return new Space.Morpher(src.path, path, state.steps);
 };
 
 var compute = function compute(morpher) {

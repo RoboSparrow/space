@@ -19,26 +19,28 @@ const Line = function (from, to, segments, origin) {
     const path = new Path(origin);
     path.add(from);
     path.add(to);
+    this.path = path;
+
     if (typeof segments === 'number') {
         this.segmentize(segments);
     }
-    this.path = path;
 };
 
 // TODO maybe this is a good general path method. if so it needs to consider open and close
 Line.prototype.segmentize = function (segments) {
-    const length = this.path.length();
-    const segm = this.path.first().clone().substract(this.path.last());
     const last = this.path.last();
+    const length = this.path.length();
+    const segm = this.path.first().clone();
 
+    segm.substract(this.path.last());
     segm.multiplyBy(1 / segments);
-    
+
     // remove everything except first element, keep instance
     if (length > 1) {
         this.path.points.splice(1, this.path.length());
     }
-    
-    for (let i = 0; i < segments; i += 1 ){
+
+    for (let i = 0; i < segments; i += 1) {
         this.path.progress(segm);
     }
     this.path.addPoint(last);
@@ -185,6 +187,7 @@ const Cog = function (segments, outerRadius, innerRadius, origin) {
 // };
 
 export {
+    Line,
     Polygon,
     Rectangle,
     Star,
