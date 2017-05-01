@@ -2280,16 +2280,37 @@ var Bezier = { render: function render() {
 
 var Space$9 = window.Space;
 
-var createTarget = function createTarget(state) {
-    return new Space$9.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
+var radius = function radius(state, margin) {
+    margin = margin || 50;
+    return state.canvas.width < state.canvas.height ? state.canvas.width / 2 - margin : state.canvas.height / 2 - 50;
 };
 
-var createMorpher = function createMorpher(path, state) {
-    var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
-    var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+var createFigure = function createFigure(type, state, reference) {
 
-    var src = new Space$9.Line(from, to, path.length());
-    return new Space$9.Morpher(path, src.path, state.steps);
+    var segments = reference !== undefined ? reference.path.length() : state.segments;
+    var figure = void 0;
+    console.log(type, segments, reference);
+    switch (type) {
+
+        case 'Line':
+            var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
+            var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+            figure = new Space$9.Line(from, to, segments);
+            break;
+
+        case 'Polygon':
+            figure = new Space$9.Polygon(segments, radius(state), state.origin);
+            break;
+
+        case 'Star':
+            figure = new Space$9.Star(segments, radius(state), 50, state.origin);
+            break;
+
+        default:
+            throw new Error('Morpher component: Figure of type "' + type + '" not recognized.');
+
+    }
+    return figure;
 };
 
 var compute$9 = function compute$9(morpher) {
@@ -2300,6 +2321,7 @@ var compute$9 = function compute$9(morpher) {
 };
 
 var draw$3 = function draw$3(path, state, canvas) {
+
     canvas.ctx.save();
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
@@ -2351,13 +2373,13 @@ var Morpher = { render: function render() {
                     _vm.state.steps = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Steps "), _c('small', [_vm._v("( " + _vm._s(_vm.morpher ? _vm.morpher.count : 0) + " of " + _vm._s(_vm.state.steps) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", on: { "click": function click($event) {
-                    _vm.create();
-                } } }, [_vm._v("Go")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                } } }), _c('label', [_vm._v("Steps "), _c('small', [_vm._v("( " + _vm._s(_vm.morpher ? _vm.morpher.count : 0) + " of " + _vm._s(_vm.state.steps) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "50" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+                    _vm.state.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segments) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
+                    _vm.create();
+                } } }, [_vm._v("Create Morpher")])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Home',
     props: ['animation', 'appState', 'canvas'],
@@ -2372,29 +2394,27 @@ var Morpher = { render: function render() {
                     strokeStyle: 'white',
                     lineWidth: 1
                 }),
-                Star: {
-                    segments: 5,
-                    outerRadius: 200,
-                    innerRadius: 70
-                },
+                segments: 6,
                 steps: 100
             },
-            figure: null,
+            path: null,
+            figures: {
+                src: typeof this.$route.params.srcFigure !== 'undefined' ? this.$route.params.srcFigure : 'Polygon',
+                targ: typeof this.$route.params.targFigure !== 'undefined' ? this.$route.params.targFigure : 'Star'
+            },
             morpher: null
         };
     },
-    created: function created() {
-        // temp redirect
-        // this.$router.push('/Path');
-    },
-
     methods: {
         init: function init() {
             this.state.origin = new Space$9.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
         },
         create: function create() {
-            this.figure = createTarget(this.state);
-            this.morpher = createMorpher(this.figure.path, this.state);
+
+            var targFigure = createFigure(this.figures.targ, this.state);
+            var srcFigure = createFigure(this.figures.src, this.state, targFigure);
+            this.path = srcFigure.path;
+            this.morpher = new Space$9.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         }
     },
     mounted: function mounted() {
@@ -2411,7 +2431,7 @@ var Morpher = { render: function render() {
             }
 
             compute$9(_this.morpher);
-            draw$3(_this.figure.path, _this.state, _this.canvas);
+            draw$3(_this.path, _this.state, _this.canvas);
             // init
             _this.canvas.fill();
         }).play();

@@ -7,11 +7,11 @@
                 <label>Steps <small>( {{(morpher) ? morpher.count : 0}} of {{ state.steps }})</small></label>
             </div>
             <div class="mui-textfield">
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="create()">Go</button>
+                <input type="range" v-model.number="state.segments" min="3" max="50">
+                <label>Segment Range <small>({{ state.segments }})</small></label>
             </div>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+                <button class="mui-btn mui-btn--small mui-btn--primary" v-on:click="create()">Create Morpher</button>
             </div>
         </section>
 
@@ -25,16 +25,38 @@ import Canvas2dHelpers from '../Canvas2dHelpers';
 
 const Space = window.Space;
 
-const createTarget = function (state) {
-    return new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
+const radius = function (state, margin) {
+    margin = margin || 50;
+    return (state.canvas.width < state.canvas.height) ? (state.canvas.width / 2) - margin : (state.canvas.height / 2) - 50;
 };
 
-const createMorpher = function (path, state) {
-    const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
-    const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+const createFigure = function (type, state, reference) {
 
-    const src = new Space.Line(from, to, path.length());
-    return new Space.Morpher(path, src.path, state.steps);
+    const segments = (reference !== undefined) ? reference.path.length() : state.segments;
+    let figure;
+console.log(type, segments,reference);
+    switch (type) {
+
+        case 'Line':
+            const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
+            const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+            figure = new Space.Line(from, to, segments);
+            break;
+
+        case 'Polygon':
+            figure = new Space.Polygon(segments, radius(state), state.origin);
+            break;
+
+        case 'Star':
+            figure = new Space.Star(segments, radius(state), 50, state.origin);
+            break;
+
+        default:
+            throw new Error('Morpher component: Figure of type "' + type + '" not recognized.');
+
+    }
+    return figure;
+
 };
 
 const compute = function (morpher) {
@@ -45,6 +67,7 @@ const compute = function (morpher) {
 };
 
 const draw = function (path, state, canvas) {
+
     canvas.ctx.save();
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
     canvas.ctx.lineWidth = state.canvas.lineWidth;
@@ -109,28 +132,27 @@ export default {
                     strokeStyle: 'white',
                     lineWidth: 1
                 }),
-                Star: {
-                    segments: 5,
-                    outerRadius: 200,
-                    innerRadius: 70
-                },
+                segments: 6,
                 steps: 100
             },
-            figure: null,
+            path: null,
+            figures: {
+                src: (typeof this.$route.params.srcFigure !== 'undefined') ? this.$route.params.srcFigure : 'Polygon',
+                targ: (typeof this.$route.params.targFigure !== 'undefined') ? this.$route.params.targFigure : 'Star'
+            },
             morpher: null
         };
-    },
-    created() {
-        // temp redirect
-        // this.$router.push('/Path');
     },
     methods: {
         init: function () {
             this.state.origin = new Space.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
         },
         create: function () {
-            this.figure = createTarget(this.state);
-            this.morpher = createMorpher(this.figure.path, this.state);
+
+            const targFigure = createFigure(this.figures.targ, this.state);
+            const srcFigure = createFigure(this.figures.src, this.state, targFigure);
+            this.path = srcFigure.path;
+            this.morpher = new Space.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         }
     },
     mounted() {
@@ -147,7 +169,7 @@ export default {
             }
 
             compute(this.morpher);
-            draw(this.figure.path, this.state, this.canvas);
+            draw(this.path, this.state, this.canvas);
             // init
             this.canvas.fill();
 
