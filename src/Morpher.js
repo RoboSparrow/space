@@ -18,17 +18,18 @@
 //@TODO morphe groups
 //@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
 
-const Morpher = function (src, targ, steps) {
+const Morpher = function (srcPath, targPath, steps) {
     const map = [];
 
-    const length = src.length();
+    const length = srcPath.length();
     // TODO: what to do if both paths have a different length?
     let unit;
     for (let i = 0; i < length; i += 1) {
-        unit = src.points[i].clone();
-        unit.substract(targ.points[i]);
+        unit = srcPath.points[i].clone();
+        unit.substract(targPath.points[i]);
         unit.multiplyBy(1 / steps);
-        map.push([src.points[i], targ.points[i], unit]);
+        // TODO, limit to neccessary
+        map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 
     this.map = map;

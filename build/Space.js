@@ -613,9 +613,9 @@ var Line = function Line(from, to, segments, origin) {
 Line.prototype.segmentize = function (segments) {
     var last = this.path.last();
     var length = this.path.length();
-    var segm = this.path.first().clone();
 
-    segm.substract(this.path.last());
+    var segm = last.clone();
+    segm.substract(this.path.first());
     segm.multiplyBy(1 / segments);
 
     // remove everything except first element, keep instance
@@ -623,11 +623,11 @@ Line.prototype.segmentize = function (segments) {
         this.path.points.splice(1, this.path.length());
     }
 
-    for (var i = 0; i < segments; i += 1) {
-        this.path.progress(segm);
+    segments -= 2; // first, lasts
+    for (var i = 0; i <= segments; i += 1) {
+        this.path.progress(segm.clone());
     }
     this.path.addPoint(last);
-    // no need to close path since it is a line:)
 };
 
 ////
@@ -783,17 +783,18 @@ var Polygons = Object.freeze({
 //@TODO morphe groups
 //@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
 
-var Morpher = function Morpher(src, targ, steps) {
+var Morpher = function Morpher(srcPath, targPath, steps) {
     var map = [];
 
-    var length = src.length();
+    var length = srcPath.length();
     // TODO: what to do if both paths have a different length?
     var unit = void 0;
     for (var i = 0; i < length; i += 1) {
-        unit = src.points[i].clone();
-        unit.substract(targ.points[i]);
+        unit = srcPath.points[i].clone();
+        unit.substract(targPath.points[i]);
         unit.multiplyBy(1 / steps);
-        map.push([src.points[i], targ.points[i], unit]);
+        // TODO, limit to neccessary
+        map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 
     this.map = map;

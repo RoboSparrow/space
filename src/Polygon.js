@@ -30,9 +30,9 @@ const Line = function (from, to, segments, origin) {
 Line.prototype.segmentize = function (segments) {
     const last = this.path.last();
     const length = this.path.length();
-    const segm = this.path.first().clone();
 
-    segm.substract(this.path.last());
+    const segm = last.clone();
+    segm.substract(this.path.first());
     segm.multiplyBy(1 / segments);
 
     // remove everything except first element, keep instance
@@ -40,11 +40,11 @@ Line.prototype.segmentize = function (segments) {
         this.path.points.splice(1, this.path.length());
     }
 
-    for (let i = 0; i < segments; i += 1) {
-        this.path.progress(segm);
+    segments -= 2;// first, lasts
+    for (let i = 0; i <= segments; i += 1) {
+        this.path.progress(segm.clone());
     }
     this.path.addPoint(last);
-    // no need to close path since it is a line:)
 };
 
 ////
