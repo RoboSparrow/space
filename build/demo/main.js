@@ -144,6 +144,197 @@ var State = {
 
 };
 
+var Utils = {
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    randInt: function randInt(min, max) {
+        min = min || -1;
+        max = max || 1;
+        // eslint-disable-next-line no-mixed-operators
+        return Math.random() * (max - min) + min;
+    },
+
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    bounds: function bounds(val, min, max) {
+        val = min !== false && val < min ? min : val;
+        val = max !== false && val > max ? max : val;
+        return val;
+    },
+
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    randIntRange: function randIntRange(base, range) {
+        var bounce = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+        if (bounce.length) {
+            if (base + range[1] > bounce[1]) {
+                base -= range[1];
+            }
+            if (base + range[0] < bounce[0]) {
+                base -= range[0];
+            }
+        }
+
+        return base + this.randInt(range[0], range[1]);
+    },
+
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    radians: function radians(deg) {
+        return deg * (Math.PI / 180);
+    }
+
+};
+
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space = window.Space;
+
+var compute = function compute(state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    }
+
+    var i = void 0;
+    var origin = void 0;
+    var figures = {};
+
+    // Path
+    var path = new Space.Path(state.origin);
+    var segments = Utils.randInt(10, 100);
+    path.add(origin);
+    for (i = 1; i < segments; i += 1) {
+        var prev = path.points[i - 1];
+        path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
+    }
+
+    figures.Path = {
+        path: path,
+        fillStyle: [255, 255, 255, 0.05]
+    };
+
+    //
+    // origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    origin = new Space.Point.Cartesian(Utils.randInt(canvas.width / 2, canvas.width), Utils.randInt(canvas.height / 2, canvas.height));
+    var star = new Space.Star(Utils.randInt(3, 15), Utils.randInt(100, 300), Utils.randInt(10, 100), origin);
+
+    figures.star = {
+        path: star.path,
+        fillStyle: [-1, -1, -1, 0.25]
+    };
+
+    // Square
+    origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
+    var dim = Utils.randInt(50, 75);
+    var square = new Space.Rectangle(dim, dim, origin);
+
+    figures.Square = {
+        path: square.path,
+        fillStyle: [-1, -1, -1, 0.25]
+    };
+
+    state.prev.figures = figures;
+    return figures;
+};
+
+var randRgba = function randRgba(rgba) {
+    var r = rgba[0] > 0 ? rgba[0] : Math.round(Utils.randInt(0, 255));
+    var g = rgba[1] > 0 ? rgba[1] : Math.round(Utils.randInt(0, 255));
+    var b = rgba[2] > 0 ? rgba[2] : Math.round(Utils.randInt(0, 255));
+    var a = rgba[3] > 0 ? rgba[3] : Math.round(Utils.randInt(0, 1));
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+};
+
+var draw = function draw(figure, ctx) {
+    //init
+    ctx.save();
+
+    // styles
+    ctx.fillStyle = randRgba(figure.fillStyle);
+    ctx.strokeStyle = randRgba(figure.fillStyle);
+    ctx.lineWidth = 1;
+
+    // path
+    var path = figure.path;
+    ctx.beginPath();
+    ctx.moveTo(path.first().x, path.first().y);
+    path.points.forEach(function (point, index) {
+        if (index === 0) {
+            return;
+        }
+        ctx.lineTo(point.x, point.y);
+    });
+
+    // draw
+    if (ctx.fillStyle) {
+        ctx.fill();
+    }
+    ctx.stroke();
+
+    // finish
+    ctx.closePath();
+    ctx.restore();
+};
+
+var Home = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm._v("nothing")]);
+    }, staticRenderFns: [],
+    name: 'Home',
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    figures: {}
+                },
+                origin: null,
+                canvas: this.appState.factor('canvas')
+            }
+        };
+    },
+    created: function created() {
+        // temp redirect
+        // this.$router.push('/Path');
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        this.canvas.fill();
+
+        this.animation.fps(32).only(function () {
+            // compute path
+            var figures = compute(_this.state, _this.canvas.canvas);
+            var tasks = Object.keys(figures);
+            // init
+            _this.canvas.fill();
+
+            // draw
+            tasks.forEach(function (id) {
+                draw(figures[id], _this.canvas.ctx);
+            });
+        }).play();
+    }
+};
+
 var Helpers = {
 
     ////
@@ -277,209 +468,6 @@ var Helpers = {
         if (prevM && !pointM) {
             ctx.quadraticCurveTo(prev.members[1].x, prev.members[1].y, point.x, point.y);
         }
-    }
-
-};
-
-(function () {
-    if (document) {
-        var head = document.head || document.getElementsByTagName('head')[0],
-            style = document.createElement('style'),
-            css = " ";style.type = 'text/css';if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }head.appendChild(style);
-    }
-})();
-
-var Space = window.Space;
-
-var createTarget = function createTarget(state) {
-    return new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
-};
-
-var createMorpher = function createMorpher(path, state) {
-    var from = new Space.Point.Cartesian(0, state.canvas.height / 2);
-    var to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
-
-    var src = new Space.Line(from, to, path.length());
-    return new Space.Morpher(src.path, path, state.steps);
-};
-
-var compute = function compute(morpher) {
-    if (morpher.finished()) {
-        morpher.reverse();
-    }
-    morpher.progress();
-};
-
-var draw = function draw(path, state, canvas) {
-    canvas.ctx.save();
-    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
-    canvas.ctx.lineWidth = state.canvas.lineWidth;
-    canvas.ctx.fillStyle = state.canvas.fillStyle;
-
-    var length = path.points.length;
-    var prev = void 0;
-    var point = void 0;
-    var i = void 0;
-
-    //// curve
-    canvas.ctx.beginPath();
-    canvas.ctx.moveTo(path.first().x, path.first().y);
-    for (i = 1; i < length; i += 1) {
-        prev = path.prev(i);
-        point = path.get(i);
-        Helpers.bezierLine(canvas.ctx, prev, point);
-    }
-    canvas.ctx.fill();
-    canvas.ctx.stroke();
-    canvas.ctx.restore();
-    //// helpers
-
-    for (i = 0; i < length; i += 1) {
-        prev = path.prev(i);
-        point = path.get(i);
-
-        if (state.showHandles) {
-            if (point.members !== undefined && point.members.length > 1) {
-                Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
-                Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
-            }
-        }
-        if (state.showPoints) {
-            Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
-        }
-        if (state.showPath) {
-            Helpers.drawLine(canvas.ctx, prev, point, '#666666');
-        }
-        if (state.showBounds) {
-            Helpers.drawBoundingBox(canvas.ctx, path, 'yellow');
-        }
-    }
-    canvas.ctx.restore();
-};
-
-var Home = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
-                    _vm.state.steps = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Steps "), _c('small', [_vm._v("( " + _vm._s(_vm.morpher ? _vm.morpher.count : 0) + " of " + _vm._s(_vm.state.steps) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", on: { "click": function click($event) {
-                    _vm.create();
-                } } }, [_vm._v("Go")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
-                    _vm.state.segmentsRange = _vm._n($event.target.value);
-                }, "blur": function blur($event) {
-                    _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
-    }, staticRenderFns: [],
-    name: 'Home',
-    props: ['animation', 'appState', 'canvas'],
-    data: function data() {
-        return {
-            state: {
-                prev: {
-                    figures: {}
-                },
-                origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'white',
-                    lineWidth: 1
-                }),
-                Star: {
-                    segments: 5,
-                    outerRadius: 200,
-                    innerRadius: 70
-                },
-                steps: 100
-            },
-            figure: null,
-            morpher: null
-        };
-    },
-    created: function created() {
-        // temp redirect
-        // this.$router.push('/Path');
-    },
-
-    methods: {
-        init: function init() {
-            this.state.origin = new Space.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
-        },
-        create: function create() {
-            this.figure = createTarget(this.state);
-            this.morpher = createMorpher(this.figure.path, this.state);
-        }
-    },
-    mounted: function mounted() {
-        var _this = this;
-
-        this.canvas.fill();
-
-        this.animation.fps(32).only(function () {
-            // @TODO
-            if (!_this.state.origin) {
-                _this.init();
-                _this.create();
-                return;
-            }
-
-            compute(_this.morpher);
-            draw(_this.figure.path, _this.state, _this.canvas);
-            // init
-            _this.canvas.fill();
-        }).play();
-    }
-};
-
-var Utils = {
-    /**
-     * Returns a random integer between min (inclusive) and max (inclusive)
-     * Using Math.round() will give you a non-uniform distribution!
-     */
-    randInt: function randInt(min, max) {
-        min = min || -1;
-        max = max || 1;
-        // eslint-disable-next-line no-mixed-operators
-        return Math.random() * (max - min) + min;
-    },
-
-    /**
-     * Returns a random integer between min (inclusive) and max (inclusive)
-     * Using Math.round() will give you a non-uniform distribution!
-     */
-    bounds: function bounds(val, min, max) {
-        val = min !== false && val < min ? min : val;
-        val = max !== false && val > max ? max : val;
-        return val;
-    },
-
-    /**
-     * Returns a random integer between min (inclusive) and max (inclusive)
-     * Using Math.round() will give you a non-uniform distribution!
-     */
-    randIntRange: function randIntRange(base, range) {
-        var bounce = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-        if (bounce.length) {
-            if (base + range[1] > bounce[1]) {
-                base -= range[1];
-            }
-            if (base + range[0] < bounce[0]) {
-                base -= range[0];
-            }
-        }
-
-        return base + this.randInt(range[0], range[1]);
-    },
-
-    /**
-     * Returns a random integer between min (inclusive) and max (inclusive)
-     * Using Math.round() will give you a non-uniform distribution!
-     */
-    radians: function radians(deg) {
-        return deg * (Math.PI / 180);
     }
 
 };
@@ -2278,6 +2266,158 @@ var Bezier = { render: function render() {
     }
 };
 
+(function () {
+    if (document) {
+        var head = document.head || document.getElementsByTagName('head')[0],
+            style = document.createElement('style'),
+            css = " ";style.type = 'text/css';if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }head.appendChild(style);
+    }
+})();
+
+var Space$9 = window.Space;
+
+var createTarget = function createTarget(state) {
+    return new Space$9.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
+};
+
+var createMorpher = function createMorpher(path, state) {
+    var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
+    var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+
+    var src = new Space$9.Line(from, to, path.length());
+    return new Space$9.Morpher(path, src.path, state.steps);
+};
+
+var compute$9 = function compute$9(morpher) {
+    if (morpher.finished()) {
+        morpher.reverse();
+    }
+    morpher.progress();
+};
+
+var draw$3 = function draw$3(path, state, canvas) {
+    canvas.ctx.save();
+    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
+    canvas.ctx.lineWidth = state.canvas.lineWidth;
+    canvas.ctx.fillStyle = state.canvas.fillStyle;
+
+    var length = path.points.length;
+    var prev = void 0;
+    var point = void 0;
+    var i = void 0;
+
+    //// curve
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(path.first().x, path.first().y);
+    for (i = 1; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+        Helpers.bezierLine(canvas.ctx, prev, point);
+    }
+    canvas.ctx.fill();
+    canvas.ctx.stroke();
+    canvas.ctx.restore();
+    //// helpers
+
+    for (i = 0; i < length; i += 1) {
+        prev = path.prev(i);
+        point = path.get(i);
+
+        if (state.showHandles) {
+            if (point.members !== undefined && point.members.length > 1) {
+                Helpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
+                Helpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
+            }
+        }
+        if (state.showPoints) {
+            Helpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
+        }
+        if (state.showPath) {
+            Helpers.drawLine(canvas.ctx, prev, point, '#666666');
+        }
+        if (state.showBounds) {
+            Helpers.drawBoundingBox(canvas.ctx, path, 'yellow');
+        }
+    }
+    canvas.ctx.restore();
+};
+
+var Morpher = { render: function render() {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
+                    _vm.state.steps = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Steps "), _c('small', [_vm._v("( " + _vm._s(_vm.morpher ? _vm.morpher.count : 0) + " of " + _vm._s(_vm.state.steps) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small app--btn", on: { "click": function click($event) {
+                    _vm.create();
+                } } }, [_vm._v("Go")])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segmentsRange, expression: "state.segmentsRange", modifiers: { "number": true } }], attrs: { "type": "range", "min": "1", "max": "50" }, domProps: { "value": _vm.state.segmentsRange }, on: { "__r": function __r($event) {
+                    _vm.state.segmentsRange = _vm._n($event.target.value);
+                }, "blur": function blur($event) {
+                    _vm.$forceUpdate();
+                } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segmentsRange) + ")")])])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+    }, staticRenderFns: [],
+    name: 'Home',
+    props: ['animation', 'appState', 'canvas'],
+    data: function data() {
+        return {
+            state: {
+                prev: {
+                    figures: {}
+                },
+                origin: null,
+                canvas: this.appState.factor('canvas', {
+                    strokeStyle: 'white',
+                    lineWidth: 1
+                }),
+                Star: {
+                    segments: 5,
+                    outerRadius: 200,
+                    innerRadius: 70
+                },
+                steps: 100
+            },
+            figure: null,
+            morpher: null
+        };
+    },
+    created: function created() {
+        // temp redirect
+        // this.$router.push('/Path');
+    },
+
+    methods: {
+        init: function init() {
+            this.state.origin = new Space$9.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
+        },
+        create: function create() {
+            this.figure = createTarget(this.state);
+            this.morpher = createMorpher(this.figure.path, this.state);
+        }
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        this.canvas.fill();
+
+        this.animation.fps(32).only(function () {
+            // @TODO
+            if (!_this.state.origin) {
+                _this.init();
+                _this.create();
+                return;
+            }
+
+            compute$9(_this.morpher);
+            draw$3(_this.figure.path, _this.state, _this.canvas);
+            // init
+            _this.canvas.fill();
+        }).play();
+    }
+};
+
 // landing views
 // single views
 var routes = [{
@@ -2356,6 +2496,14 @@ var routes = [{
     name: 'BezierPaths',
     path: '/BezierPath/:figure?',
     component: BezierPath,
+    meta: {
+        menu: true,
+        figure: false
+    }
+}, {
+    name: 'Morph',
+    path: '/Morph/:srcFigure?/:targFigure?',
+    component: Morpher,
     meta: {
         menu: true,
         figure: false

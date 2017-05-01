@@ -9,7 +9,7 @@ import Rectangle from './Paths/Rectangle.vue';
 import Star from './Paths/Star.vue';
 import Cog from './Paths/Cog.vue';
 import Bezier from './BezierPaths/Bezier.vue';
-
+import Morpher from './Morphing/Morpher.vue';
 
 const routes = [
     {
@@ -97,6 +97,15 @@ const routes = [
         name: 'BezierPaths',
         path: '/BezierPath/:figure?',
         component: BezierPath,
+        meta: {
+            menu: true,
+            figure: false
+        }
+    },
+    {
+        name: 'Morph',
+        path: '/Morph/:srcFigure?/:targFigure?',
+        component: Morpher,
         meta: {
             menu: true,
             figure: false

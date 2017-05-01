@@ -1,94 +1,98 @@
 <template>
     <div>
-        <section class="mui-form">
-            <legend>Edit Params</legend>
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.steps" min="10" max="1000" step="10">
-                <label>Steps <small>( {{(morpher) ? morpher.count : 0}} of {{ state.steps }})</small></label>
-            </div>
-            <div class="mui-textfield">
-                <button class="mui-btn mui-btn--small app--btn" v-on:click="create()">Go</button>
-            </div>
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
-            </div>
-        </section>
-
-        <!-- devel -->
-        <dev :label="'State'" :data="state"></dev>
+        nothing
     </div>
 </template>
 
 <script>
-import Canvas2dHelpers from './Canvas2dHelpers';
+import Utils from './Utils';
 
 const Space = window.Space;
 
-const createTarget = function (state) {
-    return new Space.Star(state.Star.segments, state.Star.outerRadius, state.Star.innerRadius, state.origin);
-};
-
-const createMorpher = function (path, state) {
-    const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
-    const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
-
-    const src = new Space.Line(from, to, path.length());
-    return new Space.Morpher(src.path, path, state.steps);
-};
-
-const compute = function (morpher) {
-    if (morpher.finished()) {
-        morpher.reverse();
+const compute = function (state, canvas) {
+    if (!state.origin) {
+        state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-    morpher.progress();
-};
 
-const draw = function (path, state, canvas) {
-    canvas.ctx.save();
-    canvas.ctx.strokeStyle = state.canvas.strokeStyle;
-    canvas.ctx.lineWidth = state.canvas.lineWidth;
-    canvas.ctx.fillStyle = state.canvas.fillStyle;
-
-    const length = path.points.length;
-    let prev;
-    let point;
     let i;
+    let origin;
+    const figures = {};
 
-    //// curve
-    canvas.ctx.beginPath();
-    canvas.ctx.moveTo(path.first().x, path.first().y);
-    for (i = 1; i < length; i += 1) {
-        prev = path.prev(i);
-        point = path.get(i);
-        Canvas2dHelpers.bezierLine(canvas.ctx, prev, point);
+    // Path
+    const path = new Space.Path(state.origin);
+    const segments = Utils.randInt(10, 100);
+    path.add(origin);
+    for (i = 1; i < segments; i += 1) {
+        const prev = path.points[i - 1];
+        path.add(prev.x + Utils.randInt(-100, 100), prev.y + Utils.randInt(-100, 100));
     }
-    canvas.ctx.fill();
-    canvas.ctx.stroke();
-    canvas.ctx.restore();
-    //// helpers
 
-    for (i = 0; i < length; i += 1) {
-        prev = path.prev(i);
-        point = path.get(i);
+    figures.Path = {
+        path: path,
+        fillStyle: [255, 255, 255, 0.05]
+    };
 
-        if (state.showHandles) {
-            if (point.members !== undefined && point.members.length > 1) {
-                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[0], i + ':left', 'red');
-                Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
-            }
+    //
+    // origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
+    origin = new Space.Point.Cartesian(Utils.randInt(canvas.width / 2, canvas.width), Utils.randInt(canvas.height / 2, canvas.height));
+    const star = new Space.Star(Utils.randInt(3, 15), Utils.randInt(100, 300), Utils.randInt(10, 100), origin);
+
+    figures.star = {
+        path: star.path,
+        fillStyle: [-1, -1, -1, 0.25]
+    };
+
+    // Square
+    origin = new Space.Point.Cartesian(Utils.randInt(50, canvas.width / 2), Utils.randInt(50, canvas.height / 2));
+    const dim = Utils.randInt(50, 75);
+    const square = new Space.Rectangle(dim, dim, origin);
+
+    figures.Square = {
+        path: square.path,
+        fillStyle: [-1, -1, -1, 0.25]
+    };
+
+    state.prev.figures = figures;
+    return figures;
+};
+
+const randRgba = function (rgba) {
+    const r = (rgba[0] > 0) ? rgba[0] : Math.round(Utils.randInt(0, 255));
+    const g = (rgba[1] > 0) ? rgba[1] : Math.round(Utils.randInt(0, 255));
+    const b = (rgba[2] > 0) ? rgba[2] : Math.round(Utils.randInt(0, 255));
+    const a = (rgba[3] > 0) ? rgba[3] : Math.round(Utils.randInt(0, 1));
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+};
+
+const draw = function (figure, ctx) {
+    //init
+    ctx.save();
+
+    // styles
+    ctx.fillStyle = randRgba(figure.fillStyle);
+    ctx.strokeStyle = randRgba(figure.fillStyle);
+    ctx.lineWidth = 1;
+
+    // path
+    const path = figure.path;
+    ctx.beginPath();
+    ctx.moveTo(path.first().x, path.first().y);
+    path.points.forEach((point, index) => {
+        if (index === 0) {
+            return;
         }
-        if (state.showPoints) {
-            Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
-        }
-        if (state.showPath) {
-            Canvas2dHelpers.drawLine(canvas.ctx, prev, point, '#666666');
-        }
-        if (state.showBounds) {
-            Canvas2dHelpers.drawBoundingBox(canvas.ctx, path, 'yellow');
-        }
+        ctx.lineTo(point.x, point.y);
+    });
+
+    // draw
+    if (ctx.fillStyle) {
+        ctx.fill();
     }
-    canvas.ctx.restore();
+    ctx.stroke();
+
+    // finish
+    ctx.closePath();
+    ctx.restore();
 };
 
 export default {
@@ -105,33 +109,13 @@ export default {
                     figures: {}
                 },
                 origin: null,
-                canvas: this.appState.factor('canvas', {
-                    strokeStyle: 'white',
-                    lineWidth: 1
-                }),
-                Star: {
-                    segments: 5,
-                    outerRadius: 200,
-                    innerRadius: 70
-                },
-                steps: 100
-            },
-            figure: null,
-            morpher: null
+                canvas: this.appState.factor('canvas')
+            }
         };
     },
     created() {
         // temp redirect
         // this.$router.push('/Path');
-    },
-    methods: {
-        init: function () {
-            this.state.origin = new Space.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
-        },
-        create: function () {
-            this.figure = createTarget(this.state);
-            this.morpher = createMorpher(this.figure.path, this.state);
-        }
     },
     mounted() {
         this.canvas.fill();
@@ -139,18 +123,16 @@ export default {
         this.animation
         .fps(32)
         .only(() => {
-            // @TODO
-            if (!this.state.origin) {
-                this.init();
-                this.create();
-                return;
-            }
-
-            compute(this.morpher);
-            draw(this.figure.path, this.state, this.canvas);
+            // compute path
+            const figures = compute(this.state, this.canvas.canvas);
+            const tasks = Object.keys(figures);
             // init
             this.canvas.fill();
 
+            // draw
+            tasks.forEach((id) => {
+                draw(figures[id], this.canvas.ctx);
+            });
         })
         .play()
         ;

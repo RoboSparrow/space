@@ -787,10 +787,10 @@ var Morpher = function Morpher(srcPath, targPath, steps) {
     // TODO: what to do if both paths have a different length?
     var unit = void 0;
     for (var i = 0; i < length; i += 1) {
-        unit = srcPath.points[i].clone();
-        unit.substract(targPath.points[i]);
+        unit = targPath.points[i].clone();
+        unit.substract(srcPath.points[i]);
         unit.multiplyBy(1 / steps);
-        // TODO, limit to neccessary
+        // TODO, limit collection to neccessary
         map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 
