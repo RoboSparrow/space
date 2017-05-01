@@ -2285,32 +2285,44 @@ var radius = function radius(state, margin) {
     return state.canvas.width < state.canvas.height ? state.canvas.width / 2 - margin : state.canvas.height / 2 - 50;
 };
 
-var createFigure = function createFigure(type, state, reference) {
+var Figures$2 = {
 
-    var segments = reference !== undefined ? reference.path.length() : state.segments;
-    var figure = void 0;
-    console.log(type, segments, reference);
-    switch (type) {
+    available: ['Line', 'Polygon', 'Star', 'Cog'],
 
-        case 'Line':
-            var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
-            var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
-            figure = new Space$9.Line(from, to, segments);
-            break;
+    create: function create(type, state, reference) {
 
-        case 'Polygon':
-            figure = new Space$9.Polygon(segments, radius(state), state.origin);
-            break;
+        var segments = reference !== undefined ? reference.path.length() : state.segments;
+        var figure = void 0;
 
-        case 'Star':
-            figure = new Space$9.Star(segments, radius(state), 50, state.origin);
-            break;
-
-        default:
-            throw new Error('Morpher component: Figure of type "' + type + '" not recognized.');
-
+        switch (type) {
+            case 'Line':
+                {
+                    var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
+                    var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+                    figure = new Space$9.Line(from, to, segments);
+                    break;
+                }
+            case 'Polygon':
+                {
+                    figure = new Space$9.Polygon(segments, radius(state), state.origin);
+                    break;
+                }
+            case 'Star':
+                {
+                    figure = new Space$9.Star(segments, radius(state), 50, state.origin);
+                    break;
+                }
+            case 'Cog':
+                {
+                    figure = new Space$9.Cog(segments, radius(state), 50, state.origin);
+                    break;
+                }
+            default:
+            // nothing
+        }
+        return figure;
     }
-    return figure;
+
 };
 
 var compute$9 = function compute$9(morpher) {
@@ -2369,7 +2381,15 @@ var draw$3 = function draw$3(path, state, canvas) {
 };
 
 var Morpher = { render: function render() {
-        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
+        var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', [_c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figures.src ? _vm.figures.src : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures.available, function (fig) {
+            return _c('li', { class: { 'router-link-active': fig === _vm.figures.src } }, [_c('a', { on: { "click": function click() {
+                        _vm.figures.src = fig;
+                    } } }, [_vm._v(_vm._s(fig))])]);
+        }))]), _c('span', [_vm._v(" to ")]), _c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figures.targ ? _vm.figures.targ : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures.available, function (fig) {
+            return _c('li', { class: { 'router-link-active': fig === _vm.figures.targ } }, [_c('a', { on: { "click": function click() {
+                        _vm.figures.targ = fig;
+                    } } }, [_vm._v(_vm._s(fig))])]);
+        }))])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
                     _vm.state.steps = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -2400,7 +2420,8 @@ var Morpher = { render: function render() {
             path: null,
             figures: {
                 src: typeof this.$route.params.srcFigure !== 'undefined' ? this.$route.params.srcFigure : 'Polygon',
-                targ: typeof this.$route.params.targFigure !== 'undefined' ? this.$route.params.targFigure : 'Star'
+                targ: typeof this.$route.params.targFigure !== 'undefined' ? this.$route.params.targFigure : 'Star',
+                available: Figures$2.available
             },
             morpher: null
         };
@@ -2410,9 +2431,15 @@ var Morpher = { render: function render() {
             this.state.origin = new Space$9.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
         },
         create: function create() {
+            if (Figures$2.available.indexOf(this.figures.src) === -1) {
+                throw new Error('Morpher component: Source figure of type "' + this.figures.src + '" not recognized.');
+            }
+            if (Figures$2.available.indexOf(this.figures.targ) === -1) {
+                throw new Error('Morpher component: Target figure of type "' + this.figures.targ + '" not recognized.');
+            }
 
-            var targFigure = createFigure(this.figures.targ, this.state);
-            var srcFigure = createFigure(this.figures.src, this.state, targFigure);
+            var targFigure = Figures$2.create(this.figures.targ, this.state);
+            var srcFigure = Figures$2.create(this.figures.src, this.state, targFigure);
             this.path = srcFigure.path;
             this.morpher = new Space$9.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         }

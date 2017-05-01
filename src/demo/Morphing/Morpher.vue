@@ -1,5 +1,41 @@
 <template>
     <div>
+
+        <section>
+
+                            <!-- figures.src -->
+                            <div class="mui-dropdown">
+                                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                                    {{ (figures.src) ? figures.src : 'Choose' }}
+                                    <span class="mui-caret mui--text-accent"></span>
+                                </button>
+                                <ul class="mui-dropdown__menu">
+                                    <li
+                                        v-for="fig in figures.available"
+                                        v-bind:class="{'router-link-active': fig === figures.src}"
+                                    >
+                                        <a v-on:click="function () { figures.src = fig; }">{{ fig }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <span>&nbsp;to&nbsp;</span>
+                            <!-- figures.targ -->
+                            <div class="mui-dropdown">
+                                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                                    {{ (figures.targ) ? figures.targ : 'Choose' }}
+                                    <span class="mui-caret mui--text-accent"></span>
+                                </button>
+                                <ul class="mui-dropdown__menu">
+                                    <li
+                                        v-for="fig in figures.available"
+                                        v-bind:class="{'router-link-active': fig === figures.targ}"
+                                    >
+                                        <a v-on:click="function () { figures.targ = fig; }">{{ fig }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+        </section>
+
         <section class="mui-form">
             <legend>Edit Params</legend>
             <div class="mui-textfield">
@@ -30,32 +66,39 @@ const radius = function (state, margin) {
     return (state.canvas.width < state.canvas.height) ? (state.canvas.width / 2) - margin : (state.canvas.height / 2) - 50;
 };
 
-const createFigure = function (type, state, reference) {
+const Figures = {
 
-    const segments = (reference !== undefined) ? reference.path.length() : state.segments;
-    let figure;
-console.log(type, segments,reference);
-    switch (type) {
+    available: ['Line', 'Polygon', 'Star', 'Cog'],
 
-        case 'Line':
-            const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
-            const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
-            figure = new Space.Line(from, to, segments);
-            break;
+    create: function (type, state, reference) {
 
-        case 'Polygon':
-            figure = new Space.Polygon(segments, radius(state), state.origin);
-            break;
+        const segments = (reference !== undefined) ? reference.path.length() : state.segments;
+        let figure;
 
-        case 'Star':
-            figure = new Space.Star(segments, radius(state), 50, state.origin);
-            break;
-
-        default:
-            throw new Error('Morpher component: Figure of type "' + type + '" not recognized.');
-
+        switch (type) {
+            case 'Line': {
+                const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
+                const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+                figure = new Space.Line(from, to, segments);
+                break;
+            }
+            case 'Polygon': {
+                figure = new Space.Polygon(segments, radius(state), state.origin);
+                break;
+            }
+            case 'Star': {
+                figure = new Space.Star(segments, radius(state), 50, state.origin);
+                break;
+            }
+            case 'Cog': {
+                figure = new Space.Cog(segments, radius(state), 50, state.origin);
+                break;
+            }
+            default:
+                // nothing
+        }
+        return figure;
     }
-    return figure;
 
 };
 
@@ -138,7 +181,8 @@ export default {
             path: null,
             figures: {
                 src: (typeof this.$route.params.srcFigure !== 'undefined') ? this.$route.params.srcFigure : 'Polygon',
-                targ: (typeof this.$route.params.targFigure !== 'undefined') ? this.$route.params.targFigure : 'Star'
+                targ: (typeof this.$route.params.targFigure !== 'undefined') ? this.$route.params.targFigure : 'Star',
+                available: Figures.available
             },
             morpher: null
         };
@@ -148,9 +192,15 @@ export default {
             this.state.origin = new Space.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
         },
         create: function () {
+            if (Figures.available.indexOf(this.figures.src) === -1) {
+                throw new Error('Morpher component: Source figure of type "' + this.figures.src + '" not recognized.');
+            }
+            if (Figures.available.indexOf(this.figures.targ) === -1) {
+                throw new Error('Morpher component: Target figure of type "' + this.figures.targ + '" not recognized.');
+            }
 
-            const targFigure = createFigure(this.figures.targ, this.state);
-            const srcFigure = createFigure(this.figures.src, this.state, targFigure);
+            const targFigure = Figures.create(this.figures.targ, this.state);
+            const srcFigure = Figures.create(this.figures.src, this.state, targFigure);
             this.path = srcFigure.path;
             this.morpher = new Space.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         }
