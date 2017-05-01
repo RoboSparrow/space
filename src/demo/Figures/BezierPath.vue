@@ -97,13 +97,7 @@
             </div>
         </section>
         <!-- devel -->
-        <section class="mui-form">
-            <legend>Devel</legend>
-            <div class="mui-panel" v-if="state.path.edit">
-                <edit-path-points :path="path"></edit-path-points>
-            </div>
-            <dev :label="'State'" :data="state"></dev>
-        </section>
+        <dev :label="'State'" :data="state"></dev>
     </div>
 </template>
 

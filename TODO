@@ -1,0 +1,18 @@
+pages
+------
+ - all: batter canvas init > origin oavailable on mount
+ - Home
+ - Morph
+    - apply routing params
+
+Animation.js
+------------
+ - pause (timeout) with specific task option
+
+Point, Path, Polygon
+--------------------
+ - better cog
+ - cog bezier methods
+ - Path tests!
+
+SVG Renderer

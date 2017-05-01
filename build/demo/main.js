@@ -966,7 +966,7 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.path.edit = $$c;
                     }
-                } } }), _vm._v(" Edit Path")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Devel")]), _vm.state.path.edit ? _c('div', { staticClass: "mui-panel" }, [_c('edit-path-points', { attrs: { "path": _vm.path } })], 1) : _vm._e(), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1)]);
+                } } }), _vm._v(" Edit Path")])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'BezierPath',
     props: ['animation', 'appState', 'canvas'],
@@ -2443,6 +2443,9 @@ var Morpher = { render: function render() {
             this.path = srcFigure.path;
             this.morpher = new Space$9.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         }
+    },
+    components: {
+        Dev: Dev
     },
     mounted: function mounted() {
         var _this = this;

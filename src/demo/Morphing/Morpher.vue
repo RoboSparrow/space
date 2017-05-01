@@ -2,38 +2,37 @@
     <div>
 
         <section>
-
-                            <!-- figures.src -->
-                            <div class="mui-dropdown">
-                                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
-                                    {{ (figures.src) ? figures.src : 'Choose' }}
-                                    <span class="mui-caret mui--text-accent"></span>
-                                </button>
-                                <ul class="mui-dropdown__menu">
-                                    <li
-                                        v-for="fig in figures.available"
-                                        v-bind:class="{'router-link-active': fig === figures.src}"
-                                    >
-                                        <a v-on:click="function () { figures.src = fig; }">{{ fig }}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <span>&nbsp;to&nbsp;</span>
-                            <!-- figures.targ -->
-                            <div class="mui-dropdown">
-                                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
-                                    {{ (figures.targ) ? figures.targ : 'Choose' }}
-                                    <span class="mui-caret mui--text-accent"></span>
-                                </button>
-                                <ul class="mui-dropdown__menu">
-                                    <li
-                                        v-for="fig in figures.available"
-                                        v-bind:class="{'router-link-active': fig === figures.targ}"
-                                    >
-                                        <a v-on:click="function () { figures.targ = fig; }">{{ fig }}</a>
-                                    </li>
-                                </ul>
-                            </div>
+            <!-- figures.src -->
+            <div class="mui-dropdown">
+                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                    {{ (figures.src) ? figures.src : 'Choose' }}
+                    <span class="mui-caret mui--text-accent"></span>
+                </button>
+                <ul class="mui-dropdown__menu">
+                    <li
+                        v-for="fig in figures.available"
+                        v-bind:class="{'router-link-active': fig === figures.src}"
+                    >
+                        <a v-on:click="function () { figures.src = fig; }">{{ fig }}</a>
+                    </li>
+                </ul>
+            </div>
+            <span>&nbsp;to&nbsp;</span>
+            <!-- figures.targ -->
+            <div class="mui-dropdown">
+                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                    {{ (figures.targ) ? figures.targ : 'Choose' }}
+                    <span class="mui-caret mui--text-accent"></span>
+                </button>
+                <ul class="mui-dropdown__menu">
+                    <li
+                        v-for="fig in figures.available"
+                        v-bind:class="{'router-link-active': fig === figures.targ}"
+                    >
+                        <a v-on:click="function () { figures.targ = fig; }">{{ fig }}</a>
+                    </li>
+                </ul>
+            </div>
         </section>
 
         <section class="mui-form">
@@ -58,6 +57,7 @@
 
 <script>
 import Canvas2dHelpers from '../Canvas2dHelpers';
+import Dev from '../Form/Dev.vue';
 
 const Space = window.Space;
 
@@ -204,6 +204,9 @@ export default {
             this.path = srcFigure.path;
             this.morpher = new Space.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         }
+    },
+    components: {
+        Dev
     },
     mounted() {
         this.canvas.fill();
