@@ -468,6 +468,15 @@ Group.prototype.translate = function (x, y, z) {
     }
 };
 
+Group.prototype.multiplyBy = function (f) {
+    Cartesian.prototype.multiplyBy.call(this, f);
+    console.log(this.x, this.y);
+    var length = this.members.length;
+    for (var i = 0; i < length; i += 1) {
+        this.members[i].multiplyBy(f);
+    }
+};
+
 // exports
 
 Group.prototype.clone = function () {
@@ -788,20 +797,28 @@ var computeUnit = function computeUnit(src, targ, steps) {
 
 var Morpher = function Morpher(srcPath, targPath, steps) {
     var map = [];
-
     var length = srcPath.length();
+    console.log(srcPath.length(), targPath.length());
     // TODO: what to do if both paths have a different length?
     var unit = void 0;
     var mLength = void 0;
+
     for (var i = 0; i < length; i += 1) {
-        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
-        // TODO, limit collection to neccessary
+        // targ is group
+
         if (typeof targPath.points[i].members !== 'undefined') {
             mLength = targPath.points[i].members.length;
             for (var k = 0; k < mLength; k += 1) {
-                //@TODO
+                //src to group
+                if (typeof srcPath.points[i].members === 'undefined') {
+                    srcPath.points[i] = Group.create(srcPath.points[i]);
+                    srcPath.points[i].members.push(srcPath.points[i].clone());
+                    srcPath.points[i].members.push(srcPath.points[i].clone());
+                }
             }
         }
+
+        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
         map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 

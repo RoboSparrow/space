@@ -2287,10 +2287,11 @@ var radius = function radius(state, margin) {
 
 var Figures$2 = {
 
-    available: ['Line', 'Polygon', 'Star', 'Cog'],
+    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower'],
 
     create: function create(type, state, reference) {
 
+        //TODO
         var segments = reference !== undefined ? reference.path.length() : state.segments;
         var figure = void 0;
 
@@ -2315,6 +2316,12 @@ var Figures$2 = {
             case 'Cog':
                 {
                     figure = new Space$9.Cog(segments, radius(state), 50, state.origin);
+                    break;
+                }
+            case 'Flower':
+                {
+                    figure = new Space$9.Star(segments, radius(state), 50, state.origin);
+                    figure.flower(0.5);
                     break;
                 }
             default:
@@ -2382,12 +2389,12 @@ var draw$3 = function draw$3(path, state, canvas) {
 
 var Morpher = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_c('section', [_c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figures.src ? _vm.figures.src : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures.available, function (fig) {
-            return _c('li', { class: { 'router-link-active': fig === _vm.figures.src } }, [_c('a', { on: { "click": function click() {
-                        _vm.figures.src = fig;
+            return _c('li', { class: { 'router-link-active': fig === _vm.figures.src } }, [_c('a', { on: { "click": function click($event) {
+                        _vm.goTo(fig, _vm.figures.targ);
                     } } }, [_vm._v(_vm._s(fig))])]);
         }))]), _c('span', [_vm._v(" to ")]), _c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figures.targ ? _vm.figures.targ : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures.available, function (fig) {
-            return _c('li', { class: { 'router-link-active': fig === _vm.figures.targ } }, [_c('a', { on: { "click": function click() {
-                        _vm.figures.targ = fig;
+            return _c('li', { class: { 'router-link-active': fig === _vm.figures.targ } }, [_c('a', { on: { "click": function click($event) {
+                        _vm.goTo(fig, _vm.figures.src);
                     } } }, [_vm._v(_vm._s(fig))])]);
         }))])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
                     _vm.state.steps = _vm._n($event.target.value);
@@ -2419,8 +2426,8 @@ var Morpher = { render: function render() {
             },
             path: null,
             figures: {
-                src: typeof this.$route.params.srcFigure !== 'undefined' ? this.$route.params.srcFigure : 'Polygon',
-                targ: typeof this.$route.params.targFigure !== 'undefined' ? this.$route.params.targFigure : 'Star',
+                src: typeof this.$route.params.src !== 'undefined' ? this.$route.params.src : 'Polygon',
+                targ: typeof this.$route.params.targ !== 'undefined' ? this.$route.params.targ : 'Star',
                 available: Figures$2.available
             },
             morpher: null
@@ -2442,10 +2449,26 @@ var Morpher = { render: function render() {
             var srcFigure = Figures$2.create(this.figures.src, this.state, targFigure);
             this.path = srcFigure.path;
             this.morpher = new Space$9.Morpher(srcFigure.path, targFigure.path, this.state.steps);
+        },
+        goTo: function goTo(src, targ) {
+            this.$router.push({
+                name: this.$route.name,
+                params: {
+                    src: src,
+                    targ: targ
+                }
+            });
         }
     },
     components: {
         Dev: Dev
+    },
+    watch: {
+        '$route': function $route(to) {
+            this.figures.src = to.params.src;
+            this.figures.targ = to.params.targ;
+            this.create();
+        }
     },
     mounted: function mounted() {
         var _this = this;
@@ -2552,7 +2575,7 @@ var routes = [{
     }
 }, {
     name: 'Morph',
-    path: '/Morph/:srcFigure?/:targFigure?',
+    path: '/Morph/:src?/:targ?',
     component: Morpher,
     meta: {
         menu: true,

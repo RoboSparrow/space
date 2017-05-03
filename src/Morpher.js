@@ -1,3 +1,6 @@
+import Point from './Point';
+import Group from './Group';
+
 /**
  *  Goal
  * - define steps
@@ -26,20 +29,29 @@ const computeUnit = function (src, targ, steps) {
 
 const Morpher = function (srcPath, targPath, steps) {
     const map = [];
-
     const length = srcPath.length();
+    console.log(srcPath.length(), targPath.length());
     // TODO: what to do if both paths have a different length?
     let unit;
     let mLength;
+
     for (let i = 0; i < length; i += 1) {
-        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
-        // TODO, limit collection to neccessary
+        // targ is group
+
         if (typeof targPath.points[i].members !== 'undefined') {
             mLength = targPath.points[i].members.length;
             for (let k =0; k < mLength; k += 1) {
-                //@TODO
+                //src to group
+                if (typeof srcPath.points[i].members === 'undefined') {
+                    srcPath.points[i] = Group.create(srcPath.points[i]);
+                    srcPath.points[i].members.push(srcPath.points[i].clone());
+                    srcPath.points[i].members.push(srcPath.points[i].clone());
+
+                }
             }
         }
+
+        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
         map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 

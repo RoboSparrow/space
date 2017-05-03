@@ -72,6 +72,7 @@ const Figures = {
 
     create: function (type, state, reference) {
 
+        //TODO
         const segments = (reference !== undefined) ? reference.path.length() : state.segments;
         let figure;
 
@@ -97,7 +98,6 @@ const Figures = {
             case 'Flower': {
                 figure = new Space.Star(segments, radius(state), 50, state.origin);
                 figure.flower(0.5);
-                console.log(figure.path.toArray());
                 break;
             }
             default:
@@ -211,7 +211,6 @@ export default {
             this.morpher = new Space.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         },
         goTo(src, targ) {
-            console.log(src, targ);
             this.$router.push({
                 name: this.$route.name,
                 params: {
