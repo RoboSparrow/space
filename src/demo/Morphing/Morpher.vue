@@ -13,7 +13,7 @@
                         v-for="fig in figures.available"
                         v-bind:class="{'router-link-active': fig === figures.src}"
                     >
-                        <a v-on:click="function () { figures.src = fig; }">{{ fig }}</a>
+                        <a v-on:click="goTo(fig, figures.targ)">{{ fig }}</a>
                     </li>
                 </ul>
             </div>
@@ -29,7 +29,7 @@
                         v-for="fig in figures.available"
                         v-bind:class="{'router-link-active': fig === figures.targ}"
                     >
-                        <a v-on:click="function () { figures.targ = fig; }">{{ fig }}</a>
+                        <a v-on:click="goTo(fig, figures.src)">{{ fig }}</a>
                     </li>
                 </ul>
             </div>
@@ -68,7 +68,7 @@ const radius = function (state, margin) {
 
 const Figures = {
 
-    available: ['Line', 'Polygon', 'Star', 'Cog'],
+    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower'],
 
     create: function (type, state, reference) {
 
@@ -92,6 +92,12 @@ const Figures = {
             }
             case 'Cog': {
                 figure = new Space.Cog(segments, radius(state), 50, state.origin);
+                break;
+            }
+            case 'Flower': {
+                figure = new Space.Star(segments, radius(state), 50, state.origin);
+                figure.flower(0.5);
+                console.log(figure.path.toArray());
                 break;
             }
             default:
@@ -180,8 +186,8 @@ export default {
             },
             path: null,
             figures: {
-                src: (typeof this.$route.params.srcFigure !== 'undefined') ? this.$route.params.srcFigure : 'Polygon',
-                targ: (typeof this.$route.params.targFigure !== 'undefined') ? this.$route.params.targFigure : 'Star',
+                src: (typeof this.$route.params.src !== 'undefined') ? this.$route.params.src : 'Polygon',
+                targ: (typeof this.$route.params.targ !== 'undefined') ? this.$route.params.targ : 'Star',
                 available: Figures.available
             },
             morpher: null
@@ -203,10 +209,27 @@ export default {
             const srcFigure = Figures.create(this.figures.src, this.state, targFigure);
             this.path = srcFigure.path;
             this.morpher = new Space.Morpher(srcFigure.path, targFigure.path, this.state.steps);
+        },
+        goTo(src, targ) {
+            console.log(src, targ);
+            this.$router.push({
+                name: this.$route.name,
+                params: {
+                    src: src,
+                    targ: targ
+                }
+            });
         }
     },
     components: {
         Dev
+    },
+    watch: {
+        '$route'(to) {
+            this.figures.src = to.params.src;
+            this.figures.targ = to.params.targ;
+            this.create();
+        }
     },
     mounted() {
         this.canvas.fill();

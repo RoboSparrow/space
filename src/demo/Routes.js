@@ -104,7 +104,7 @@ const routes = [
     },
     {
         name: 'Morph',
-        path: '/Morph/:srcFigure?/:targFigure?',
+        path: '/Morph/:src?/:targ?',
         component: Morpher,
         meta: {
             menu: true,
