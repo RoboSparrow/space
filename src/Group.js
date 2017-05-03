@@ -74,7 +74,7 @@ Group.prototype.clone = function () {
     const clone = new Group(this.x, this.y, this.z);
     const length = this.members.length;
     for (let i = 0; i < length; i += 1) {
-        clone.members[i] = this.members[i];
+        clone.members[i] = this.members[i].clone();
     }
     return clone;
 };

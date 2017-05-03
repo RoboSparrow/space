@@ -474,7 +474,7 @@ Group.prototype.clone = function () {
     var clone = new Group(this.x, this.y, this.z);
     var length = this.members.length;
     for (var i = 0; i < length; i += 1) {
-        clone.members[i] = this.members[i];
+        clone.members[i] = this.members[i].clone();
     }
     return clone;
 };
@@ -779,6 +779,12 @@ var Polygons = Object.freeze({
 
 //@TODO morphe groups
 //@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
+var computeUnit = function computeUnit(src, targ, steps) {
+    var unit = targ.clone();
+    unit.substract(src);
+    unit.multiplyBy(1 / steps);
+    return unit;
+};
 
 var Morpher = function Morpher(srcPath, targPath, steps) {
     var map = [];
@@ -786,11 +792,16 @@ var Morpher = function Morpher(srcPath, targPath, steps) {
     var length = srcPath.length();
     // TODO: what to do if both paths have a different length?
     var unit = void 0;
+    var mLength = void 0;
     for (var i = 0; i < length; i += 1) {
-        unit = targPath.points[i].clone();
-        unit.substract(srcPath.points[i]);
-        unit.multiplyBy(1 / steps);
+        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
         // TODO, limit collection to neccessary
+        if (typeof targPath.points[i].members !== 'undefined') {
+            mLength = targPath.points[i].members.length;
+            for (var k = 0; k < mLength; k += 1) {
+                //@TODO
+            }
+        }
         map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 

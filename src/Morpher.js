@@ -17,6 +17,12 @@
 
 //@TODO morphe groups
 //@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
+const computeUnit = function (src, targ, steps) {
+    const unit = targ.clone();
+    unit.substract(src);
+    unit.multiplyBy(1 / steps);
+    return unit;
+};
 
 const Morpher = function (srcPath, targPath, steps) {
     const map = [];
@@ -24,11 +30,16 @@ const Morpher = function (srcPath, targPath, steps) {
     const length = srcPath.length();
     // TODO: what to do if both paths have a different length?
     let unit;
+    let mLength;
     for (let i = 0; i < length; i += 1) {
-        unit = targPath.points[i].clone();
-        unit.substract(srcPath.points[i]);
-        unit.multiplyBy(1 / steps);
+        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
         // TODO, limit collection to neccessary
+        if (typeof targPath.points[i].members !== 'undefined') {
+            mLength = targPath.points[i].members.length;
+            for (let k =0; k < mLength; k += 1) {
+                //@TODO
+            }
+        }
         map.push([srcPath.points[i], targPath.points[i], unit]);
     }
 
