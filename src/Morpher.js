@@ -39,13 +39,13 @@ const Morpher = function (srcPath, targPath, steps) {
         if (typeof targPath.points[i].members !== 'undefined') {
             mLength = targPath.points[i].members.length;
             for (let k = 0; k < mLength; k += 1) {
-                //src to group
-                if (typeof srcPath.points[i].members === 'undefined') {
-                    srcPath.points[i] = Group.create(srcPath.points[i]);
-                    srcPath.points[i].members.push(srcPath.points[i].clone());
-                    srcPath.points[i].members.push(srcPath.points[i].clone());
-
-                }
+                // src to group
+                //if (typeof srcPath.points[i].members === 'undefined') {
+                //    srcPath.points[i] = Group.create(srcPath.points[i]);
+                //    srcPath.points[i].members.push(srcPath.points[i].clone());
+                //    srcPath.points[i].members.push(srcPath.points[i].clone());
+                //}
+                Group.createBezier2D(srcPath.points[i]);
             }
         }
 

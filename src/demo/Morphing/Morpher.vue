@@ -130,9 +130,11 @@ const compute = function (morpher, state) {
 
     if (finished && !state.continuous) {
         return;
-    }    if (finished) {
+    }
+    if (finished) {
         morpher.reverse();
     }
+
     morpher.progress();
 };
 

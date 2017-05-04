@@ -514,6 +514,20 @@ Group.create = function (x, y, z) {
     return new Group(x, y, z);
 };
 
+// creates a bezier point with two handles from coordinates or a given cartesian point
+// if not already set the handles are set to the coordinates of the group point (sharp edge)
+Group.createBezier2D = function (x, y, z) {
+    var g = Group.create(x, y, z);
+    var handle = new Cartesian(g.x, g.y, g.z);
+    if (!g.members.length) {
+        g.members[0] = handle;
+    }
+    if (g.members.length === 1) {
+        g.members[1] = handle.clone();
+    }
+    return g;
+};
+
 /**
  * Rob Spencer's algorithm
  * @see http://scaledinnovation.com/analytics/splines/aboutSplines.html
@@ -810,12 +824,13 @@ var Morpher = function Morpher(srcPath, targPath, steps) {
         if (typeof targPath.points[i].members !== 'undefined') {
             mLength = targPath.points[i].members.length;
             for (var k = 0; k < mLength; k += 1) {
-                //src to group
-                if (typeof srcPath.points[i].members === 'undefined') {
-                    srcPath.points[i] = Group.create(srcPath.points[i]);
-                    srcPath.points[i].members.push(srcPath.points[i].clone());
-                    srcPath.points[i].members.push(srcPath.points[i].clone());
-                }
+                // src to group
+                //if (typeof srcPath.points[i].members === 'undefined') {
+                //    srcPath.points[i] = Group.create(srcPath.points[i]);
+                //    srcPath.points[i].members.push(srcPath.points[i].clone());
+                //    srcPath.points[i].members.push(srcPath.points[i].clone());
+                //}
+                Group.createBezier2D(srcPath.points[i]);
             }
         }
 

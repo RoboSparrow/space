@@ -2342,9 +2342,11 @@ var compute$9 = function compute$9(morpher, state) {
 
     if (finished && !state.continuous) {
         return;
-    }if (finished) {
+    }
+    if (finished) {
         morpher.reverse();
     }
+
     morpher.progress();
 };
 

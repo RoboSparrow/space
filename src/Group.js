@@ -112,5 +112,19 @@ Group.create = function (x, y, z) {
     return new Group(x, y, z);
 };
 
+// creates a bezier point with two handles from coordinates or a given cartesian point
+// if not already set the handles are set to the coordinates of the group point (sharp edge)
+Group.createBezier2D = function (x, y, z) {
+    const g = Group.create(x, y, z);
+    const handle = new Cartesian(g.x, g.y, g.z);
+    if (!g.members.length) {
+        g.members[0] = handle;
+    }
+    if (g.members.length === 1) {
+        g.members[1] = handle.clone();
+    }
+    return g;
+};
+
 
 export default Group;
