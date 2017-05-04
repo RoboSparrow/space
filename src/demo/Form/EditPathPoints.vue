@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="app--micro-form" v-if="path && path.points !== 'undefined'">
-            <section  v-for="(point, index) in path.points">
+            <div v-for="(point, index) in path.points">
                 <strong>Point {{index}}</strong>
                 <div>
                     <input type="text" v-model.number="point.x" v-on:change="update()" size="3">
@@ -13,14 +13,13 @@
                 <div
                     v-if="typeof point.members !== 'undefined' && point.members.length"
                     v-for="(member, i) in point.members">
-                    <strong>cp[{{i}}]</strong><br>
+                    <br><strong>cp[{{i}}]</strong><br>
                     <input type="text" v-model.number="member.x" v-on:change="update()" size="3">
                     <label>x</label>
                     <input type="text" v-model.number="member.y" v-on:change="update()" size="3">
                     <label>.y</label>
                 </div>
-                <br>
-            </section>
+            </div>
         </div>
     </div>
 </template>

@@ -70,7 +70,6 @@ Group.prototype.translate = function (x, y, z) {
 
 Group.prototype.multiplyBy = function (f) {
     Cartesian.prototype.multiplyBy.call(this, f);
-    console.log(this.x, this.y);
     const length = this.members.length;
     for (let i = 0; i < length; i += 1) {
         this.members[i].multiplyBy(f);

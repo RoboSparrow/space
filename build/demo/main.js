@@ -578,7 +578,7 @@ var ColorPicker = { render: function render() {
 
 var EditPathPoints = { render: function render() {
         var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('div', [_vm.path && _vm.path.points !== 'undefined' ? _c('div', { staticClass: "app--micro-form" }, _vm._l(_vm.path.points, function (point, index) {
-            return _c('section', [_c('strong', [_vm._v("Point " + _vm._s(index))]), _c('div', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: point.x, expression: "point.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": point.x }, on: { "change": function change($event) {
+            return _c('div', [_c('strong', [_vm._v("Point " + _vm._s(index))]), _c('div', [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: point.x, expression: "point.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": point.x }, on: { "change": function change($event) {
                         _vm.update();
                     }, "input": function input($event) {
                         if ($event.target.composing) {
@@ -595,7 +595,7 @@ var EditPathPoints = { render: function render() {
                     }, "blur": function blur($event) {
                         _vm.$forceUpdate();
                     } } }), _c('label', [_vm._v("y")])]), _vm._l(point.members, function (member, i) {
-                return typeof point.members !== 'undefined' && point.members.length ? _c('div', [_c('strong', [_vm._v("cp[" + _vm._s(i) + "]")]), _c('br'), _c('input', { directives: [{ name: "model", rawName: "v-model.number", value: member.x, expression: "member.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": member.x }, on: { "change": function change($event) {
+                return typeof point.members !== 'undefined' && point.members.length ? _c('div', [_c('br'), _c('strong', [_vm._v("cp[" + _vm._s(i) + "]")]), _c('br'), _c('input', { directives: [{ name: "model", rawName: "v-model.number", value: member.x, expression: "member.x", modifiers: { "number": true } }], attrs: { "type": "text", "size": "3" }, domProps: { "value": member.x }, on: { "change": function change($event) {
                             _vm.update();
                         }, "input": function input($event) {
                             if ($event.target.composing) {
@@ -612,7 +612,7 @@ var EditPathPoints = { render: function render() {
                         }, "blur": function blur($event) {
                             _vm.$forceUpdate();
                         } } }), _c('label', [_vm._v(".y")])]) : _vm._e();
-            }), _c('br')], 2);
+            })], 2);
         })) : _vm._e()]);
     }, staticRenderFns: [],
     name: 'EditPathPoints',
@@ -966,7 +966,7 @@ var BezierPath = { render: function render() {
                     } else {
                         _vm.state.path.edit = $$c;
                     }
-                } } }), _vm._v(" Edit Path")])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }), _vm._v(" Edit Path")])]), _vm.state.path.edit ? _c('edit-path-points', { attrs: { "path": _vm.path } }) : _vm._e()], 1), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'BezierPath',
     props: ['animation', 'appState', 'canvas'],
@@ -2289,15 +2289,16 @@ var Figures$2 = {
 
     available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower'],
 
-    create: function create(type, state, reference) {
+    create: function create(type, state) {
 
         //TODO
-        var segments = reference !== undefined ? reference.path.length() : state.segments;
         var figure = void 0;
+        var segments = void 0;
 
         switch (type) {
             case 'Line':
                 {
+                    segments = state.pathLength;
                     var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
                     var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
                     figure = new Space$9.Line(from, to, segments);
@@ -2305,21 +2306,25 @@ var Figures$2 = {
                 }
             case 'Polygon':
                 {
+                    segments = state.pathLength;
                     figure = new Space$9.Polygon(segments, radius(state), state.origin);
                     break;
                 }
             case 'Star':
                 {
+                    segments = state.pathLength / 2;
                     figure = new Space$9.Star(segments, radius(state), 50, state.origin);
                     break;
                 }
             case 'Cog':
                 {
+                    segments = state.pathLength / 4;
                     figure = new Space$9.Cog(segments, radius(state), 50, state.origin);
                     break;
                 }
             case 'Flower':
                 {
+                    segments = state.pathLength / 2;
                     figure = new Space$9.Star(segments, radius(state), 50, state.origin);
                     figure.flower(0.5);
                     break;
@@ -2332,8 +2337,12 @@ var Figures$2 = {
 
 };
 
-var compute$9 = function compute$9(morpher) {
-    if (morpher.finished()) {
+var compute$9 = function compute$9(morpher, state) {
+    var finished = morpher.finished();
+
+    if (finished && !state.continuous) {
+        return;
+    }if (finished) {
         morpher.reverse();
     }
     morpher.progress();
@@ -2394,9 +2403,22 @@ var Morpher = { render: function render() {
                     } } }, [_vm._v(_vm._s(fig))])]);
         }))]), _c('span', [_vm._v(" to ")]), _c('div', { staticClass: "mui-dropdown" }, [_c('button', { staticClass: "mui-btn mui-btn-small", attrs: { "data-mui-toggle": "dropdown" } }, [_vm._v(_vm._s(_vm.figures.targ ? _vm.figures.targ : 'Choose') + " "), _c('span', { staticClass: "mui-caret mui--text-accent" })]), _c('ul', { staticClass: "mui-dropdown__menu" }, _vm._l(_vm.figures.available, function (fig) {
             return _c('li', { class: { 'router-link-active': fig === _vm.figures.targ } }, [_c('a', { on: { "click": function click($event) {
-                        _vm.goTo(fig, _vm.figures.src);
+                        _vm.goTo(_vm.figures.src, fig);
                     } } }, [_vm._v(_vm._s(fig))])]);
-        }))])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
+        }))])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Morphing")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.continuous, expression: "state.continuous" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.continuous) ? _vm._i(_vm.state.continuous, null) > -1 : _vm.state.continuous }, on: { "__c": function __c($event) {
+                    var $$a = _vm.state.continuous,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.continuous = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.continuous = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.continuous = $$c;
+                    }
+                } } }), _vm._v(" Continuous")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
                     _vm.state.steps = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -2421,8 +2443,10 @@ var Morpher = { render: function render() {
                     strokeStyle: 'white',
                     lineWidth: 1
                 }),
-                segments: 6,
-                steps: 100
+                pathLength: 12,
+                steps: 100,
+                //behaviour
+                continuous: true
             },
             path: null,
             figures: {
@@ -2431,6 +2455,7 @@ var Morpher = { render: function render() {
                 available: Figures$2.available
             },
             morpher: null
+
         };
     },
     methods: {
@@ -2483,7 +2508,7 @@ var Morpher = { render: function render() {
                 return;
             }
 
-            compute$9(_this.morpher);
+            compute$9(_this.morpher, _this.state);
             draw$3(_this.path, _this.state, _this.canvas);
             // init
             _this.canvas.fill();

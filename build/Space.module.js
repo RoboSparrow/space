@@ -470,7 +470,6 @@ Group.prototype.translate = function (x, y, z) {
 
 Group.prototype.multiplyBy = function (f) {
     Cartesian.prototype.multiplyBy.call(this, f);
-    console.log(this.x, this.y);
     var length = this.members.length;
     for (var i = 0; i < length; i += 1) {
         this.members[i].multiplyBy(f);
@@ -798,7 +797,6 @@ var computeUnit = function computeUnit(src, targ, steps) {
 var Morpher = function Morpher(srcPath, targPath, steps) {
     var map = [];
     var length = srcPath.length();
-    console.log(srcPath.length(), targPath.length());
     // TODO: what to do if both paths have a different length?
     var unit = void 0;
     var mLength = void 0;

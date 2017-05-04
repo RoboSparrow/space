@@ -1,4 +1,3 @@
-import Point from './Point';
 import Group from './Group';
 
 /**
@@ -30,7 +29,6 @@ const computeUnit = function (src, targ, steps) {
 const Morpher = function (srcPath, targPath, steps) {
     const map = [];
     const length = srcPath.length();
-    console.log(srcPath.length(), targPath.length());
     // TODO: what to do if both paths have a different length?
     let unit;
     let mLength;
@@ -40,7 +38,7 @@ const Morpher = function (srcPath, targPath, steps) {
 
         if (typeof targPath.points[i].members !== 'undefined') {
             mLength = targPath.points[i].members.length;
-            for (let k =0; k < mLength; k += 1) {
+            for (let k = 0; k < mLength; k += 1) {
                 //src to group
                 if (typeof srcPath.points[i].members === 'undefined') {
                     srcPath.points[i] = Group.create(srcPath.points[i]);

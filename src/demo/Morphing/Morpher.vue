@@ -29,12 +29,24 @@
                         v-for="fig in figures.available"
                         v-bind:class="{'router-link-active': fig === figures.targ}"
                     >
-                        <a v-on:click="goTo(fig, figures.src)">{{ fig }}</a>
+                        <a v-on:click="goTo(figures.src, fig)">{{ fig }}</a>
                     </li>
                 </ul>
             </div>
         </section>
 
+        <!-- morphing -->
+        <section class="mui-form">
+            <legend>Morphing</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.continuous">
+                    Continuous
+                </label>
+            </div>
+        </section>
+
+        <!-- params -->
         <section class="mui-form">
             <legend>Edit Params</legend>
             <div class="mui-textfield">
@@ -70,32 +82,37 @@ const Figures = {
 
     available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower'],
 
-    create: function (type, state, reference) {
+    create: function (type, state) {
 
         //TODO
-        const segments = (reference !== undefined) ? reference.path.length() : state.segments;
         let figure;
+        let segments;
 
         switch (type) {
             case 'Line': {
+                segments = state.pathLength;
                 const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
                 const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
                 figure = new Space.Line(from, to, segments);
                 break;
             }
             case 'Polygon': {
+                segments = state.pathLength;
                 figure = new Space.Polygon(segments, radius(state), state.origin);
                 break;
             }
             case 'Star': {
+                segments = state.pathLength / 2;
                 figure = new Space.Star(segments, radius(state), 50, state.origin);
                 break;
             }
             case 'Cog': {
+                segments = state.pathLength / 4;
                 figure = new Space.Cog(segments, radius(state), 50, state.origin);
                 break;
             }
             case 'Flower': {
+                segments = state.pathLength / 2;
                 figure = new Space.Star(segments, radius(state), 50, state.origin);
                 figure.flower(0.5);
                 break;
@@ -108,8 +125,12 @@ const Figures = {
 
 };
 
-const compute = function (morpher) {
-    if (morpher.finished()) {
+const compute = function (morpher, state) {
+    const finished = morpher.finished();
+
+    if (finished && !state.continuous) {
+        return;
+    }    if (finished) {
         morpher.reverse();
     }
     morpher.progress();
@@ -181,8 +202,10 @@ export default {
                     strokeStyle: 'white',
                     lineWidth: 1
                 }),
-                segments: 6,
-                steps: 100
+                pathLength: 12,
+                steps: 100,
+                //behaviour
+                continuous: true
             },
             path: null,
             figures: {
@@ -190,7 +213,8 @@ export default {
                 targ: (typeof this.$route.params.targ !== 'undefined') ? this.$route.params.targ : 'Star',
                 available: Figures.available
             },
-            morpher: null
+            morpher: null,
+
         };
     },
     methods: {
@@ -243,7 +267,7 @@ export default {
                 return;
             }
 
-            compute(this.morpher);
+            compute(this.morpher, this.state);
             draw(this.path, this.state, this.canvas);
             // init
             this.canvas.fill();

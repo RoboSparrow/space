@@ -95,6 +95,7 @@
                     <input type="checkbox" v-model="state.path.edit" > Edit Path
                 </label>
             </div>
+            <edit-path-points v-if="state.path.edit" :path="path"></edit-path-points>
         </section>
         <!-- devel -->
         <dev :label="'State'" :data="state"></dev>
