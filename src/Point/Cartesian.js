@@ -138,4 +138,12 @@ Cartesian.create = function (x, y, z) {
     return new Cartesian(x, y, z);
 };
 
+Cartesian.fromArray = function (a) {
+    // throw Exception if not a valid array
+    if (a.length !== 3) {
+        throw Error('Array not divisable by 3');
+    }
+    return new Cartesian(a[0], a[1], a[2]);
+};
+
 export default Cartesian;

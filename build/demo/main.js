@@ -2430,7 +2430,67 @@ var Morpher = { render: function render() {
                     _vm.$forceUpdate();
                 } } }), _c('label', [_vm._v("Segment Range "), _c('small', [_vm._v("(" + _vm._s(_vm.state.segments) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('button', { staticClass: "mui-btn mui-btn--small mui-btn--primary", on: { "click": function click($event) {
                     _vm.create();
-                } } }, [_vm._v("Create Morpher")])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
+                } } }, [_vm._v("Create Morpher")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Helpers")]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showHandles, expression: "state.showHandles" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showHandles) ? _vm._i(_vm.state.showHandles, null) > -1 : _vm.state.showHandles }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showHandles,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showHandles = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showHandles = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showHandles = $$c;
+                    }
+                } } }), _vm._v(" Handles")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPoints, expression: "state.showPoints" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPoints) ? _vm._i(_vm.state.showPoints, null) > -1 : _vm.state.showPoints }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showPoints,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showPoints = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showPoints = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showPoints = $$c;
+                    }
+                } } }), _vm._v(" Points")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showPath, expression: "state.showPath" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showPath) ? _vm._i(_vm.state.showPath, null) > -1 : _vm.state.showPath }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showPath,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showPath = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showPath = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showPath = $$c;
+                    }
+                } } }), _vm._v(" Path")])]), _c('div', { staticClass: "mui-checkbox" }, [_c('label', [_c('input', { directives: [{ name: "model", rawName: "v-model", value: _vm.state.showBounds, expression: "state.showBounds" }], attrs: { "type": "checkbox" }, domProps: { "checked": Array.isArray(_vm.state.showBounds) ? _vm._i(_vm.state.showBounds, null) > -1 : _vm.state.showBounds }, on: { "change": function change($event) {
+                    _vm.init();
+                }, "__c": function __c($event) {
+                    var $$a = _vm.state.showBounds,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false;if (Array.isArray($$a)) {
+                        var $$v = null,
+                            $$i = _vm._i($$a, $$v);if ($$c) {
+                            $$i < 0 && (_vm.state.showBounds = $$a.concat($$v));
+                        } else {
+                            $$i > -1 && (_vm.state.showBounds = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+                        }
+                    } else {
+                        _vm.state.showBounds = $$c;
+                    }
+                } } }), _vm._v(" Bounding Box")])])]), _c('dev', { attrs: { "label": 'State', "data": _vm.state } })], 1);
     }, staticRenderFns: [],
     name: 'Home',
     props: ['animation', 'appState', 'canvas'],
@@ -2511,7 +2571,7 @@ var Morpher = { render: function render() {
             }
 
             compute$9(_this.morpher, _this.state);
-            draw$3(_this.path, _this.state, _this.canvas);
+            draw$3(_this.morpher.path, _this.state, _this.canvas);
             // init
             _this.canvas.fill();
         }).play();

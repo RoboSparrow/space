@@ -62,6 +62,31 @@
             </div>
         </section>
 
+        <!-- helpers -->
+        <section class="mui-form">
+            <legend>Helpers</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showHandles" v-on:change="init()"> Handles
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showPoints" v-on:change="init()"> Points
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showPath" v-on:change="init()"> Path
+                </label>
+            </div>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showBounds" v-on:change="init()"> Bounding Box
+                </label>
+            </div>
+        </section>
+
         <!-- devel -->
         <dev :label="'State'" :data="state"></dev>
     </div>
@@ -270,7 +295,7 @@ export default {
             }
 
             compute(this.morpher, this.state);
-            draw(this.path, this.state, this.canvas);
+            draw(this.morpher.path, this.state, this.canvas);
             // init
             this.canvas.fill();
 

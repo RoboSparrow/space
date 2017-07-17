@@ -207,6 +207,14 @@ Cartesian.create = function (x, y, z) {
     return new Cartesian(x, y, z);
 };
 
+Cartesian.fromArray = function (a) {
+    // throw Exception if not a valid array
+    if (a.length !== 3) {
+        throw Error('Array not divisable by 3');
+    }
+    return new Cartesian(a[0], a[1], a[2]);
+};
+
 var Point = {
     Cartesian: Cartesian,
     Spherical: Spherical,
@@ -498,6 +506,7 @@ Group.prototype.toArray = function () {
 
 // static methods
 
+// returns new instance
 Group.create = function (x, y, z) {
     //is point like
     if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && typeof x.clone === 'function') {
@@ -511,18 +520,24 @@ Group.create = function (x, y, z) {
     return new Group(x, y, z);
 };
 
-// creates a bezier point with two handles from coordinates or a given cartesian point
-// if not already set the handles are set to the coordinates of the group point (sharp edge)
-Group.createBezier2D = function (x, y, z) {
-    var g = Group.create(x, y, z);
-    var handle = new Cartesian(g.x, g.y, g.z);
-    if (!g.members.length) {
-        g.members[0] = handle;
+// returns new instance
+Group.fromArray = function (a) {
+    var fragment = void 0;
+
+    // Note: Cartesian.fromArray ensures strict check for a.length === 3 ant throws Exception
+
+    // point
+    fragment = a.splice(0, 3);
+    var point = Cartesian.fromArray(fragment);
+    var group = Group.create(point);
+
+    // members
+    while (a.length) {
+        fragment = a.splice(0, 3);
+        point = Cartesian.fromArray(fragment);
+        group.members.push(point);
     }
-    if (g.members.length === 1) {
-        g.members[1] = handle.clone();
-    }
-    return g;
+    return group;
 };
 
 /**
@@ -799,43 +814,82 @@ var Polygons = Object.freeze({
  * star is closed, so length - 1
 */
 
-//@TODO morphe groups
-//@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
-var computeUnit = function computeUnit(src, targ, steps) {
-    var unit = targ.clone();
-    unit.substract(src);
-    unit.multiplyBy(1 / steps);
+// TODO center view
+
+var apply = function apply(point, reference, operator) {
+    point.x += operator * reference.x;
+    point.y += operator * reference.y;
+    point.z += operator * reference.z;
+    //TODO compute: create Group by default and remove condition
+    if (typeof point.members !== 'undefined') {
+        var length = point.members.length;
+        for (var i = 0; i < length; i += 1) {
+            apply(point.members[i], reference.members[i], operator);
+        }
+    }
+};
+
+var computeUnitArray = function computeUnitArray(srcArr, targArr, steps) {
+    var length = srcArr.length;
+    var unit = [];
+    for (var i = 0; i < length; i += 1) {
+        unit[i] = targArr[i] - srcArr[i];
+        unit[i] /= steps;
+    }
     return unit;
 };
 
-var Morpher = function Morpher(srcPath, targPath, steps) {
-    var map = [];
-    var length = srcPath.length();
-    // TODO: what to do if both paths have a different length?
-    var unit = void 0;
-    var mLength = void 0;
+var normalizeArray = function normalizeArray(arr, refArr) {
+    if (arr.length >= refArr.length) {
+        return arr;
+    }
+    var min = arr.length;
+    var max = refArr.length;
+    for (var i = min; i < max; i += 3) {
+        Array.prototype.push.apply(arr, [arr[0], arr[1], arr[2]]);
+    }
+    return arr;
+};
 
-    for (var i = 0; i < length; i += 1) {
-        // targ is group
+var compute = function compute(src, targ, steps) {
+    var s = src.toArray();
+    var t = targ.toArray();
 
-        if (typeof targPath.points[i].members !== 'undefined') {
-            mLength = targPath.points[i].members.length;
-            for (var k = 0; k < mLength; k += 1) {
-                // src to group
-                //if (typeof srcPath.points[i].members === 'undefined') {
-                //    srcPath.points[i] = Group.create(srcPath.points[i]);
-                //    srcPath.points[i].members.push(srcPath.points[i].clone());
-                //    srcPath.points[i].members.push(srcPath.points[i].clone());
-                //}
-                Group.createBezier2D(srcPath.points[i]);
-            }
-        }
+    normalizeArray(s, t);
+    normalizeArray(t, s);
 
-        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
-        map.push([srcPath.points[i], targPath.points[i], unit]);
+    var unit = computeUnitArray(s, t, steps);
+
+    if (s.length > 3) {
+        s = Group.fromArray(s);
+        t = Group.fromArray(t);
+        unit = Group.fromArray(unit);
+    } else {
+        s = Point.Cartesian.fromArray(s);
+        t = Point.Cartesian.fromArray(t);
+        unit = Point.Cartesian.fromArray(unit);
     }
 
-    this.map = map;
+    return [s, t, unit];
+};
+
+var Morpher = function Morpher(srcPath, targPath, steps) {
+    this.path = new Path(srcPath.origin());
+    this.map = [];
+
+    ////TODO deal with origin for maps, and different origins for target and path
+    var length = srcPath.length();
+
+    var computedStep = void 0;
+    for (var i = 0; i < length; i += 1) {
+        computedStep = compute(srcPath.points[i], targPath.points[i], steps);
+        this.path.add(computedStep[0]);
+        this.map.push(computedStep[2]); //TODO use an object instead
+    }
+    if (srcPath.isClosed()) {
+        this.path.close();
+    }
+
     this.count = 0;
     this.steps = steps;
     this.direction = 1;
@@ -847,9 +901,11 @@ Morpher.prototype.next = function () {
         return false;
     }
 
-    var length = this.map.length;
+    var length = this.path.length(); //TODO global?
+    var item = void 0;
     for (var i = 0; i < length; i += 1) {
-        this.map[i][0].add(this.map[i][2]); //unit
+        item = this.path.get(i);
+        apply(item, this.map[i], 1);
     }
 
     this.count += 1;
@@ -862,9 +918,11 @@ Morpher.prototype.prev = function () {
         return false;
     }
 
-    var length = this.map.length;
+    var length = this.path.length(); //TODO global?
+    var item = void 0;
     for (var i = 0; i < length; i += 1) {
-        this.map[i][0].substract(this.map[i][2]); //unit
+        item = this.path.get(i);
+        apply(item, this.map[i], -1);
     }
 
     this.count -= 1;

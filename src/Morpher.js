@@ -1,4 +1,6 @@
 import Group from './Group';
+import Point from './Point';
+import Path from './Path';
 
 /**
  *  Goal
@@ -17,43 +19,82 @@ import Group from './Group';
  * star is closed, so length - 1
 */
 
-//@TODO morphe groups
-//@TODO replace callback with just two paths to morphe, do not make them dependent on the lasme length
-const computeUnit = function (src, targ, steps) {
-    const unit = targ.clone();
-    unit.substract(src);
-    unit.multiplyBy(1 / steps);
+// TODO center view
+
+const apply = function (point, reference, operator) {
+    point.x += (operator * reference.x);
+    point.y += (operator * reference.y);
+    point.z += (operator * reference.z);
+    //TODO compute: create Group by default and remove condition
+    if (typeof point.members !== 'undefined') {
+        const length = point.members.length;
+        for (let i = 0; i < length; i += 1) {
+            apply(point.members[i], reference.members[i], operator);
+        }
+    }
+};
+
+const computeUnitArray = function (srcArr, targArr, steps) {
+    const length = srcArr.length;
+    const unit = [];
+    for (let i = 0; i < length; i += 1) {
+        unit[i] = targArr[i] - srcArr[i];
+        unit[i] /= steps;
+    }
     return unit;
 };
 
-const Morpher = function (srcPath, targPath, steps) {
-    const map = [];
-    const length = srcPath.length();
-    // TODO: what to do if both paths have a different length?
-    let unit;
-    let mLength;
+const normalizeArray = function (arr, refArr) {
+    if (arr.length >= refArr.length) {
+        return arr;
+    }
+    const min = arr.length;
+    const max = refArr.length;
+    for (let i = min; i < max; i += 3) {
+        Array.prototype.push.apply(arr, [arr[0], arr[1], arr[2]]);
+    }
+    return arr;
+};
 
-    for (let i = 0; i < length; i += 1) {
-        // targ is group
+const compute = function (src, targ, steps) {
+    let s = src.toArray();
+    let t = targ.toArray();
 
-        if (typeof targPath.points[i].members !== 'undefined') {
-            mLength = targPath.points[i].members.length;
-            for (let k = 0; k < mLength; k += 1) {
-                // src to group
-                //if (typeof srcPath.points[i].members === 'undefined') {
-                //    srcPath.points[i] = Group.create(srcPath.points[i]);
-                //    srcPath.points[i].members.push(srcPath.points[i].clone());
-                //    srcPath.points[i].members.push(srcPath.points[i].clone());
-                //}
-                Group.createBezier2D(srcPath.points[i]);
-            }
-        }
+    normalizeArray(s, t);
+    normalizeArray(t, s);
 
-        unit = computeUnit(srcPath.points[i], targPath.points[i], steps);
-        map.push([srcPath.points[i], targPath.points[i], unit]);
+    let unit = computeUnitArray(s, t, steps);
+
+    if (s.length > 3) {
+        s = Group.fromArray(s);
+        t = Group.fromArray(t);
+        unit = Group.fromArray(unit);
+    } else {
+        s = Point.Cartesian.fromArray(s);
+        t = Point.Cartesian.fromArray(t);
+        unit = Point.Cartesian.fromArray(unit);
     }
 
-    this.map = map;
+    return [s, t, unit];
+};
+
+const Morpher = function (srcPath, targPath, steps) {
+    this.path = new Path(srcPath.origin());
+    this.map = [];
+
+    ////TODO deal with origin for maps, and different origins for target and path
+    const length = srcPath.length();
+
+    let computedStep;
+    for (let i = 0; i < length; i += 1) {
+        computedStep = compute(srcPath.points[i], targPath.points[i], steps);
+        this.path.add(computedStep[0]);
+        this.map.push(computedStep[2]);//TODO use an object instead
+    }
+    if (srcPath.isClosed()) {
+        this.path.close();
+    }
+
     this.count = 0;
     this.steps = steps;
     this.direction = 1;
@@ -65,9 +106,11 @@ Morpher.prototype.next = function () {
         return false;
     }
 
-    const length = this.map.length;
+    const length = this.path.length();//TODO global?
+    let item;
     for (let i = 0; i < length; i += 1) {
-        this.map[i][0].add(this.map[i][2]); //unit
+        item = this.path.get(i);
+        apply(item, this.map[i], 1);
     }
 
     this.count += 1;
@@ -80,9 +123,11 @@ Morpher.prototype.prev = function () {
         return false;
     }
 
-    const length = this.map.length;
+    const length = this.path.length();//TODO global?
+    let item;
     for (let i = 0; i < length; i += 1) {
-        this.map[i][0].substract(this.map[i][2]); //unit
+        item = this.path.get(i);
+        apply(item, this.map[i], -1);
     }
 
     this.count -= 1;
