@@ -864,6 +864,10 @@ var normalizeGroup = function normalizeGroup(src, targ) {
 /**
  * Morper creates a new draw path (always path of groups) from a srcpath and normalizes it against targPath,
  * A computed array of computed "unit" groups maps against this path. Every unit contains
+ *
+ * targPath and srcPath need to be paths
+ *      they must have the same length(),
+ *      they can be open or closed
  */
 
 var Morpher = function Morpher(srcPath, targPath, steps) {
@@ -871,8 +875,7 @@ var Morpher = function Morpher(srcPath, targPath, steps) {
     this.targ = new Path(targPath.origin());
     this.units = [];
 
-    //TODO LINE > FLOWER
-    //// TODO deal with origin for maps, and different origins for target and path
+    // TODO deal with origin for maps, and different origins for target and path
     var length = srcPath.length();
 
     for (var i = 0; i < length; i += 1) {
@@ -943,6 +946,9 @@ Morpher.prototype.prev = function () {
     return true;
 };
 
+/**
+ * progress transformation to next step, based on this.direction
+ */
 Morpher.prototype.progress = function () {
     if (this.direction > 0) {
         this.next();
@@ -951,6 +957,9 @@ Morpher.prototype.progress = function () {
     this.prev();
 };
 
+/**
+ * checks if a transformation progress is finished
+ */
 Morpher.prototype.finished = function () {
     if (this.direction > 0) {
         return this.count === this.steps;
@@ -958,6 +967,9 @@ Morpher.prototype.finished = function () {
     return this.count === 0;
 };
 
+/**
+ * reverse progress direction
+ */
 Morpher.prototype.reverse = function () {
     this.direction *= -1;
 };
