@@ -31,19 +31,19 @@ Line.prototype.segmentize = function (segments) {
     const last = this.path.last();
     const length = this.path.length();
 
+    // TODO closed lines are possible as they inherit from path
     const segm = last.clone();
     segm.substract(this.path.first());
     segm.multiplyBy(1 / segments);
 
     // remove everything except first element, keep instance
-    if (length > 1) {
-        this.path.points.splice(1, this.path.length());
-    }
+    this.path.points.splice(1, length);// since it's a line horignal lengt must be > 1
 
-    segments -= 2;// first, lasts
-    for (let i = 0; i <= segments; i += 1) {
+    const len = segments - 2;// first, last
+    for (let i = 0; i < len; i += 1) {
         this.path.progress(segm.clone());
     }
+
     this.path.addPoint(last);
 };
 

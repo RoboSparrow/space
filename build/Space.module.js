@@ -648,19 +648,19 @@ Line.prototype.segmentize = function (segments) {
     var last = this.path.last();
     var length = this.path.length();
 
+    // TODO closed lines are possible as they inherit from path
     var segm = last.clone();
     segm.substract(this.path.first());
     segm.multiplyBy(1 / segments);
 
     // remove everything except first element, keep instance
-    if (length > 1) {
-        this.path.points.splice(1, this.path.length());
-    }
+    this.path.points.splice(1, length); // since it's a line horignal lengt must be > 1
 
-    segments -= 2; // first, lasts
-    for (var i = 0; i <= segments; i += 1) {
+    var len = segments - 2; // first, last
+    for (var i = 0; i < len; i += 1) {
         this.path.progress(segm.clone());
     }
+
     this.path.addPoint(last);
 };
 
@@ -797,30 +797,24 @@ var Polygons = Object.freeze({
 	Cog: Cog
 });
 
-/**
- *  Goal
- * - define steps
- * - set counter 0
- * - create mrph array
- * - target figure
- * - src figure
- *      - set each point to i * segment, centerY
- *          -set each handle to 0,0,0
- *      - targ[i].x - src[i].x / steps
- *          - set each handle targ[i].member[k] - src[i].members[k] / steps
- * morph from a line into a star and back
- * better: store array of polar points in template,
- * convert figure point to polar and check radius length
- * star is closed, so length - 1
-*/
-
 // TODO center view
 
+/**
+ * Applies a step transform deeply to a group
+ * our normal poitn.multiply cannot be used here as it would not deep transorm mebers against reference memebers,
+ * only members against the main coordinates
+ *
+ * srcPath and targPath need to have the same length TODO: handle segment normalization
+ * Ervery srcPath items will be first normalized against it's targPath partner,
+ *      it will be always a group
+ *      it will have n members, where n is the max of either length
+ *      member indexes who dont exist in src will be created as point with the same coordinates as src
+ */
 var apply = function apply(point, reference, operator) {
     point.x += operator * reference.x;
     point.y += operator * reference.y;
     point.z += operator * reference.z;
-    //TODO compute: create Group by default and remove condition
+
     if (typeof point.members !== 'undefined') {
         var length = point.members.length;
         for (var i = 0; i < length; i += 1) {
@@ -829,65 +823,64 @@ var apply = function apply(point, reference, operator) {
     }
 };
 
-var computeUnitArray = function computeUnitArray(srcArr, targArr, steps) {
-    var length = srcArr.length;
-    var unit = [];
+/**
+ * Comuptes a transformation unit group for a single src group vin relation to it's targ gruop based on the steps
+ * src and targ need to be normalized groups, i.e. have the same member length
+ */
+var computeUnit = function computeUnit(src, targ, steps) {
+    var x = void 0;
+    var y = void 0;
+    var z = void 0;
+
+    x = (targ.x - src.x) / steps;
+    y = (targ.y - src.y) / steps;
+    z = (targ.z - src.z) / steps;
+    var unit = new Group(x, y, z);
+
+    var length = src.members.length;
     for (var i = 0; i < length; i += 1) {
-        unit[i] = targArr[i] - srcArr[i];
-        unit[i] /= steps;
+        x = (targ.members[i].x - src.members[i].x) / steps;
+        y = (targ.members[i].y - src.members[i].y) / steps;
+        z = (targ.members[i].z - src.members[i].z) / steps;
+        unit.members[i] = new Point.Cartesian(x, y, z);
     }
+    src.unit = unit;
     return unit;
 };
 
-var normalizeArray = function normalizeArray(arr, refArr) {
-    if (arr.length >= refArr.length) {
-        return arr;
+var normalizeGroup = function normalizeGroup(src, targ) {
+    var length = targ.members.length > src.members.length ? targ.members.length : src.members.length;
+    for (var i = 0; i < length; i += 1) {
+        if (typeof src.members[i] === 'undefined') {
+            src.members[i] = new Point.Cartesian(src.x, src.y, src.z);
+        }
+        if (typeof targ.members[i] === 'undefined') {
+            targ.members[i] = new Point.Cartesian(targ.x, targ.y, targ.z);
+        }
     }
-    var min = arr.length;
-    var max = refArr.length;
-    for (var i = min; i < max; i += 3) {
-        Array.prototype.push.apply(arr, [arr[0], arr[1], arr[2]]);
-    }
-    return arr;
+    return [src, targ];
 };
 
-var compute = function compute(src, targ, steps) {
-    var s = src.toArray();
-    var t = targ.toArray();
-
-    normalizeArray(s, t);
-    normalizeArray(t, s);
-
-    var unit = computeUnitArray(s, t, steps);
-
-    if (s.length > 3) {
-        s = Group.fromArray(s);
-        t = Group.fromArray(t);
-        unit = Group.fromArray(unit);
-    } else {
-        s = Point.Cartesian.fromArray(s);
-        t = Point.Cartesian.fromArray(t);
-        unit = Point.Cartesian.fromArray(unit);
-    }
-
-    return [s, t, unit];
-};
+/**
+ * Morper creates a new draw path (always path of groups) from a srcpath and normalizes it against targPath,
+ * A computed array of computed "unit" groups maps against this path. Every unit contains
+ */
 
 var Morpher = function Morpher(srcPath, targPath, steps) {
-    this.path = new Path(srcPath.origin());
-    this.map = [];
+    this.src = new Path(srcPath.origin());
+    this.targ = new Path(targPath.origin());
+    this.units = [];
 
-    ////TODO deal with origin for maps, and different origins for target and path
+    //TODO LINE > FLOWER
+    //// TODO deal with origin for maps, and different origins for target and path
     var length = srcPath.length();
 
-    var computedStep = void 0;
     for (var i = 0; i < length; i += 1) {
-        computedStep = compute(srcPath.points[i], targPath.points[i], steps);
-        this.path.add(computedStep[0]);
-        this.map.push(computedStep[2]); //TODO use an object instead
+        this.compute(srcPath.points[i], targPath.points[i], steps);
     }
-    if (srcPath.isClosed()) {
-        this.path.close();
+
+    if (targPath.isClosed()) {
+        this.src.close();
     }
 
     this.count = 0;
@@ -895,34 +888,55 @@ var Morpher = function Morpher(srcPath, targPath, steps) {
     this.direction = 1;
 };
 
+/**
+ * normalize src vs targ and compute respective unit
+ */
+Morpher.prototype.compute = function (src, targ, steps) {
+    var s = Group.create(src);
+    var t = Group.create(targ);
+
+    var g = normalizeGroup(s, t);
+    this.src.add(g[0]);
+    this.targ.add(g[1]);
+
+    var unit = computeUnit(g[0], g[1], steps);
+    this.units.push(unit);
+};
+
+/**
+ * Apply forward transformation to single item
+ */
 Morpher.prototype.next = function () {
+    //return;//dev
     if (this.count >= this.steps) {
-        this.direction = -1;
+        this.reverse();
         return false;
     }
 
-    var length = this.path.length(); //TODO global?
+    var length = this.src.length(); //TODO global?
     var item = void 0;
     for (var i = 0; i < length; i += 1) {
-        item = this.path.get(i);
-        apply(item, this.map[i], 1);
+        item = this.src.get(i);
+        apply(item, item.unit, 1);
     }
 
     this.count += 1;
     return true;
 };
 
+/**
+ * Apply backward transformation to single item
+ */
 Morpher.prototype.prev = function () {
     if (this.count <= 0) {
-        this.direction = 1;
-        return false;
+        this.reverse();
     }
 
-    var length = this.path.length(); //TODO global?
+    var length = this.src.length(); //TODO global?
     var item = void 0;
     for (var i = 0; i < length; i += 1) {
-        item = this.path.get(i);
-        apply(item, this.map[i], -1);
+        item = this.src.get(i);
+        apply(item, item.unit, -1);
     }
 
     this.count -= 1;

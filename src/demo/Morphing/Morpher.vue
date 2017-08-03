@@ -118,7 +118,7 @@ const Figures = {
                 segments = state.pathLength;
                 const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
                 const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
-                figure = new Space.Line(from, to, segments);
+                figure = new Space.Line(from, to, segments); //TODO solve -1 inside morpher or line.segmentize
                 break;
             }
             case 'Polygon': {
@@ -164,6 +164,7 @@ const compute = function (morpher, state) {
 };
 
 const draw = function (path, state, canvas) {
+    //canvas.clear();
 
     canvas.ctx.save();
     canvas.ctx.strokeStyle = state.canvas.strokeStyle;
@@ -198,6 +199,7 @@ const draw = function (path, state, canvas) {
                 Canvas2dHelpers.drawHandle(canvas.ctx, point, point.members[1], i + ':right', 'blue');
             }
         }
+
         if (state.showPoints) {
             Canvas2dHelpers.drawPoint(canvas.ctx, point, i + ':point', '#666666');
         }
@@ -295,7 +297,7 @@ export default {
             }
 
             compute(this.morpher, this.state);
-            draw(this.morpher.path, this.state, this.canvas);
+            draw(this.morpher.src, this.state, this.canvas);
             // init
             this.canvas.fill();
 
