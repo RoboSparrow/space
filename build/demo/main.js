@@ -2287,7 +2287,7 @@ var radius = function radius(state, margin) {
 
 var Figures$2 = {
 
-    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower'],
+    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower', 'Random'],
 
     create: function create(type, state) {
 
@@ -2298,7 +2298,7 @@ var Figures$2 = {
         switch (type) {
             case 'Line':
                 {
-                    segments = state.pathLength;
+                    segments = state.segments;
                     var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
                     var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
                     figure = new Space$9.Line(from, to, segments); //TODO solve -1 inside morpher or line.segmentize
@@ -2306,27 +2306,46 @@ var Figures$2 = {
                 }
             case 'Polygon':
                 {
-                    segments = state.pathLength;
+                    segments = state.segments;
                     figure = new Space$9.Polygon(segments, radius(state), state.origin);
                     break;
                 }
             case 'Star':
                 {
-                    segments = state.pathLength / 2;
+                    segments = state.segments / 2;
                     figure = new Space$9.Star(segments, radius(state), 50, state.origin);
                     break;
                 }
             case 'Cog':
                 {
-                    segments = state.pathLength / 4;
+                    segments = state.segments / 4;
                     figure = new Space$9.Cog(segments, radius(state), 50, state.origin);
                     break;
                 }
             case 'Flower':
                 {
-                    segments = state.pathLength / 2;
+                    segments = state.segments / 2;
                     figure = new Space$9.Star(segments, radius(state), 50, state.origin);
                     figure.flower(0.5);
+                    break;
+                }
+            case 'Random':
+                {
+                    var path = new Space$9.Path();
+                    var _segments = state.segments;
+                    var range = 200;
+                    var rand = void 0;
+                    path.add(new Space$9.Group(state.canvas.width / 2, state.canvas.height / 2));
+                    for (var i = 0; i < _segments; i += 1) {
+                        rand = new Space$9.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
+                        rand.add(path.last());
+                        rand.x = Utils.bounds(rand.x, 0, state.canvas.width);
+                        rand.y = Utils.bounds(rand.y, 0, state.canvas.height);
+                        path.add(rand);
+                    }
+                    path.close();
+                    Space$9.Bezier.smoothPath(path, .5);
+                    figure = { path: path }; //TODO
                     break;
                 }
             default:
@@ -2422,11 +2441,11 @@ var Morpher = { render: function render() {
                     } else {
                         _vm.state.continuous = $$c;
                     }
-                } } }), _vm._v(" Continuous")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "1000", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
+                } } }), _vm._v(" Continuous")])])]), _c('section', { staticClass: "mui-form" }, [_c('legend', [_vm._v("Edit Params")]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.steps, expression: "state.steps", modifiers: { "number": true } }], attrs: { "type": "range", "min": "10", "max": "300", "step": "10" }, domProps: { "value": _vm.state.steps }, on: { "__r": function __r($event) {
                     _vm.state.steps = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
-                } } }), _c('label', [_vm._v("Steps "), _c('small', [_vm._v("( " + _vm._s(_vm.morpher ? _vm.morpher.count : 0) + " of " + _vm._s(_vm.state.steps) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "50" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
+                } } }), _c('label', [_vm._v("Steps "), _c('small', [_vm._v("( " + _vm._s(_vm.morpher ? _vm.morpher.count : 0) + " of " + _vm._s(_vm.state.steps) + ")")])])]), _c('div', { staticClass: "mui-textfield" }, [_c('input', { directives: [{ name: "model", rawName: "v-model.number", value: _vm.state.segments, expression: "state.segments", modifiers: { "number": true } }], attrs: { "type": "range", "min": "3", "max": "150" }, domProps: { "value": _vm.state.segments }, on: { "__r": function __r($event) {
                     _vm.state.segments = _vm._n($event.target.value);
                 }, "blur": function blur($event) {
                     _vm.$forceUpdate();
@@ -2507,7 +2526,7 @@ var Morpher = { render: function render() {
                     strokeStyle: 'white',
                     lineWidth: 1
                 }),
-                pathLength: 12,
+                segments: 12,
                 steps: 100,
                 //behaviour
                 continuous: true

@@ -50,11 +50,11 @@
         <section class="mui-form">
             <legend>Edit Params</legend>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.steps" min="10" max="1000" step="10">
+                <input type="range" v-model.number="state.steps" min="10" max="300" step="10">
                 <label>Steps <small>( {{(morpher) ? morpher.count : 0}} of {{ state.steps }})</small></label>
             </div>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.segments" min="3" max="50">
+                <input type="range" v-model.number="state.segments" min="3" max="150">
                 <label>Segment Range <small>({{ state.segments }})</small></label>
             </div>
             <div class="mui-textfield">
@@ -95,6 +95,7 @@
 <script>
 import Canvas2dHelpers from '../Canvas2dHelpers';
 import Dev from '../Form/Dev.vue';
+import Utils from '../Utils';
 
 const Space = window.Space;
 
@@ -105,7 +106,7 @@ const radius = function (state, margin) {
 
 const Figures = {
 
-    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower'],
+    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower', 'Random'],
 
     create: function (type, state) {
 
@@ -115,31 +116,52 @@ const Figures = {
 
         switch (type) {
             case 'Line': {
-                segments = state.pathLength;
+                segments = state.segments;
                 const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
                 const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
                 figure = new Space.Line(from, to, segments); //TODO solve -1 inside morpher or line.segmentize
                 break;
             }
             case 'Polygon': {
-                segments = state.pathLength;
+                segments = state.segments;
                 figure = new Space.Polygon(segments, radius(state), state.origin);
                 break;
             }
             case 'Star': {
-                segments = state.pathLength / 2;
+                segments = state.segments / 2;
                 figure = new Space.Star(segments, radius(state), 50, state.origin);
                 break;
             }
             case 'Cog': {
-                segments = state.pathLength / 4;
+                segments = state.segments / 4;
                 figure = new Space.Cog(segments, radius(state), 50, state.origin);
                 break;
             }
             case 'Flower': {
-                segments = state.pathLength / 2;
+                segments = state.segments / 2;
                 figure = new Space.Star(segments, radius(state), 50, state.origin);
                 figure.flower(0.5);
+                break;
+            }
+            case 'Random': {
+                const path = new Space.Path();
+                const segments = state.segments;
+                const range = 200;
+                let rand;
+                path.add(new Space.Group(state.canvas.width / 2, state.canvas.height / 2));
+                for (let i = 0; i < segments; i += 1) {
+                    rand = new Space.Point.Cartesian(
+                        Utils.randInt(-range, range) * Utils.randInt(),
+                        Utils.randInt(-range, range) * Utils.randInt()
+                    );
+                    rand.add(path.last());
+                    rand.x = Utils.bounds(rand.x, 0, state.canvas.width);
+                    rand.y = Utils.bounds(rand.y, 0, state.canvas.height);
+                    path.add(rand);
+                }
+                path.close();
+                Space.Bezier.smoothPath(path, .5);
+                figure = { path: path }; //TODO
                 break;
             }
             default:
@@ -231,7 +253,7 @@ export default {
                     strokeStyle: 'white',
                     lineWidth: 1
                 }),
-                pathLength: 12,
+                segments: 12,
                 steps: 100,
                 //behaviour
                 continuous: true

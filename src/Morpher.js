@@ -3,6 +3,7 @@ import Point from './Point';
 import Path from './Path';
 
 // TODO center view
+// TODO Morph/Random/Line doesn't work
 
 /**
  * Applies a step transform deeply to a group
@@ -87,6 +88,9 @@ const Morpher = function (srcPath, targPath, steps) {
         this.compute(srcPath.points[i], targPath.points[i], steps);
     }
 
+    if (srcPath.isClosed()) {
+        this.src.close();
+    }
     if (targPath.isClosed()) {
         this.src.close();
     }
@@ -173,7 +177,7 @@ Morpher.prototype.finished = function () {
 };
 
 /**
- * reverse progress direction
+ * reverse progress direction 
  */
 Morpher.prototype.reverse = function () {
     this.direction *= -1;
