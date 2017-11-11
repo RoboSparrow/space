@@ -124,8 +124,6 @@ Canvas2d.prototype.fill = function () {
 
 var State = {
     canvas: {
-        width: 500,
-        height: 500,
         strokeStyle: 'hsla(300, 100%, 75%, 1)',
         fillStyle: 'rgba(0, 0, 0, .08)',
         lineWidth: 0.1
@@ -2280,16 +2278,18 @@ var Bezier = { render: function render() {
 
 var Space$9 = window.Space;
 
-var radius = function radius(state, margin) {
+var paused = void 0; //holds timeout
+
+var radius = function radius(canvas, margin) {
     margin = margin || 50;
-    return state.canvas.width < state.canvas.height ? state.canvas.width / 2 - margin : state.canvas.height / 2 - 50;
+    return canvas.width < canvas.height ? canvas.width / 2 - margin : canvas.height / 2 - 50;
 };
 
 var Figures$2 = {
 
     available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower', 'Random'],
 
-    create: function create(type, state) {
+    create: function create(type, state, canvas) {
 
         //TODO
         var figure = void 0;
@@ -2299,52 +2299,53 @@ var Figures$2 = {
             case 'Line':
                 {
                     segments = state.segments;
-                    var from = new Space$9.Point.Cartesian(0, state.canvas.height / 2);
-                    var to = new Space$9.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+                    var from = new Space$9.Point.Cartesian(0, canvas.height / 2);
+                    var to = new Space$9.Point.Cartesian(canvas.width, canvas.height / 2);
                     figure = new Space$9.Line(from, to, segments); //TODO solve -1 inside morpher or line.segmentize
                     break;
                 }
             case 'Polygon':
                 {
                     segments = state.segments;
-                    figure = new Space$9.Polygon(segments, radius(state), state.origin);
+                    figure = new Space$9.Polygon(segments, radius(canvas), state.origin);
                     break;
                 }
             case 'Star':
                 {
                     segments = state.segments / 2;
-                    figure = new Space$9.Star(segments, radius(state), 50, state.origin);
+                    figure = new Space$9.Star(segments, radius(canvas), 50, state.origin);
                     break;
                 }
             case 'Cog':
                 {
                     segments = state.segments / 4;
-                    figure = new Space$9.Cog(segments, radius(state), 50, state.origin);
+                    figure = new Space$9.Cog(segments, radius(canvas), 50, state.origin);
                     break;
                 }
             case 'Flower':
                 {
                     segments = state.segments / 2;
-                    figure = new Space$9.Star(segments, radius(state), 50, state.origin);
+                    figure = new Space$9.Star(segments, radius(canvas), 50, state.origin);
                     figure.flower(0.5);
                     break;
                 }
             case 'Random':
                 {
+                    segments = state.segments;
                     var path = new Space$9.Path();
-                    var _segments = state.segments;
                     var range = 200;
                     var rand = void 0;
-                    path.add(new Space$9.Group(state.canvas.width / 2, state.canvas.height / 2));
-                    for (var i = 0; i < _segments; i += 1) {
+
+                    path.add(new Space$9.Group(canvas.width / 2, canvas.height / 2));
+                    for (var i = 0; i < segments; i += 1) {
                         rand = new Space$9.Point.Cartesian(Utils.randInt(-range, range) * Utils.randInt(), Utils.randInt(-range, range) * Utils.randInt());
                         rand.add(path.last());
-                        rand.x = Utils.bounds(rand.x, 0, state.canvas.width);
-                        rand.y = Utils.bounds(rand.y, 0, state.canvas.height);
+                        rand.x = Utils.bounds(rand.x, 0, canvas.width);
+                        rand.y = Utils.bounds(rand.y, 0, canvas.height);
                         path.add(rand);
                     }
                     path.close();
-                    Space$9.Bezier.smoothPath(path, .5);
+                    Space$9.Bezier.smoothPath(path, 0.5);
                     figure = { path: path }; //TODO
                     break;
                 }
@@ -2357,13 +2358,24 @@ var Figures$2 = {
 };
 
 var compute$9 = function compute$9(morpher, state) {
+
     var finished = morpher.finished();
 
     if (finished && !state.continuous) {
         return;
     }
+
     if (finished) {
-        morpher.reverse();
+        state.continuous = false;
+
+        paused = setTimeout(function () {
+            morpher.reverse();
+            state.continuous = true;
+
+            clearTimeout(paused);
+        }, 1000);
+
+        return;
     }
 
     morpher.progress();
@@ -2543,7 +2555,7 @@ var Morpher = { render: function render() {
     },
     methods: {
         init: function init() {
-            this.state.origin = new Space$9.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
+            this.state.origin = new Space$9.Point.Cartesian(this.canvas.canvas.width / 2, this.canvas.canvas.height / 2);
         },
         create: function create() {
             if (Figures$2.available.indexOf(this.figures.src) === -1) {
@@ -2553,8 +2565,8 @@ var Morpher = { render: function render() {
                 throw new Error('Morpher component: Target figure of type "' + this.figures.targ + '" not recognized.');
             }
 
-            var targFigure = Figures$2.create(this.figures.targ, this.state);
-            var srcFigure = Figures$2.create(this.figures.src, this.state, targFigure);
+            var targFigure = Figures$2.create(this.figures.targ, this.state, this.canvas.canvas);
+            var srcFigure = Figures$2.create(this.figures.src, this.state, this.canvas.canvas);
             this.path = srcFigure.path;
             this.morpher = new Space$9.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         },
@@ -2582,9 +2594,9 @@ var Morpher = { render: function render() {
         var _this = this;
 
         this.canvas.fill();
-
-        this.animation.fps(32).only(function () {
-            // @TODO
+        this.animation
+        //.fps(32)
+        .only(function () {
             if (!_this.state.origin) {
                 _this.init();
                 _this.create();

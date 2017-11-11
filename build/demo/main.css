@@ -3829,7 +3829,8 @@ header a {
 #content {
   min-height: 100%;
   overflow-x: hidden;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  padding: 0; }
 
 .app--footer-content {
   padding-top: .5em;

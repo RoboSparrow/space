@@ -872,8 +872,9 @@ var normalizeGroup = function normalizeGroup(src, targ) {
  */
 
 var Morpher = function Morpher(srcPath, targPath, steps) {
-    this.src = new Path(srcPath.origin());
-    this.targ = new Path(targPath.origin());
+
+    this.src = new Path();
+    this.targ = new Path();
     this.units = [];
 
     // TODO deal with origin for maps, and different origins for target and path
@@ -972,7 +973,7 @@ Morpher.prototype.finished = function () {
 };
 
 /**
- * reverse progress direction 
+ * reverse progress direction
  */
 Morpher.prototype.reverse = function () {
     this.direction *= -1;

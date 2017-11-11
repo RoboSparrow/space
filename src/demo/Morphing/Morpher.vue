@@ -99,16 +99,18 @@ import Utils from '../Utils';
 
 const Space = window.Space;
 
-const radius = function (state, margin) {
+let paused; //holds timeout
+
+const radius = function (canvas, margin) {
     margin = margin || 50;
-    return (state.canvas.width < state.canvas.height) ? (state.canvas.width / 2) - margin : (state.canvas.height / 2) - 50;
+    return (canvas.width < canvas.height) ? (canvas.width / 2) - margin : (canvas.height / 2) - 50;
 };
 
 const Figures = {
 
     available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower', 'Random'],
 
-    create: function (type, state) {
+    create: function (type, state, canvas) {
 
         //TODO
         let figure;
@@ -117,50 +119,51 @@ const Figures = {
         switch (type) {
             case 'Line': {
                 segments = state.segments;
-                const from = new Space.Point.Cartesian(0, state.canvas.height / 2);
-                const to = new Space.Point.Cartesian(state.canvas.width, state.canvas.height / 2);
+                const from = new Space.Point.Cartesian(0, canvas.height / 2);
+                const to = new Space.Point.Cartesian(canvas.width, canvas.height / 2);
                 figure = new Space.Line(from, to, segments); //TODO solve -1 inside morpher or line.segmentize
                 break;
             }
             case 'Polygon': {
                 segments = state.segments;
-                figure = new Space.Polygon(segments, radius(state), state.origin);
+                figure = new Space.Polygon(segments, radius(canvas), state.origin);
                 break;
             }
             case 'Star': {
                 segments = state.segments / 2;
-                figure = new Space.Star(segments, radius(state), 50, state.origin);
+                figure = new Space.Star(segments, radius(canvas), 50, state.origin);
                 break;
             }
             case 'Cog': {
                 segments = state.segments / 4;
-                figure = new Space.Cog(segments, radius(state), 50, state.origin);
+                figure = new Space.Cog(segments, radius(canvas), 50, state.origin);
                 break;
             }
             case 'Flower': {
                 segments = state.segments / 2;
-                figure = new Space.Star(segments, radius(state), 50, state.origin);
+                figure = new Space.Star(segments, radius(canvas), 50, state.origin);
                 figure.flower(0.5);
                 break;
             }
             case 'Random': {
+                segments = state.segments;
                 const path = new Space.Path();
-                const segments = state.segments;
                 const range = 200;
                 let rand;
-                path.add(new Space.Group(state.canvas.width / 2, state.canvas.height / 2));
+
+                path.add(new Space.Group(canvas.width / 2, canvas.height / 2));
                 for (let i = 0; i < segments; i += 1) {
                     rand = new Space.Point.Cartesian(
                         Utils.randInt(-range, range) * Utils.randInt(),
                         Utils.randInt(-range, range) * Utils.randInt()
                     );
                     rand.add(path.last());
-                    rand.x = Utils.bounds(rand.x, 0, state.canvas.width);
-                    rand.y = Utils.bounds(rand.y, 0, state.canvas.height);
+                    rand.x = Utils.bounds(rand.x, 0, canvas.width);
+                    rand.y = Utils.bounds(rand.y, 0, canvas.height);
                     path.add(rand);
                 }
                 path.close();
-                Space.Bezier.smoothPath(path, .5);
+                Space.Bezier.smoothPath(path, 0.5);
                 figure = { path: path }; //TODO
                 break;
             }
@@ -173,13 +176,24 @@ const Figures = {
 };
 
 const compute = function (morpher, state) {
+
     const finished = morpher.finished();
 
     if (finished && !state.continuous) {
         return;
     }
+
     if (finished) {
-        morpher.reverse();
+        state.continuous = false;
+
+        paused = setTimeout(() => {
+            morpher.reverse();
+            state.continuous = true;
+
+            clearTimeout(paused);
+        }, 1000);
+
+        return;
     }
 
     morpher.progress();
@@ -270,7 +284,7 @@ export default {
     },
     methods: {
         init: function () {
-            this.state.origin = new Space.Point.Cartesian(this.state.canvas.width / 2, this.state.canvas.height / 2);
+            this.state.origin = new Space.Point.Cartesian(this.canvas.canvas.width / 2, this.canvas.canvas.height / 2);
         },
         create: function () {
             if (Figures.available.indexOf(this.figures.src) === -1) {
@@ -280,8 +294,8 @@ export default {
                 throw new Error('Morpher component: Target figure of type "' + this.figures.targ + '" not recognized.');
             }
 
-            const targFigure = Figures.create(this.figures.targ, this.state);
-            const srcFigure = Figures.create(this.figures.src, this.state, targFigure);
+            const targFigure = Figures.create(this.figures.targ, this.state, this.canvas.canvas);
+            const srcFigure = Figures.create(this.figures.src, this.state, this.canvas.canvas);
             this.path = srcFigure.path;
             this.morpher = new Space.Morpher(srcFigure.path, targFigure.path, this.state.steps);
         },
@@ -307,11 +321,9 @@ export default {
     },
     mounted() {
         this.canvas.fill();
-
         this.animation
-        .fps(32)
+        //.fps(32)
         .only(() => {
-            // @TODO
             if (!this.state.origin) {
                 this.init();
                 this.create();
