@@ -1,8 +1,4 @@
-////
-// Basic eslint config. Can be overwritten (or extended)  by eslint configs in src/ subfolders
-////
-
-// http://eslint.org/docs/user-guide/configuring
+// https://eslint.org/docs/user-guide/configuring
 
 module.exports = {
     root: true,
@@ -13,32 +9,51 @@ module.exports = {
     env: {
         browser: true,
     },
+    extends: 'airbnb-base',
     // required to lint *.vue files
     plugins: [
         'html'
     ],
-    extends: 'airbnb-base',
-
-    ////
+    // check if imports actually resolve
+    settings: {
+        'import/resolver': {
+            webpack: {
+                config: 'build/webpack.base.conf.js'
+            }
+        }
+    },
     // add your custom rules here
-    ////
-
     rules: {
+        // don't require .vue extension when importing
+        'import/extensions': ['error', 'always', {
+            js: 'never',
+            vue: 'never'
+        }],
+        // disallow reassignment of function parameters
+        // disallow parameter object manipulation except for specific exclusions
+        'no-param-reassign': ['error', {
+            props: true,
+            ignorePropertyModificationsFor: [
+                'state', // for vuex state
+                'acc', // for reduce accumulators
+                'e' // for e.returnvalue
+            ]
+        }],
+        // allow optionalDependencies
+        'import/no-extraneous-dependencies': ['error', {
+            optionalDependencies: ['test/unit/index.js']
+        }],
         // allow debugger during development
-        'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+        'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 
-        indent: ['error', 4, { 'SwitchCase': 1 }],
-        'func-names': 'off',
-        'no-underscore-dangle': 'off',
-        'no-console': 'error', //'off',
+        ////
+        // personal
+        ////
+
+        'indent': ['error', 4, {
+            'SwitchCase': 1
+        }],
         'comma-dangle': ['error', 'only-multiline'],
-        'no-restricted-syntax': [
-            'error',
-            //'ForInStatement',
-            //'ForOfStatement',
-            'LabeledStatement',
-            'WithStatement',
-        ],
         'spaced-comment': 'off',
         'padded-blocks': 'off',
         'arrow-body-style': 'off', //stupid rule
@@ -46,6 +61,9 @@ module.exports = {
         'no-continue': 'off',
         'object-shorthand': 'off',
         'no-param-reassign': 'off',
-        'max-len': 'off'
+        'max-len': 'off',
+        'func-names': 'off',
+        'no-underscore-dangle': 'off',
+        'no-console': 'off', //,'error'
     }
 }
