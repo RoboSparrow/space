@@ -26,7 +26,7 @@ import Utils from '../Utils';
 import Dev from '../Form/Dev';
 import Canvas2dHelpers from '../Canvas2dHelpers';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 const compute = function (state, canvas) {
     const path = new Space.Path();

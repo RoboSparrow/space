@@ -3,12 +3,12 @@
         <section class="mui-form">
             <legend>Edit Params</legend>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
-                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
+                <input type="range" v-model.number="state.widthRange" min="5" max="1000">
+                <label>Width Range <small>({{ state.widthRange }})</small></label>
             </div>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.radiusRange" min="5" max="500">
-                <label>Radius Range <small>({{ state.radiusRange }})</small></label>
+                <input type="range" v-model.number="state.heightRange" min="5" max="1000">
+                <label>Height Range <small>({{ state.heightRange }})</small></label>
             </div>
         </section>
 
@@ -21,25 +21,23 @@
 import Utils from '../Utils';
 import Dev from '../Form/Dev';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 const compute = function (state, canvas) {
     if (!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-    let radius = Math.floor(Utils.randInt(5, state.radiusRange));
-    let segments = Math.floor(Utils.randInt(3, state.segmentsRange));
-    segments = Utils.bounds(segments, false, 25);
-    radius = Utils.bounds(radius, false, canvas.width / 2);
+    const width = Math.floor(Utils.randInt(5, state.widthRange));
+    const height = Math.floor(Utils.randInt(3, state.heightRange));
 
-    state.prev.segments = segments;
-    state.prev.radius = radius;
+    state.prev.width = width;
+    state.prev.height = height;
 
-    return new Space.Polygon(segments, radius, state.origin);
+    return new Space.Rectangle(width, height, state.origin);
 };
 
 export default {
-    name: 'Polygon',
+    name: 'Rectangle',
     props: [
         'animation',
         'appState',
@@ -52,15 +50,15 @@ export default {
         return {
             state: {
                 prev: {
-                    segments: 3,
-                    radius: 50
+                    width: 25,
+                    height: 50
                 },
-                segmentsRange: 10,
-                radiusRange: 200,
+                widthRange: 500,
+                heightRange: 500,
                 origin: null,
                 canvas: this.appState.factor('canvas', {
                     strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(99, 9, 9, .8)'
+                    fillStyle: 'rgba(255, 255, 255, .2)'
                 })
             }
         };

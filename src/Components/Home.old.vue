@@ -7,7 +7,7 @@
 <script>
 import Utils from './Utils';
 
-const Space = window.Space;
+import Space from '../Space';
 
 const compute = function (state, canvas) {
     if (!state.origin) {

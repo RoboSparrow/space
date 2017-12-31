@@ -110,7 +110,7 @@ import ColorPicker from '../Form/ColorPicker';
 import EditPathPoints from '../Form/EditPathPoints';
 import Dev from '../Form/Dev';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 //TODO this can be moved into figure paths
 const compute = function (path, state) {

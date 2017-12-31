@@ -7,12 +7,8 @@
                 <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
             </div>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
-                <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
-            </div>
-            <div class="mui-textfield">
-                <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
-                <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
+                <input type="range" v-model.number="state.radiusRange" min="5" max="500">
+                <label>Radius Range <small>({{ state.radiusRange }})</small></label>
             </div>
         </section>
 
@@ -25,29 +21,25 @@
 import Utils from '../Utils';
 import Dev from '../Form/Dev';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 const compute = function (state, canvas) {
     if (!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-
-    let outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
-    let innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
+    let radius = Math.floor(Utils.randInt(5, state.radiusRange));
     let segments = Math.floor(Utils.randInt(3, state.segmentsRange));
     segments = Utils.bounds(segments, false, 25);
-    outerRadius = Utils.bounds(outerRadius, false, canvas.width / 2);
-    innerRadius = Utils.bounds(innerRadius, false, canvas.width / 2);
+    radius = Utils.bounds(radius, false, canvas.width / 2);
 
     state.prev.segments = segments;
-    state.prev.outerRadius = outerRadius;
-    state.prev.innerRadius = innerRadius;
+    state.prev.radius = radius;
 
-    return new Space.Cog(segments, outerRadius, innerRadius, state.origin);
+    return new Space.Polygon(segments, radius, state.origin);
 };
 
 export default {
-    name: 'Star',
+    name: 'Polygon',
     props: [
         'animation',
         'appState',
@@ -61,16 +53,14 @@ export default {
             state: {
                 prev: {
                     segments: 3,
-                    outerRadius: 50,
-                    innerRadius: 10
+                    radius: 50
                 },
                 segmentsRange: 10,
-                outerRadiusRange: 200,
-                innerRadiusRange: 200,
+                radiusRange: 200,
                 origin: null,
                 canvas: this.appState.factor('canvas', {
                     strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(0, 99, 0, .6)'
+                    fillStyle: 'rgba(99, 9, 9, .8)'
                 })
             }
         };

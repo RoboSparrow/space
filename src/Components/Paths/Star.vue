@@ -25,7 +25,7 @@
 import Utils from '../Utils';
 import Dev from '../Form/Dev';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 const compute = function (state, canvas) {
     if (!state.origin) {

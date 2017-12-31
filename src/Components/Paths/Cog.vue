@@ -3,12 +3,16 @@
         <section class="mui-form">
             <legend>Edit Params</legend>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.widthRange" min="5" max="1000">
-                <label>Width Range <small>({{ state.widthRange }})</small></label>
+                <input type="range" v-model.number="state.segmentsRange" min="1" max="50">
+                <label>Segment Range <small>({{ state.segmentsRange }})</small></label>
             </div>
             <div class="mui-textfield">
-                <input type="range" v-model.number="state.heightRange" min="5" max="1000">
-                <label>Height Range <small>({{ state.heightRange }})</small></label>
+                <input type="range" v-model.number="state.outerRadiusRange" min="5" max="500">
+                <label>Outer Radius Range <small>({{ state.outerRadiusRange }})</small></label>
+            </div>
+            <div class="mui-textfield">
+                <input type="range" v-model.number="state.innerRadiusRange" min="5" max="500">
+                <label>Inner Radius Range <small>({{ state.innerRadiusRange }})</small></label>
             </div>
         </section>
 
@@ -21,23 +25,29 @@
 import Utils from '../Utils';
 import Dev from '../Form/Dev';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 const compute = function (state, canvas) {
     if (!state.origin) {
         state.origin = new Space.Point.Cartesian(canvas.width / 2, canvas.height / 2);
     }
-    const width = Math.floor(Utils.randInt(5, state.widthRange));
-    const height = Math.floor(Utils.randInt(3, state.heightRange));
 
-    state.prev.width = width;
-    state.prev.height = height;
+    let outerRadius = Math.floor(Utils.randInt(5, state.outerRadiusRange));
+    let innerRadius = Math.floor(Utils.randInt(5, state.innerRadiusRange));
+    let segments = Math.floor(Utils.randInt(3, state.segmentsRange));
+    segments = Utils.bounds(segments, false, 25);
+    outerRadius = Utils.bounds(outerRadius, false, canvas.width / 2);
+    innerRadius = Utils.bounds(innerRadius, false, canvas.width / 2);
 
-    return new Space.Rectangle(width, height, state.origin);
+    state.prev.segments = segments;
+    state.prev.outerRadius = outerRadius;
+    state.prev.innerRadius = innerRadius;
+
+    return new Space.Cog(segments, outerRadius, innerRadius, state.origin);
 };
 
 export default {
-    name: 'Rectangle',
+    name: 'Star',
     props: [
         'animation',
         'appState',
@@ -50,15 +60,17 @@ export default {
         return {
             state: {
                 prev: {
-                    width: 25,
-                    height: 50
+                    segments: 3,
+                    outerRadius: 50,
+                    innerRadius: 10
                 },
-                widthRange: 500,
-                heightRange: 500,
+                segmentsRange: 10,
+                outerRadiusRange: 200,
+                innerRadiusRange: 200,
                 origin: null,
                 canvas: this.appState.factor('canvas', {
                     strokeStyle: 'rgba(255, 255, 255, 1)',
-                    fillStyle: 'rgba(255, 255, 255, .2)'
+                    fillStyle: 'rgba(0, 99, 0, .6)'
                 })
             }
         };

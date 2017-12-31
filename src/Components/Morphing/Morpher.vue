@@ -97,7 +97,7 @@ import Canvas2dHelpers from '../Canvas2dHelpers';
 import Dev from '../Form/Dev';
 import Utils from '../Utils';
 
-const Space = window.Space;
+import Space from '../../Space';
 
 let paused; //holds timeout
 

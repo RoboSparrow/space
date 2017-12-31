@@ -6,12 +6,12 @@ import '../node_modules/muicss/dist/js/mui';//TODO, commonjs or write custom com
 // rollup-plugin-scss
 //import './main.scss';
 
-import Animation from './Page/Animation';
-import Canvas2d from './Page/Canvas2d';
-import State from './Page/State';
-import Routes from './Page/Routes';
+import Animation from './Components/Animation';
+import Canvas2d from './Components/Canvas2d';
+import State from './Components/State';
+import Routes from './Components/Routes';
 
-import App from './Page/App';
+import App from './Components/App';
 
 const animation = new Animation();
 const canvas = new Canvas2d();
