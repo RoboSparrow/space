@@ -3,7 +3,7 @@
 'use strict';
 
 import Space from '../src/Space';
-import World from '../src/World';
+import World from '../src/Space/World';
 import assert from 'assert';
 
 describe('World', function() {
@@ -47,7 +47,7 @@ describe('World', function() {
         const p1 = new Space.Point.Cartesian(50, 50, -50);
         let w1 = new World(p1);
         const o1 = w1.origin();
-        
+
         const p2 = new Space.Point.Cartesian(100, -100);
         let w2 = new World(p2);
         const o2 = w2.origin();
