@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "test": "./node_modules/.bin/mocha --require babel-core/register --reporter spec test || true",
+    "test": "BABEL_ENV=test ./node_modules/.bin/mocha --require babel-core/register --reporter spec test || true",
     "lint": "eslint --ext .js,.vue src test/unit/specs",
     "build": "node build/build.js"
   },
