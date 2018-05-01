@@ -218,6 +218,7 @@ describe('Path 2D', function() {
         path.add(new Space.Point.Cartesian(50, 50));
         path.add(new Space.Point.Cartesian(150, 150));
         const q = path.isClosed();
+        assert.strictEqual(q, false);
     });
 
     it('isClosed() on re-opened path', function() {
@@ -404,6 +405,30 @@ describe('Path 2D', function() {
         assert.strictEqual(path.points[1].z, 500);
 
         assert.deepStrictEqual(o, origin);
+    });
+
+    ////
+    // expand
+    ////
+
+    it('expand() uneven', function() {
+        const path = new Space.Path();
+        path.add(50, 50);
+        path.add(100, 100);
+        path.add(-50, 50);
+        path.close();
+
+        path.expand(2);
+        assert.strictEqual(path.length(), 5);
+
+        assert.strictEqual(path.points[0].x, 50);
+        assert.strictEqual(path.points[0].y, 50);
+
+        assert.strictEqual(path.points[2].x, 100);
+        assert.strictEqual(path.points[2].y, 100);
+
+        assert.strictEqual(path.points[2].x, 100);
+        assert.strictEqual(path.points[2].y, 100);
     });
 
 });
