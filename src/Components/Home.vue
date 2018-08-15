@@ -1,6 +1,19 @@
 <template>
     <div>
         morph: {{state.currentTitle}}, segments {{state.segments}}
+        <!-- helpers -->
+        <section class="mui-form">
+            <legend>Helpers</legend>
+            <div class="mui-checkbox">
+                <label>
+                    <input type="checkbox" v-model="state.showHandles"> Handles
+                </label>
+                <label>
+                    <input type="checkbox" v-model="state.showPoints"> Points
+                </label>
+            </div>
+            <pre>{{state}}</pre>
+        </section>
     </div>
 </template>
 
@@ -26,7 +39,7 @@ const Sequence = [
             const origin = center(canvas);
             const outerRadius = boundary(canvas, 50) / 2;
             const innerRadius = outerRadius / 3;
-            const segments = state.segments / 2; //DEV: FOR COG
+            const segments = state.segments;
 
             return new Space.Star(segments, outerRadius, innerRadius, origin);
         }
@@ -37,7 +50,7 @@ const Sequence = [
             const origin = center(canvas);
             const outerRadius = boundary(canvas, 50) / 2;
             const innerRadius = outerRadius / 3;
-            const segments = state.segments / 4; //DEV
+            const segments = state.segments;
 
             return new Space.Cog(segments, outerRadius, innerRadius, origin);
         }
@@ -48,7 +61,7 @@ const Sequence = [
             const origin = center(canvas);
             const width = boundary(canvas, 50);
             const height = width / 2;
-
+            state.segments = 4; // update for next figure
             return new Space.Rectangle(width, height, origin);
         }
     }
@@ -135,7 +148,8 @@ export default {
                 currentTitle: '',
                 steps: 30,
                 segments: 12,
-
+                showHandles: false,
+                showPoints: false,
                 prev: {
                     figures: {}
                 },
@@ -175,10 +189,12 @@ export default {
             const finished = this.morpher.finished();
 
             if (finished) {
+                this.animation.pause();
                 paused = setTimeout(() => {
                     //morpher.reverse();
                     this.state.currentIndex = (this.state.currentIndex < Sequence.length - 1) ? this.state.currentIndex + 1 : 0;
                     this.morpher = morpher(this.state, this.canvas.canvas);
+                    this.animation.play();
                     clearTimeout(paused);
                 }, 1000);
 

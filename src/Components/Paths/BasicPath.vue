@@ -18,6 +18,8 @@
 </template>
 
 <script>
+// Renamed component Path
+// [Vue warn]: Do not use built-in or reserved HTML elements as component id: Path
 import Utils from '../Utils';
 import Dev from '../Form/Dev';
 

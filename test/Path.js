@@ -419,7 +419,29 @@ describe('Path 2D', function() {
         path.close();
 
         path.expand(2);
+        console.log(path.toArray());
         assert.strictEqual(path.length(), 5);
+
+        assert.strictEqual(path.points[0].x, 50);
+        assert.strictEqual(path.points[0].y, 50);
+
+        assert.strictEqual(path.points[2].x, 100);
+        assert.strictEqual(path.points[2].y, 100);
+
+        assert.strictEqual(path.points[2].x, 100);
+        assert.strictEqual(path.points[2].y, 100);
+    });
+
+    it('expand(5) longer than path.length', function() {
+        const path = new Space.Path();
+        path.add(50, 50);
+        path.add(100, 100);
+        path.add(-50, 50);
+        path.close();
+
+        path.expand(5);
+        console.log(path.toArray());
+        assert.strictEqual(path.length(), 8);
 
         assert.strictEqual(path.points[0].x, 50);
         assert.strictEqual(path.points[0].y, 50);

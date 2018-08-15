@@ -57,6 +57,7 @@ const computeUnit = function (src, targ, steps) {
 const normalizeGroup = function (src, targ) {
     const length = (targ.members.length > src.members.length) ? targ.members.length : src.members.length;
     for (let i = 0; i < length; i += 1) {
+        // TODO expand geometry
         if (typeof src.members[i] === 'undefined') {
             src.members[i] = new Point.Cartesian(src.x, src.y, src.z);
         }

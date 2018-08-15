@@ -3,7 +3,7 @@ import Home from './Home';
 import BezierPath from './Figures/BezierPath';
 import Figures from './Figures/Figures';
 // single views
-import Path from './Paths/Path';
+import BasicPath from './Paths/BasicPath';
 import Polygon from './Paths/Polygon';
 import Rectangle from './Paths/Rectangle';
 import Star from './Paths/Star';
@@ -15,7 +15,9 @@ const routes = [
     {
         name: '',
         path: '/',
-        component: Path,
+        //// TODO
+        // component: BasicPath,
+        redirect: '/Path',
         meta: {
             menu: false,
             figure: false
@@ -33,7 +35,7 @@ const routes = [
     {
         name: 'Path',
         path: '/Path',
-        component: Path,
+        component: BasicPath,
         meta: {
             menu: true,
             figure: true

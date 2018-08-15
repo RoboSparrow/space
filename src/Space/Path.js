@@ -171,4 +171,35 @@ Path.prototype.rotate2D = function (rad) {
     }
 };
 
+// expand path evenly, new path elements are crossproducts of siblings
+Path.prototype.expand = function (n) {
+
+    if (isNaN(n) || n <= 0) {
+        return false;
+    }
+// todo : isopen
+    const length = this.points.length; // true array length
+    const projected = length + n;
+
+    // the larger the expand factor is the smaller will be the iteration step
+    // smallest step size is 1
+    const gapSize = projected / length;
+
+    // section < 1 :discard
+    // section === 0: discard
+    // section > 0 && < 1:
+    // section === 1
+    // section >1
+
+
+    // using new length
+    const step = Math.floor(gapSize);
+    for (let i = step; i < projected; i += step) {
+        this.points.splice(i * step, 0, new Point.Cartesian());//TODO path.insert
+    }
+
+    return true;
+};
+
+
 export default Path;

@@ -108,7 +108,7 @@ const radius = function (canvas, margin) {
 
 const Figures = {
 
-    available: ['Line', 'Polygon', 'Star', 'Cog', 'Flower', 'Random'],
+    available: ['Line', 'Polygon', 'Rectangle', 'Star', 'Cog', 'Flower', 'Random'],
 
     create: function (type, state, canvas) {
 
@@ -122,6 +122,11 @@ const Figures = {
                 const from = new Space.Point.Cartesian(0, canvas.height / 2);
                 const to = new Space.Point.Cartesian(canvas.width, canvas.height / 2);
                 figure = new Space.Line(from, to, segments); //TODO solve -1 inside morpher or line.segmentize
+                break;
+            }
+            case 'Rectangle': {
+                //state.segments = 4;
+                figure = new Space.Rectangle(radius(canvas), radius(canvas), state.origin); //TODO solve -1 inside morpher or line.segmentize
                 break;
             }
             case 'Polygon': {
