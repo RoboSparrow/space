@@ -1,8 +1,6 @@
 # Space
 
-> messing around with space
-
-[No cycling, no smoking, no fishing, No dogs!](https://goo.gl/images/XOX5ye)
+just messing around with VUE and Vectors
 
 ## Build Setup
 
