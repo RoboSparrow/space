@@ -1,6 +1,6 @@
 # Space
 
-just messing around with VUE and Vectors
+just messing around with Vue and Vectors
 
 ## Build Setup
 
