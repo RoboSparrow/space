@@ -222,3 +222,22 @@ footer, footer a {
 .router-link-active:hover {
     cursor: pointer;
 }
+
+// sliders
+
+input[type=range]{
+    border: none;
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track, 
+input[type=range]::-moz-range-track {
+    height: 2px;
+    background: rgba($app-sidebar-fg-color, .5);
+    border: none;
+    border-radius: 3px;
+}
+
+input[type=range]:focus {
+    border: none;
+}
