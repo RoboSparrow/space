@@ -10,7 +10,7 @@ import State from './State';
 import Routes from './Routes';
 
 import App from './App';
-
+ß
 const animation = new Animation();
 const canvas = new Canvas2d();
 

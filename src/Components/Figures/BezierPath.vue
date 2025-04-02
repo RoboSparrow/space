@@ -106,9 +106,9 @@
 import Canvas2dHelpers from '../Canvas2dHelpers';
 import Utils from '../Utils';
 
-import ColorPicker from '../Form/ColorPicker';
-import EditPathPoints from '../Form/EditPathPoints';
-import Dev from '../Form/Dev';
+import ColorPicker from '../Form/ColorPicker.vue';
+import EditPathPoints from '../Form/EditPathPoints.vue';
+import Dev from '../Form/Dev.vue';
 
 import Space from '../../Space';
 

@@ -1,15 +1,15 @@
 // landing views
-import Home from './Home';
-import BezierPath from './Figures/BezierPath';
-import Figures from './Figures/Figures';
+import Home from './Home.vue';
+import BezierPath from './Figures/BezierPath.vue';
+import Figures from './Figures/Figures.vue';
 // single views
-import Path from './Paths/Path';
-import Polygon from './Paths/Polygon';
-import Rectangle from './Paths/Rectangle';
-import Star from './Paths/Star';
-import Cog from './Paths/Cog';
-import Bezier from './BezierPaths/Bezier';
-import Morpher from './Morphing/Morpher';
+import Path from './Paths/Path.vue';
+import Polygon from './Paths/Polygon.vue';
+import Rectangle from './Paths/Rectangle.vue';
+import Star from './Paths/Star.vue';
+import Cog from './Paths/Cog.vue';
+import Bezier from './BezierPaths/Bezier.vue';
+import Morpher from './Morphing/Morpher.vue';
 
 const routes = [
     {

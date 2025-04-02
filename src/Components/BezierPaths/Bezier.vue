@@ -23,7 +23,7 @@
 
 <script>
 import Utils from '../Utils';
-import Dev from '../Form/Dev';
+import Dev from '../Form/Dev.vue';
 import Canvas2dHelpers from '../Canvas2dHelpers';
 
 import Space from '../../Space';
