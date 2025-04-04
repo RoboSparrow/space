@@ -188,8 +188,8 @@
 import Canvas2dHelpers from '../Canvas2dHelpers';
 import Utils from '../Utils';
 import Routes from '../Routes';
-import ColorPicker from '../Form/ColorPicker';
-import Dev from '../Form/Dev';
+import ColorPicker from '../Form/ColorPicker.vue';
+import Dev from '../Form/Dev.vue';
 
 import Space from '../../Space';
 

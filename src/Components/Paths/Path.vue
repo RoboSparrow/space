@@ -19,7 +19,7 @@
 
 <script>
 import Utils from '../Utils';
-import Dev from '../Form/Dev';
+import Dev from '../Form/Dev.vue';
 
 import Space from '../../Space';
 
