@@ -4,7 +4,7 @@
         <section>
             <!-- figures.src -->
             <div class="mui-dropdown">
-                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                <button class="mui-btn mui-btn--small" data-mui-toggle="dropdown">
                     {{ (figures.src) ? figures.src : 'Choose' }}
                     <span class="mui-caret mui--text-accent"></span>
                 </button>
@@ -20,7 +20,7 @@
             <span>&nbsp;to&nbsp;</span>
             <!-- figures.targ -->
             <div class="mui-dropdown">
-                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                <button class="mui-btn mui-btn--small" data-mui-toggle="dropdown">
                     {{ (figures.targ) ? figures.targ : 'Choose' }}
                     <span class="mui-caret mui--text-accent"></span>
                 </button>

@@ -11,11 +11,11 @@
 
                                 <ul class="mui-list--inline mui--text-body2">
                                     <!-- brand -->
-                                    <!--
-                                    <li>
-                                        <span class="app--brand"></span>
+                                    <li class="mui--align-middle">
+                                        <a class="app--icon mui--text-display1" href="/#/Home">
+                                            <home-icon />
+                                        </a>
                                     </li>
-                                    -->
                                     <!-- menus -->
                                     <li
                                         v-for="(menu, name) in menus"
@@ -23,14 +23,14 @@
                                     >
                                         <div v-if="menu.length === 1" class="mui-dropdown">
                                             <button
-                                                class="mui-btn mui-btn-small"
+                                                class="mui-btn mui-btn--small"
                                                 v-on:click="goTo(menu[0])">
                                                 {{ menu[0].name }}
                                             </button>
                                         </div>
 
                                         <div v-if="menu.length > 1" class="mui-dropdown">
-                                            <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                                            <button class="mui-btn mui-btn--small" data-mui-toggle="dropdown">
                                                 {{ name }} <span class="mui-caret mui--text-accent"></span>
                                             </button>
 
@@ -46,12 +46,15 @@
                                         </div>
                                     </li>
                                 </ul>
+
                             </td>
                             <td class="mui--text-right">
                                 <ul class="mui-list--inline mui--text-body2">
                                     <!-- settings sidebar -->
                                     <li class="mui--align-middle app--sidebar-trigger">
-                                        <a class="app--icon mui--text-display1" v-on:click="toggle()">⚙</a>
+                                        <a class="app--icon mui--text-display1" v-on:click="toggle()">
+                                            <cog-icon />
+                                        </a>
                                     </li>
                                 </ul>
                             </td>
@@ -95,11 +98,17 @@
 <script>
 import Animation from './Form/Animation.vue';
 
+// @see https://pictogrammers.com/library/mdi/
+import HomeIcon from 'vue-material-design-icons/Home.vue';
+import CogIcon from 'vue-material-design-icons/Cog.vue';
+
 export default {
     name: 'app',
     props: ['animation', 'appState', 'canvas', 'routes', 'menus'],
     components: {
-        Animation
+        Animation,
+        HomeIcon,
+        CogIcon,
     },
     mounted() {
         this.sidebar = document.getElementById('sidebar');

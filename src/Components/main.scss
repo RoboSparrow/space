@@ -55,6 +55,10 @@ header {
     z-index: 2;
 }
 
+header .mui-list--inline {
+    margin-bottom: 0;
+}
+
 header .app--sidebar-trigger {
     cursor: pointer;
     -webkit-animation: spin-slow 4s linear infinite;
@@ -68,10 +72,6 @@ header .app--sidebar-trigger:hover{
 
 @-webkit-keyframes spin-slow { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin-slow { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
-
-header .app--brand {
-    margin-right: 1em;
-}
 
 header a {
     color: white;

@@ -2,7 +2,7 @@
     <div>
         <section>
             <div class="mui-dropdown">
-                <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                <button class="mui-btn mui-btn--small" data-mui-toggle="dropdown">
                     {{ (figure) ? figure : 'Choose' }}
                     <span class="mui-caret mui--text-accent"></span>
                 </button>
