@@ -67,9 +67,12 @@ export default {
     },
     mounted() {
         let polygon;
+        this.canvas.clear();
+
+        this.canvas.clear();
 
         this.animation
-        // .fps(1)
+        .fps(1)
         .only(() => {
             // compute path
             polygon = compute(this.state, this.canvas.canvas);

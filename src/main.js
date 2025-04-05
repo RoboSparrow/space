@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 import '../node_modules/muicss/dist/css/mui.css';
+import '../node_modules/muicss/dist/js/mui.js';
 
 // import sass from 'sass';
 // const result = sass.compile('./Components/main.scss');
@@ -19,27 +20,23 @@ const canvas = new Canvas2d(); //
 // Create the router
 Vue.use(VueRouter);
 const router = new VueRouter({
-    mode: 'hash', //'history',
+    //mode: 'hash', //'history',
     routes: Routes.routes
 });
 
 const data = {
-      animation,
-      appState: State,
-      canvas,
-      routes: Routes.menu()
-  };
+    animation,
+    appState: State,
+    canvas,
+    routes: Routes.named(),
+    menus: Routes.menus(),
+};
 
 // 4. Create and mount root instance.
 // Make sure to inject the router.
 new Vue({
     router,
-    data: {
-        animation,
-        appState: State,
-        canvas,
-        routes: Routes.menu()
-    },
+    data,
     components: {
         App
     },

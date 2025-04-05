@@ -320,9 +320,10 @@ export default {
         }
     },
     mounted() {
-        this.canvas.fill();
+        this.canvas.clear();
+
         this.animation
-        //.fps(32)
+        .fps(32)
         .only(() => {
             if (!this.state.origin) {
                 this.init();
