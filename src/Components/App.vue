@@ -21,7 +21,15 @@
                                         v-for="(menu, name) in menus"
                                         v-if="name !== 'Home'"
                                     >
-                                        <div class="mui-dropdown">
+                                        <div v-if="menu.length === 1" class="mui-dropdown">
+                                            <button
+                                                class="mui-btn mui-btn-small"
+                                                v-on:click="goTo(menu[0])">
+                                                {{ menu[0].name }}
+                                            </button>
+                                        </div>
+
+                                        <div v-if="menu.length > 1" class="mui-dropdown">
                                             <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
                                                 {{ name }} <span class="mui-caret mui--text-accent"></span>
                                             </button>
@@ -35,7 +43,6 @@
                                                     <a v-on:click="goTo(route)">{{ route.name }}</a>
                                                 </li>
                                             </ul>
-
                                         </div>
                                     </li>
                                 </ul>
