@@ -19,7 +19,7 @@
 
 <script>
 import Utils from '../Utils';
-import Dev from '../Form/Dev';
+import Dev from '../Form/Dev.vue';
 
 import Space from '../../Space';
 
@@ -65,9 +65,10 @@ export default {
     },
     mounted() {
         let polygon;
+        this.canvas.clear();
 
         this.animation
-        // .fps(1)
+        .fps(1)
         .only(() => {
             // compute path
             polygon = compute(this.state, this.canvas.canvas);

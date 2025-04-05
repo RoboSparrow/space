@@ -7,26 +7,46 @@
                 <div class="mui-container-fluid">
                     <table width="100%">
                         <tr class="mui--appbar-height">
-                            <td>
-                                <span class="app--brand"></span>
-                                <div class="mui-dropdown">
-                                    <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
-                                        Space <span class="mui--text-accent">/</span> {{ $route.name }}
-                                        <span class="mui-caret mui--text-accent"></span>
-                                    </button>
-                                    <ul class="mui-dropdown__menu">
-                                        <li
-                                            v-for="route in routes"
-                                            v-if="route.name"
-                                            v-bind:class="{'router-link-active': $route.name === route.name}"
-                                        >
-                                            <a v-on:click="goTo(route)">{{ route.name }}</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <td class="mui--text-title">
+
+                                <ul class="mui-list--inline mui--text-body2">
+                                    <!-- brand -->
+                                    <!--
+                                    <li>
+                                        <span class="app--brand"></span>
+                                    </li>
+                                    -->
+                                    <!-- menus -->
+                                    <li
+                                        v-for="(menu, name) in menus"
+                                        v-if="name !== 'Home'"
+                                    >
+                                        <div class="mui-dropdown">
+                                            <button class="mui-btn mui-btn-small" data-mui-toggle="dropdown">
+                                                {{ name }} <span class="mui-caret mui--text-accent"></span>
+                                            </button>
+
+                                            <ul class="mui-dropdown__menu">
+                                                <li
+                                                    v-for="route in menu"
+                                                    v-if="route.name"
+                                                    v-bind:class="{'router-link-active': $route.name === route.name}"
+                                                >
+                                                    <a v-on:click="goTo(route)">{{ route.name }}</a>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </li>
+                                </ul>
                             </td>
-                            <td>
-                                <a class="app--sidebar-trigger mui--pull-right mui--text-display1" v-on:click="toggle()"><i class="zmdi zmdi-settings"></i></a>
+                            <td class="mui--text-right">
+                                <ul class="mui-list--inline mui--text-body2">
+                                    <!-- settings sidebar -->
+                                    <li class="mui--align-middle app--sidebar-trigger">
+                                        <a class="app--icon mui--text-display1" v-on:click="toggle()">⚙</a>
+                                    </li>
+                                </ul>
                             </td>
                         </tr>
                     </table>
@@ -66,11 +86,11 @@
 </template>
 
 <script>
-import Animation from './Form/Animation';
+import Animation from './Form/Animation.vue';
 
 export default {
     name: 'app',
-    props: ['animation', 'appState', 'canvas', 'routes'],
+    props: ['animation', 'appState', 'canvas', 'routes', 'menus'],
     components: {
         Animation
     },
@@ -99,7 +119,7 @@ export default {
     },
     data: function () {
         return {
-            sidebar: null
+            sidebar: null,
         };
     }
 };

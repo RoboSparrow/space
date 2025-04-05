@@ -94,7 +94,7 @@
 
 <script>
 import Canvas2dHelpers from '../Canvas2dHelpers';
-import Dev from '../Form/Dev';
+import Dev from '../Form/Dev.vue';
 import Utils from '../Utils';
 
 import Space from '../../Space';
@@ -320,9 +320,10 @@ export default {
         }
     },
     mounted() {
-        this.canvas.fill();
+        this.canvas.clear();
+
         this.animation
-        //.fps(32)
+        .fps(32)
         .only(() => {
             if (!this.state.origin) {
                 this.init();
